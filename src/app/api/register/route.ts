@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendVerificationCode } from "@/lib/mail";
 import bcrypt from "bcryptjs";
 import type { UserStatus } from "@prisma/client";
+export const runtime = 'nodejs';
 
 const verificationCodes = new Map<string, { code: string; data: any; expiresAt: number }>();
 
