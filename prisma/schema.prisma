@@ -51,6 +51,23 @@ enum OfferStatus {
   REJECTED
 }
 
+enum OfferProduct {
+  GTA
+  GV
+  GTE
+}
+
+enum OfferDuration {
+  SHORT
+  MEDIUM
+  LONG
+}
+
+enum OfferOpenStatus {
+  NEW_OPEN
+  RE_OPEN
+}
+
 enum UserStatus {
   PENDING
   ACTIVE
@@ -77,6 +94,7 @@ model User {
 
   companies  Company[]
   activities Activity[]
+  offers     Offer[]
 }
 
 model Company {
@@ -111,16 +129,21 @@ model Contact {
 }
 
 model Offer {
-  id        Int         @id @default(autoincrement())
-  title     String      @db.VarChar(191)
-  value     Float?
-  status    OfferStatus @default(PENDING)
-  fileUrl   String?     @db.VarChar(191)
-  createdAt Int         @default(0)
-  updatedAt Int         @default(0)
+  id          Int             @id @default(autoincrement())
+  title       String          @db.VarChar(191)
+  product     OfferProduct
+  duration    OfferDuration
+  openStatus  OfferOpenStatus @default(NEW_OPEN)
+  value       Float?
+  fileUrl     String?         @db.VarChar(191)
+  createdAt   Int             @default(0)
+  updatedAt   Int             @default(0)
 
-  company   Company     @relation(fields: [companyId], references: [id])
-  companyId Int
+  company     Company         @relation(fields: [companyId], references: [id])
+  companyId   Int
+
+  createdBy   User            @relation(fields: [createdById], references: [id])
+  createdById Int
 }
 
 model Activity {

@@ -1,95 +1,87 @@
 // User Role Types
-export type UserRole = 'MCP' | 'MCVP' | 'LCP' | 'LCVP' | 'TeamLeader' | 'TeamMember';
+export type UserRole = 'MCP' | 'MCVP' | 'LCP' | 'LCVP' | 'TL' | 'TM' | 'ADMIN';
 
 export interface User {
   id: string;
   name: string;
   email: string;
   role: UserRole;
-  avatar?: string;
-  teamId?: string;
-  createdAt: Date;
+  chapter?: string;
+  status?: string;
+  createdAt?: number;
 }
 
 // Company Types
-export type CompanyStatus = 'aktif' | 'pasif' | 'negatif' | 'pozitif' | 'cevap_yok' | 'tekrar_ara' | 'toplanti_planlandi';
+export type CompanyStatus = 'POSITIVE' | 'NEGATIVE' | 'NO_ANSWER' | 'CALL_AGAIN' | 'MEETING_PLANNED';
 
 export interface Company {
-  id: string;
+  id: number;
   name: string;
-  category: string;
-  location: string;
-  phone: string;
-  email: string;
-  website?: string;
+  phone?: string;
+  email?: string;
   status: CompanyStatus;
-  activeProposals: number;
-  contactCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  assignedTo: string;
   notes?: string;
+  logoUrl?: string;
+  chapter?: string;
+  createdAt: number;
+  updatedAt: number;
+  createdById: number;
+  createdBy?: { id: number; name: string };
+  _count?: { contacts: number; activities: number; offers: number };
 }
 
 // Contact Types
 export interface Contact {
-  id: string;
-  companyId: string;
+  id: number;
+  companyId: number;
   name: string;
   email?: string;
   phone?: string;
-  position?: string;
-  isPrimary: boolean;
-  createdAt: Date;
+  createdAt: number;
+  company?: { id: number; name: string; chapter?: string };
 }
 
 // Activity Types
-export type ActivityType = 'cold_call' | 'meeting' | 'email' | 'task' | 'proposal' | 'postponed';
-export type ActivityStatus = 'completed' | 'pending' | 'overdue' | 'cancelled';
+export type ActivityType = 'COLD_CALL' | 'MEETING' | 'EMAIL' | 'FOLLOW_UP';
 
 export interface Activity {
-  id: string;
-  companyId: string;
-  contactId?: string;
-  userId: string;
-  userName: string;
+  id: number;
+  companyId: number;
+  userId: number;
   type: ActivityType;
-  status: ActivityStatus;
-  notes?: string;
-  scheduledAt?: Date;
-  completedAt?: Date;
-  createdAt: Date;
+  note?: string;
+  date: number;
+  createdAt: number;
+  user?: { id: number; name: string; role: string };
+  company?: { id: number; name: string; chapter?: string };
 }
 
-// Proposal/Deal Types
-export type DealStage = 'new_lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost';
+// Offer Types
+export type OfferProduct = 'GTA' | 'GV' | 'GTE';
+export type OfferDuration = 'SHORT' | 'MEDIUM' | 'LONG';
+export type OfferOpenStatus = 'NEW_OPEN' | 'RE_OPEN';
 
-export interface Proposal {
-  id: string;
-  companyId: string;
-  contactId?: string;
+export interface Offer {
+  id: number;
   title: string;
-  value: number;
-  currency: string;
-  stage: DealStage;
-  probability: number;
-  ownerId: string;
-  ownerName: string;
-  nextAction?: string;
-  nextActionDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  product: OfferProduct;
+  duration: OfferDuration;
+  openStatus: OfferOpenStatus;
+  value?: number;
+  fileUrl?: string;
+  companyId: number;
+  createdById: number;
+  createdAt: number;
+  updatedAt: number;
+  company?: { id: number; name: string; chapter?: string };
+  createdBy?: { id: number; name: string; role: string };
 }
 
 // Dashboard Stats
 export interface DashboardStats {
   totalCompanies: number;
-  activeCompanies: number;
-  totalProposals: number;
-  totalValue: number;
-  conversionRate: number;
-  activitiesCompleted: number;
-  activitiesPending: number;
+  totalActivities: number;
+  totalOffers: number;
   coldCallsToday: number;
   meetingsBooked: number;
   newCompaniesThisWeek: number;
@@ -97,20 +89,27 @@ export interface DashboardStats {
 
 // Filter Types
 export interface CompanyFilter {
-  category?: string;
   status?: CompanyStatus;
-  hasProposal?: boolean;
-  contactCount?: 'none' | 'some' | 'many';
-  assignedTo?: string;
+  chapter?: string;
 }
 
 export interface ActivityFilter {
   type?: ActivityType;
-  status?: ActivityStatus;
-  userId?: string;
-  companyId?: string;
-  dateFrom?: Date;
-  dateTo?: Date;
+  userId?: number;
+  companyId?: number;
+}
+
+// Permission Helper Type
+export interface RolePermissions {
+  canCreateCompany: boolean;
+  canEditCompany: boolean;
+  canDeleteContact: boolean;
+  canViewAllActivities: boolean;
+  canEditAllActivities: boolean;
+  canViewOffers: boolean;
+  canCreateOffer: boolean;
+  canViewAllChapters: boolean;
+  canApproveUsers: boolean;
 }
 
 // Notification Types
@@ -121,19 +120,5 @@ export interface Notification {
   message: string;
   type: 'info' | 'warning' | 'success' | 'error';
   read: boolean;
-  createdAt: Date;
-}
-
-// Permission Helper Type
-export interface RolePermissions {
-  canCreateCompany: boolean;
-  canEditCompany: boolean;
-  canDeleteContact: boolean;
-  canViewAllActivities: boolean;
-  canEditAllActivities: boolean;
-  canViewDeals: boolean;
-  canViewRevenue: boolean;
-  canViewTeamStats: boolean;
-  canViewGlobalStats: boolean;
-  canFilterByTeam: boolean;
+  createdAt: number;
 }
