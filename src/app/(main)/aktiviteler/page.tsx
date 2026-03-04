@@ -88,7 +88,7 @@ export default function ActivitiesPage() {
   // Filter activities based on user permissions
   const filteredActivities = mockActivities.filter(activity => {
     if (!permissions.canViewAllActivities) {
-      return activity.userId === user.id;
+      return activity.userId === user?.id;
     }
     return true;
   });
