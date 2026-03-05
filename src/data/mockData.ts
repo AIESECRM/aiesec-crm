@@ -10,3 +10,5 @@ export const getCompanyById = (id: string) => null;
 export const getContactsByCompanyId = (id: string) => [];
 export const getActivitiesByCompanyId = (id: string) => [];
 export const getProposalsByCompanyId = (id: string) => [];
+
+/*debenme*/
