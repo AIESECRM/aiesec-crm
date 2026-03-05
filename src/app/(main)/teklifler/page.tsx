@@ -26,6 +26,8 @@ export default function DealsPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [filterProduct, setFilterProduct] = useState<OfferProduct | ''>('');
   const [filterOpenStatus, setFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
+  const [tempFilterProduct, setTempFilterProduct] = useState<OfferProduct | ''>('');
+  const [tempFilterOpenStatus, setTempFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
   const [submitting, setSubmitting] = useState(false);
   const filterWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -39,9 +41,16 @@ export default function DealsPage() {
   });
 
   useEffect(() => {
-    fetchData();
+    fetchData('', '');
     fetchCompanies();
   }, []);
+
+  useEffect(() => {
+    if (showFilter) {
+      setTempFilterProduct(filterProduct);
+      setTempFilterOpenStatus(filterOpenStatus);
+    }
+  }, [showFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -53,11 +62,11 @@ export default function DealsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showFilter]);
 
-  const fetchData = async () => {
+  const fetchData = async (product: string, openStatus: string) => {
     setLoading(true);
     const params = new URLSearchParams();
-    if (filterProduct) params.set('product', filterProduct);
-    if (filterOpenStatus) params.set('openStatus', filterOpenStatus);
+    if (product) params.set('product', product);
+    if (openStatus) params.set('openStatus', openStatus);
 
     const res = await fetch(`/api/offers?${params.toString()}`);
     if (res.status === 403) { setUnauthorized(true); setLoading(false); return; }
@@ -71,6 +80,22 @@ export default function DealsPage() {
     const res = await fetch('/api/companies');
     const data = await res.json();
     setCompanies(data.companies || []);
+  };
+
+  const handleApplyFilter = () => {
+    setFilterProduct(tempFilterProduct);
+    setFilterOpenStatus(tempFilterOpenStatus);
+    fetchData(tempFilterProduct, tempFilterOpenStatus);
+    setShowFilter(false);
+  };
+
+  const handleResetFilter = () => {
+    setTempFilterProduct('');
+    setTempFilterOpenStatus('');
+    setFilterProduct('');
+    setFilterOpenStatus('');
+    fetchData('', '');
+    setShowFilter(false);
   };
 
   const handleAddOffer = async (e: React.FormEvent) => {
@@ -91,12 +116,11 @@ export default function DealsPage() {
     if (res.ok) {
       setShowAddModal(false);
       setNewOffer({ companyId: '', title: '', product: 'GTA', duration: 'SHORT', openStatus: 'NEW_OPEN', value: '' });
-      fetchData();
+      fetchData(filterProduct, filterOpenStatus);
     }
     setSubmitting(false);
   };
 
-  // Group offers by product
   const offersByProduct = PRODUCT_OPTIONS.reduce((acc, product) => {
     acc[product] = offers.filter(o => o.product === product);
     return acc;
@@ -127,9 +151,12 @@ export default function DealsPage() {
         </div>
         <div className="deals-page__actions">
           <div className="deals-page__filter-wrapper" ref={filterWrapperRef}>
-            <button className="deals-page__filter-btn" onClick={() => setShowFilter(!showFilter)}>
+            <button
+              className={`deals-page__filter-btn ${filterProduct || filterOpenStatus ? 'deals-page__filter-btn--active' : ''}`}
+              onClick={() => setShowFilter(!showFilter)}
+            >
               <Filter className="deals-page__filter-btn-icon" />
-              Filtrele
+              Filtrele {filterProduct || filterOpenStatus ? '●' : ''}
             </button>
             {showFilter && (
               <div className="deals-page__filter-dropdown">
@@ -140,22 +167,34 @@ export default function DealsPage() {
                   </div>
                   <div className="filter-panel__group">
                     <label className="filter-panel__label">Ürün</label>
-                    <select className="filter-panel__select" value={filterProduct} onChange={(e) => setFilterProduct(e.target.value as OfferProduct | '')}>
+                    <select
+                      className="filter-panel__select"
+                      value={tempFilterProduct}
+                      onChange={(e) => setTempFilterProduct(e.target.value as OfferProduct | '')}
+                    >
                       <option value="">Tümü</option>
                       {PRODUCT_OPTIONS.map(p => <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>)}
                     </select>
                   </div>
                   <div className="filter-panel__group">
                     <label className="filter-panel__label">Durum</label>
-                    <select className="filter-panel__select" value={filterOpenStatus} onChange={(e) => setFilterOpenStatus(e.target.value as OfferOpenStatus | '')}>
+                    <select
+                      className="filter-panel__select"
+                      value={tempFilterOpenStatus}
+                      onChange={(e) => setTempFilterOpenStatus(e.target.value as OfferOpenStatus | '')}
+                    >
                       <option value="">Tümü</option>
                       <option value="NEW_OPEN">New Open</option>
                       <option value="RE_OPEN">Re Open</option>
                     </select>
                   </div>
                   <div className="filter-panel__actions">
-                    <button className="filter-panel__btn filter-panel__btn--primary" onClick={() => { fetchData(); setShowFilter(false); }}>Uygula</button>
-                    <button className="filter-panel__btn filter-panel__btn--secondary" onClick={() => { setFilterProduct(''); setFilterOpenStatus(''); setShowFilter(false); fetchData(); }}>Temizle</button>
+                    <button className="filter-panel__btn filter-panel__btn--primary" onClick={handleApplyFilter}>
+                      Uygula
+                    </button>
+                    <button className="filter-panel__btn filter-panel__btn--secondary" onClick={handleResetFilter}>
+                      Temizle
+                    </button>
                   </div>
                 </div>
               </div>

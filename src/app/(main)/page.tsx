@@ -3,10 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  Home, Building2, Phone, Calendar, TrendingUp, TrendingDown, Users
+import {
+  Home, Building2, Phone, Calendar, Users
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
+import './page.css';
+
+const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
 
 const ACTIVITY_LABELS: Record<string, string> = {
   COLD_CALL: 'Cold Call',
@@ -31,8 +35,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    // Sadece normal roller için veri çek
+    if (user && !NATIONAL_ROLES.includes(user.role)) {
+      fetchData();
+    } else if (user && NATIONAL_ROLES.includes(user.role)) {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -47,6 +56,18 @@ export default function DashboardPage() {
     setLoading(false);
   };
 
+  // User henüz yüklenmediyse bekle
+  if (!user) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh' }}>
+      <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
+    </div>
+  );
+
+  // MCVP/MCP/ADMIN → Executive Dashboard
+  if (NATIONAL_ROLES.includes(user.role)) {
+    return <ExecutiveDashboard />;
+  }
+
   const todayColdCalls = activities.filter(a => {
     const today = new Date();
     const actDate = new Date(a.date * 1000);
@@ -57,46 +78,21 @@ export default function DashboardPage() {
   }).length;
 
   const plannedMeetings = activities.filter(a => a.type === 'MEETING').length;
-
   const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
   const newCompaniesThisWeek = companies.filter(c => c.createdAt > oneWeekAgo).length;
 
   const stats = [
-    {
-      id: 1,
-      label: 'Toplam Şirket',
-      value: companies.length,
-      icon: <Building2 />,
-      iconColor: 'blue',
-    },
-    {
-      id: 2,
-      label: 'Cold Call (Bugün)',
-      value: todayColdCalls,
-      icon: <Phone />,
-      iconColor: 'green',
-    },
-    {
-      id: 3,
-      label: 'Toplantı',
-      value: plannedMeetings,
-      icon: <Calendar />,
-      iconColor: 'orange',
-    },
-    {
-      id: 4,
-      label: 'Bu Hafta Yeni Şirket',
-      value: newCompaniesThisWeek,
-      icon: <Users />,
-      iconColor: 'purple',
-    },
+    { id: 1, label: 'Toplam Şirket', value: companies.length, icon: <Building2 />, iconColor: 'blue' },
+    { id: 2, label: 'Cold Call (Bugün)', value: todayColdCalls, icon: <Phone />, iconColor: 'green' },
+    { id: 3, label: 'Toplantı', value: plannedMeetings, icon: <Calendar />, iconColor: 'orange' },
+    { id: 4, label: 'Bu Hafta Yeni Şirket', value: newCompaniesThisWeek, icon: <Users />, iconColor: 'purple' },
   ];
 
   const recentCompanies = companies.slice(0, 4);
   const recentActivities = activities.slice(0, 5);
 
   if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh' }}>
       <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
     </div>
   );
