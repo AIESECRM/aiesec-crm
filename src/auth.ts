@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import type { UserStatus } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -21,14 +20,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!user) return null;
 
-        if (user.status === "PENDING") {
-          throw new Error("PENDING");
-        }
-
-        if (user.status === "REJECTED") {
-          throw new Error("REJECTED");
-        }
-
         const isValid = await bcrypt.compare(
           credentials.password as string,
           user.password
@@ -36,22 +27,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isValid) return null;
 
+        // Status'u da döndür, login sayfasında kontrol edilecek
         return {
           id: String(user.id),
           name: user.name,
           email: user.email,
           role: user.role,
           chapter: user.chapter,
+          status: user.status,
         };
       },
     }),
   ],
-    callbacks: {
+  callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.chapter = (user as any).chapter;
+        token.status = (user as any).status;
       }
       return token;
     },
@@ -60,6 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).chapter = token.chapter;
+        (session.user as any).status = token.status;
       }
       return session;
     },

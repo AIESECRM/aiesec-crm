@@ -23,26 +23,28 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    if (result?.error === "PENDING") {
-      setError("Hesabınız henüz onaylanmadı. Şube yöneticinizin onayını bekleyin.");
-      setLoading(false);
-    } else if (result?.error === "REJECTED") {
-      setError("Hesabınız reddedildi. Lütfen yöneticinizle iletişime geçin.");
-      setLoading(false);
-    } else if (result?.error) {
+    if (result?.error) {
       setError("Email veya şifre hatalı!");
       setLoading(false);
-    } else {
-      const sessionRes = await fetch("/api/auth/session");
-      const sessionData = await sessionRes.json();
-      const role = sessionData?.user?.role;
+      return;
+    }
 
-        if (role === "ADMIN") {
-          router.push("/admin");
-          } else {
-            router.push("/");
-          }
-      }
+    // Giriş başarılı, session'dan status ve role al
+    const sessionRes = await fetch("/api/auth/session");
+    const sessionData = await sessionRes.json();
+    const role = sessionData?.user?.role;
+    const status = sessionData?.user?.status;
+
+    if (status === "PENDING") {
+      router.push("/onay-bekleniyor");
+    } else if (status === "REJECTED") {
+      setError("Hesabınız reddedildi. Lütfen yöneticinizle iletişime geçin.");
+      setLoading(false);
+    } else if (role === "ADMIN") {
+      router.push("/admin");
+    } else {
+      router.push("/");
+    }
   };
 
   return (
