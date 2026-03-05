@@ -12,22 +12,34 @@ interface FilterPanelProps {
   initialFilters?: CompanyFilter;
 }
 
-const categories = ['Teknoloji', 'Kamu', 'Startup', 'Finans', 'Sağlık', 'Eğitim'];
-const contactCounts = [
+const statusOptions = [
   { value: '', label: 'Tümü' },
-  { value: 'none', label: 'Bağlantı Yok' },
-  { value: 'some', label: '1-5 Bağlantı' },
-  { value: 'many', label: '5+ Bağlantı' },
+  { value: 'POSITIVE', label: 'Pozitif' },
+  { value: 'NEGATIVE', label: 'Negatif' },
+  { value: 'NO_ANSWER', label: 'Cevap Yok' },
+  { value: 'CALL_AGAIN', label: 'Tekrar Ara' },
+  { value: 'MEETING_PLANNED', label: 'Toplantı Planlandı' },
 ];
-const proposalStatuses = [
-  { value: '', label: 'Tümü' },
-  { value: 'true', label: 'Teklif Var' },
-  { value: 'false', label: 'Teklif Yok' },
-];
-const companyStatuses = [
-  { value: '', label: 'Aktif & Pasif' },
-  { value: 'aktif', label: 'Sadece Aktif' },
-  { value: 'pasif', label: 'Sadece Pasif' },
+
+const chapterOptions = [
+  { value: '', label: 'Tüm Şubeler' },
+  { value: 'ADANA', label: 'Adana' },
+  { value: 'ANKARA', label: 'Ankara' },
+  { value: 'ANTALYA', label: 'Antalya' },
+  { value: 'BURSA', label: 'Bursa' },
+  { value: 'DENIZLI', label: 'Denizli' },
+  { value: 'DOGU_AKDENIZ', label: 'Doğu Akdeniz' },
+  { value: 'ESKISEHIR', label: 'Eskişehir' },
+  { value: 'GAZIANTEP', label: 'Gaziantep' },
+  { value: 'ISTANBUL', label: 'İstanbul' },
+  { value: 'ISTANBUL_ASYA', label: 'İstanbul Asya' },
+  { value: 'BATI_ISTANBUL', label: 'Batı İstanbul' },
+  { value: 'IZMIR', label: 'İzmir' },
+  { value: 'KOCAELI', label: 'Kocaeli' },
+  { value: 'KONYA', label: 'Konya' },
+  { value: 'KUTAHYA', label: 'Kütahya' },
+  { value: 'SAKARYA', label: 'Sakarya' },
+  { value: 'TRABZON', label: 'Trabzon' },
 ];
 
 export default function FilterPanel({ 
@@ -37,13 +49,6 @@ export default function FilterPanel({
   initialFilters = {} 
 }: FilterPanelProps) {
   const [filters, setFilters] = useState<CompanyFilter>(initialFilters);
-
-  const handleChange = (key: keyof CompanyFilter, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value || undefined,
-    }));
-  };
 
   const handleApply = () => {
     onApply(filters);
@@ -65,53 +70,26 @@ export default function FilterPanel({
       </div>
 
       <div className="filter-panel__group">
-        <label className="filter-panel__label">Kategori</label>
-        <select 
-          className="filter-panel__select"
-          value={filters.category || ''}
-          onChange={(e) => handleChange('category', e.target.value)}
-        >
-          <option value="">Tümü</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="filter-panel__group">
-        <label className="filter-panel__label">Bağlantı Sayısı</label>
-        <select 
-          className="filter-panel__select"
-          value={filters.contactCount || ''}
-          onChange={(e) => handleChange('contactCount', e.target.value)}
-        >
-          {contactCounts.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="filter-panel__group">
-        <label className="filter-panel__label">Teklif Durumu</label>
-        <select 
-          className="filter-panel__select"
-          value={filters.hasProposal !== undefined ? String(filters.hasProposal) : ''}
-          onChange={(e) => handleChange('hasProposal', e.target.value)}
-        >
-          {proposalStatuses.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="filter-panel__group">
         <label className="filter-panel__label">Durum</label>
-        <select 
+        <select
           className="filter-panel__select"
           value={filters.status || ''}
-          onChange={(e) => handleChange('status', e.target.value)}
+          onChange={(e) => setFilters(prev => ({ ...prev, status: (e.target.value || undefined) as any }))}
         >
-          {companyStatuses.map(opt => (
+          {statusOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="filter-panel__group">
+        <label className="filter-panel__label">Şube</label>
+        <select
+          className="filter-panel__select"
+          value={filters.chapter || ''}
+          onChange={(e) => setFilters(prev => ({ ...prev, chapter: e.target.value || undefined }))}
+        >
+          {chapterOptions.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>

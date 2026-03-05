@@ -1,66 +1,105 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
-  Home, 
-  Building2, 
-  Phone, 
-  Calendar, 
-  TrendingUp, 
-  TrendingDown,
-  Users
+  Home, Building2, Phone, Calendar, TrendingUp, TrendingDown, Users
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockCompanies, mockActivities } from '@/data/mockData';
-import { CompanyCard } from '@/components/companies';
-import StatusBadge from '@/components/common/StatusBadge';
-import './page.css';
+
+const ACTIVITY_LABELS: Record<string, string> = {
+  COLD_CALL: 'Cold Call',
+  MEETING: 'Görüşme',
+  EMAIL: 'Email',
+  FOLLOW_UP: 'Takip',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  POSITIVE: 'Pozitif',
+  NEGATIVE: 'Negatif',
+  NO_ANSWER: 'Cevap Yok',
+  CALL_AGAIN: 'Tekrar Ara',
+  MEETING_PLANNED: 'Toplantı Planlandı',
+};
 
 export default function DashboardPage() {
-  const { isAdmin } = useAuth();
+  const { user } = useAuth() as any;
   const router = useRouter();
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const [companiesRes, activitiesRes] = await Promise.all([
+      fetch('/api/companies'),
+      fetch('/api/activities'),
+    ]);
+    const companiesData = await companiesRes.json();
+    const activitiesData = await activitiesRes.json();
+    setCompanies(companiesData.companies || []);
+    setActivities(activitiesData.activities || []);
+    setLoading(false);
+  };
+
+  const todayColdCalls = activities.filter(a => {
+    const today = new Date();
+    const actDate = new Date(a.date * 1000);
+    return a.type === 'COLD_CALL' &&
+      actDate.getDate() === today.getDate() &&
+      actDate.getMonth() === today.getMonth() &&
+      actDate.getFullYear() === today.getFullYear();
+  }).length;
+
+  const plannedMeetings = activities.filter(a => a.type === 'MEETING').length;
+
+  const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+  const newCompaniesThisWeek = companies.filter(c => c.createdAt > oneWeekAgo).length;
 
   const stats = [
     {
       id: 1,
       label: 'Toplam Şirket',
-      value: mockCompanies.length,
+      value: companies.length,
       icon: <Building2 />,
       iconColor: 'blue',
-      trend: '+12%',
-      trendUp: true,
     },
     {
       id: 2,
       label: 'Cold Call (Bugün)',
-      value: 8,
+      value: todayColdCalls,
       icon: <Phone />,
       iconColor: 'green',
-      trend: '+5',
-      trendUp: true,
     },
     {
       id: 3,
-      label: 'Toplantı Planlandı',
-      value: 3,
+      label: 'Toplantı',
+      value: plannedMeetings,
       icon: <Calendar />,
       iconColor: 'orange',
     },
     {
       id: 4,
       label: 'Bu Hafta Yeni Şirket',
-      value: 2,
+      value: newCompaniesThisWeek,
       icon: <Users />,
       iconColor: 'purple',
-      trend: '-2',
-      trendUp: false,
     },
   ];
 
-  const recentCompanies = mockCompanies.slice(0, 4);
-  const recentActivities = mockActivities.slice(0, 5);
+  const recentCompanies = companies.slice(0, 4);
+  const recentActivities = activities.slice(0, 5);
+
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
+    </div>
+  );
 
   return (
     <div className="dashboard">
@@ -69,6 +108,11 @@ export default function DashboardPage() {
           <Home className="dashboard__title-icon" />
           <h1 className="dashboard__title-text">Anasayfa</h1>
         </div>
+        {user && (
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            Hoşgeldin, <strong>{user.name}</strong>
+          </div>
+        )}
       </div>
 
       <div className="dashboard__stats">
@@ -78,12 +122,6 @@ export default function DashboardPage() {
               <div className={`stat-card__icon stat-card__icon--${stat.iconColor}`}>
                 {stat.icon}
               </div>
-              {stat.trend && (
-                <span className={`stat-card__trend ${stat.trendUp ? 'stat-card__trend--up' : 'stat-card__trend--down'}`}>
-                  {stat.trendUp ? <TrendingUp className="stat-card__trend-icon" /> : <TrendingDown className="stat-card__trend-icon" />}
-                  {stat.trend}
-                </span>
-              )}
             </div>
             <div className="stat-card__value">{stat.value}</div>
             <div className="stat-card__label">{stat.label}</div>
@@ -96,122 +134,89 @@ export default function DashboardPage() {
           <div className="dashboard__section">
             <div className="dashboard__section-header">
               <h2 className="dashboard__section-title">Son Eklenen Şirketler</h2>
-              <Link href="/sirketler" className="dashboard__section-action">
-                Tümünü Gör
-              </Link>
+              <Link href="/sirketler" className="dashboard__section-action">Tümünü Gör</Link>
             </div>
             <div className="dashboard__recent-companies">
-              {recentCompanies.map((company) => (
-                <CompanyCard 
-                  key={company.id} 
-                  company={company} 
+              {recentCompanies.length > 0 ? recentCompanies.map((company) => (
+                <div
+                  key={company.id}
                   onClick={() => router.push(`/sirketler/${company.id}`)}
-                />
-              ))}
+                  style={{
+                    padding: '12px 16px', backgroundColor: 'white', borderRadius: '8px',
+                    border: '1px solid #e5e7eb', cursor: 'pointer', marginBottom: '8px',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#111827' }}>{company.name}</div>
+                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                      {company.email || '—'}
+                    </div>
+                  </div>
+                  <span style={{
+                    backgroundColor: '#f3f4f6', color: '#374151',
+                    padding: '4px 10px', borderRadius: '20px', fontSize: '12px'
+                  }}>
+                    {STATUS_LABELS[company.status] || company.status}
+                  </span>
+                </div>
+              )) : (
+                <p style={{ color: '#6b7280', fontSize: '14px' }}>Henüz şirket eklenmemiş.</p>
+              )}
             </div>
           </div>
 
           <div className="dashboard__section">
             <div className="dashboard__section-header">
               <h2 className="dashboard__section-title">Son Aktiviteler</h2>
-              <Link href="/aktiviteler" className="dashboard__section-action">
-                Tümünü Gör
-              </Link>
+              <Link href="/aktiviteler" className="dashboard__section-action">Tümünü Gör</Link>
             </div>
             <div className="dashboard__activity-list">
-              {recentActivities.map((activity) => {
-                const company = mockCompanies.find(c => c.id === activity.companyId);
-                return (
-                  <div key={activity.id} className="dashboard__activity-item">
-                    <div className="dashboard__activity-left">
-                      <div className="dashboard__activity-status">
-                        <StatusBadge status={activity.type} showIcon />
+              {recentActivities.length > 0 ? recentActivities.map((activity) => (
+                <div key={activity.id} className="dashboard__activity-item">
+                  <div className="dashboard__activity-left">
+                    <div className="dashboard__activity-info">
+                      <div className="dashboard__activity-company">{activity.company?.name || '—'}</div>
+                      <div className="dashboard__activity-meta">
+                        {activity.user?.name} • {ACTIVITY_LABELS[activity.type] || activity.type}
                       </div>
-                      <div className="dashboard__activity-info">
-                        <div className="dashboard__activity-company">{company?.name}</div>
-                        <div className="dashboard__activity-meta">{activity.userName}</div>
-                      </div>
-                    </div>
-                    <div className="dashboard__activity-right">
-                      <span className="dashboard__activity-date">
-                        {(activity.completedAt || activity.createdAt).toLocaleDateString('tr-TR')}
-                      </span>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="dashboard__activity-right">
+                    <span className="dashboard__activity-date">
+                      {new Date(activity.date * 1000).toLocaleDateString('tr-TR')}
+                    </span>
+                  </div>
+                </div>
+              )) : (
+                <p style={{ color: '#6b7280', fontSize: '14px' }}>Henüz aktivite eklenmemiş.</p>
+              )}
             </div>
           </div>
-
-          {isAdmin && (
-            <div className="dashboard__section">
-              <div className="dashboard__section-header">
-                <h2 className="dashboard__section-title">Cold Call İstatistikleri</h2>
-              </div>
-              <div className="dashboard__activity-list">
-                <div className="dashboard__activity-item">
-                  <div className="dashboard__activity-left">
-                    <div className="stat-card__icon stat-card__icon--blue" style={{ width: 32, height: 32 }}>
-                      <Phone style={{ width: 18, height: 18 }} />
-                    </div>
-                    <div>
-                      <div className="dashboard__activity-company">Toplam Cold Call</div>
-                      <div className="dashboard__activity-meta">Bu ay</div>
-                    </div>
-                  </div>
-                  <div className="dashboard__activity-right">
-                    <span className="stat-card__value" style={{ fontSize: 20 }}>156</span>
-                  </div>
-                </div>
-                <div className="dashboard__activity-item">
-                  <div className="dashboard__activity-left">
-                    <div className="stat-card__icon stat-card__icon--green" style={{ width: 32, height: 32 }}>
-                      <Calendar style={{ width: 18, height: 18 }} />
-                    </div>
-                    <div>
-                      <div className="dashboard__activity-company">Dönüşüm Oranı</div>
-                      <div className="dashboard__activity-meta">Cold Call → Toplantı</div>
-                    </div>
-                  </div>
-                  <div className="dashboard__activity-right">
-                    <span className="stat-card__value" style={{ fontSize: 20 }}>24%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="dashboard__sidebar">
           <div className="dashboard__section">
             <div className="dashboard__section-header">
-              <h2 className="dashboard__section-title">Bekleyen Görevler</h2>
+              <h2 className="dashboard__section-title">Aktivite Özeti</h2>
             </div>
             <div className="dashboard__activity-list">
-              <div className="dashboard__activity-item">
-                <div className="dashboard__activity-left">
-                  <div>
-                    <div className="dashboard__activity-company">Global Teknoloji&apos;yi ara</div>
-                    <div className="dashboard__activity-meta">Bugün - 14:00</div>
+              {['COLD_CALL', 'MEETING', 'EMAIL', 'FOLLOW_UP'].map(type => {
+                const count = activities.filter(a => a.type === type).length;
+                return (
+                  <div key={type} className="dashboard__activity-item">
+                    <div className="dashboard__activity-left">
+                      <div>
+                        <div className="dashboard__activity-company">{ACTIVITY_LABELS[type]}</div>
+                        <div className="dashboard__activity-meta">Toplam</div>
+                      </div>
+                    </div>
+                    <div className="dashboard__activity-right">
+                      <span className="stat-card__value" style={{ fontSize: 20 }}>{count}</span>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="dashboard__activity-item">
-                <div className="dashboard__activity-left">
-                  <div>
-                    <div className="dashboard__activity-company">Teklif gönder - Aselsan</div>
-                    <div className="dashboard__activity-meta">Yarın - 10:00</div>
-                  </div>
-                </div>
-              </div>
-              <div className="dashboard__activity-item">
-                <div className="dashboard__activity-left">
-                  <div>
-                    <div className="dashboard__activity-company">Toplantı - TechCorp</div>
-                    <div className="dashboard__activity-meta">25 Şubat - 15:30</div>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>
