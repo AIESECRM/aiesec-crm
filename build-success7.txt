@@ -1,0 +1,50 @@
+
+> aiesec-b2b-sales@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\ernal\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\ernal\OneDrive\Belgeler\GitHub\AIESECB2BSALES2\package-lock.json
+
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/Header/Header.tsx:23:1
+Module not found: Can't resolve '@/components/common/ProfileModal/ProfileModal'
+[0m [90m 21 |[39m [36mimport[39m { useSearch } [36mfrom[39m [32m'@/contexts/SearchContext'[39m[33m;[39m
+ [90m 22 |[39m [36mimport[39m { [33mUserRole[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 23 |[39m [36mimport[39m [33mProfileModal[39m [36mfrom[39m [32m'@/components/common/ProfileModal/ProfileModal'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 24 |[39m [36mimport[39m [32m'./Header.css'[39m[33m;[39m
+ [90m 25 |[39m
+ [90m 26 |[39m [90m// Mock notifications data[39m[0m
+
+Import map: aliased to relative './src/components/common/ProfileModal/ProfileModal' inside of [project]/OneDrive/Belgeler/GitHub/AIESECB2BSALES2
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/Header/Header.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/MainLayout/MainLayout.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/MainLayout/MainLayout.tsx [Server Component]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/Header/Header.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/MainLayout/MainLayout.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/MainLayout/MainLayout.tsx [Server Component]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/components/layout/Header/Header.tsx:23:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

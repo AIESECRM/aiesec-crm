@@ -1,0 +1,1172 @@
+
+> aiesec-b2b-sales@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\ernal\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\ernal\OneDrive\Belgeler\GitHub\AIESECB2BSALES2\package-lock.json
+
+
+> Build error occurred
+Error: Turbopack build failed with 44 errors:
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:32:1
+Module not found: Can't resolve './page.css'
+[0m [90m 30 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 31 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 32 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 33 |[39m
+ [90m 34 |[39m [36mconst[39m activityTypes[33m:[39m { type[33m:[39m [33mActivityType[39m[33m;[39m label[33m:[39m string[33m;[39m icon[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }[] [33m=[39m [
+ [90m 35 |[39m   { type[33m:[39m [32m'cold_call'[39m[33m,[39m label[33m:[39m [32m'Cold Call'[39m[33m,[39m icon[33m:[39m [33m<[39m[33mPhone[39m [33m/[39m[33m>[39m }[33m,[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:21:1
+Module not found: Can't resolve './page.css'
+[0m [90m 19 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 22 |[39m
+ [90m 23 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mPeoplePage[39m() {
+ [90m 24 |[39m   [36mconst[39m { permissions } [33m=[39m useAuth()[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:22:1
+Module not found: Can't resolve './page.css'
+[0m [90m 20 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 21 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 22 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 23 |[39m
+ [90m 24 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mDashboardPage[39m() {
+ [90m 25 |[39m   [36mconst[39m { isAdmin } [33m=[39m useAuth()[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:46:1
+Module not found: Can't resolve './page.css'
+[0m [90m 44 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 45 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 46 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 47 |[39m
+ [90m 48 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mCompanyDetailPage[39m() {
+ [90m 49 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:11:1
+Module not found: Can't resolve './page.css'
+[0m [90m  9 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mCompanyFilter[39m[33m,[39m [33mCompanyStatus[39m[33m,[39m [33mActivity[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 11 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 12 |[39m
+ [90m 13 |[39m [36mconst[39m categories [33m=[39m [[32m'Teknoloji'[39m[33m,[39m [32m'Kamu'[39m[33m,[39m [32m'Startup'[39m[33m,[39m [32m'Finans'[39m[33m,[39m [32m'Sağlık'[39m[33m,[39m [32m'Eğitim'[39m][33m;[39m
+ [90m 14 |[39m [36mconst[39m statuses[33m:[39m { value[33m:[39m [33mCompanyStatus[39m[33m;[39m label[33m:[39m string }[] [33m=[39m [[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:29:1
+Module not found: Can't resolve '@/actions/activities'
+[0m [90m 27 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 28 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { getAllActivities[33m,[39m createActivity[33m,[39m updateActivity[33m,[39m deleteActivity } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 30 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 31 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+ [90m 32 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:19:1
+Module not found: Can't resolve '@/actions/activities'
+[0m [90m 17 |[39m [36mimport[39m { [33mCompanyCard[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+ [90m 18 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 19 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 20 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 21 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 22 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:35:1
+Module not found: Can't resolve '@/actions/activities'
+[0m [90m 33 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 34 |[39m [36mimport[39m { getCompanyById } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 35 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 36 |[39m   getActivitiesByCompany[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 37 |[39m   updateActivity[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 38 |[39m   deleteActivity[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 39 |[39m   addActivityComment
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 40 |[39m } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 41 |[39m [36mimport[39m { getProposalsByCompany } [36mfrom[39m [32m'@/actions/proposals'[39m[33m;[39m
+ [90m 42 |[39m [36mimport[39m { getContactsByCompany } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m 43 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:8:1
+Module not found: Can't resolve '@/actions/activities'
+[0m [90m  6 |[39m [36mimport[39m { [33mCompanyCard[39m[33m,[39m [33mCompanySidebar[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m { getCompanies[33m,[39m createCompany } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mCompanyFilter[39m[33m,[39m [33mCompanyStatus[39m[33m,[39m [33mActivity[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:5:1
+Module not found: Can't resolve '@/actions/activities'
+[0m [90m 3 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { [33mBuilding2[39m[33m,[39m [33mPhone[39m[33m,[39m [33mCalendar[39m[33m,[39m [33mTrendingUp[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mActivity[39m[33m,[39m [33mUser[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:28:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 26 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 28 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 29 |[39m [36mimport[39m { getAllActivities[33m,[39m createActivity[33m,[39m updateActivity[33m,[39m deleteActivity } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 30 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 31 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:16:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 14 |[39m   [33mSave[39m
+ [90m 15 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 16 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 17 |[39m [36mimport[39m { getAllContacts[33m,[39m createContact } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m 18 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mContact[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:18:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 16 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 17 |[39m [36mimport[39m { [33mCompanyCard[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 18 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 19 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 21 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:34:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 32 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 33 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 34 |[39m [36mimport[39m { getCompanyById } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 35 |[39m [36mimport[39m {
+ [90m 36 |[39m   getActivitiesByCompany[33m,[39m
+ [90m 37 |[39m   updateActivity[33m,[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:7:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m  5 |[39m [36mimport[39m { [33mBuilding2[39m[33m,[39m [33mFilter[39m[33m,[39m [33mPlus[39m[33m,[39m [33mX[39m[33m,[39m [33mSave[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mCompanyCard[39m[33m,[39m [33mCompanySidebar[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { getCompanies[33m,[39m createCompany } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m  9 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mCompanyFilter[39m[33m,[39m [33mCompanyStatus[39m[33m,[39m [33mActivity[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:6:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 4 |[39m [36mimport[39m { [33mCalendarPlus[39m[33m,[39m [33mSave[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m[33m,[39m [33mUser[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 9 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:6:1
+Module not found: Can't resolve '@/actions/companies'
+[0m [90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mUser[39m[33m,[39m [33mUserRole[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mShield[39m[33m,[39m [33mBriefcase[39m[33m,[39m [33mChevronDown[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 9 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:17:1
+Module not found: Can't resolve '@/actions/contacts'
+[0m [90m 15 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 17 |[39m [36mimport[39m { getAllContacts[33m,[39m createContact } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 18 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mContact[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:42:1
+Module not found: Can't resolve '@/actions/contacts'
+[0m [90m 40 |[39m } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 41 |[39m [36mimport[39m { getProposalsByCompany } [36mfrom[39m [32m'@/actions/proposals'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 42 |[39m [36mimport[39m { getContactsByCompany } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 43 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 44 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m 45 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:1017:51
+Module not found: Can't resolve '@/actions/contacts'
+[0m [90m 1015 |[39m                     [36mreturn[39m[33m;[39m
+ [90m 1016 |[39m                   }
+[31m[1m>[22m[39m[90m 1017 |[39m                   [36mconst[39m { createContact } [33m=[39m [36mawait[39m [36mimport[39m([32m'@/actions/contacts'[39m)[33m;[39m
+ [90m      |[39m                                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 1018 |[39m                   [36mconst[39m created [33m=[39m [36mawait[39m createContact({
+ [90m 1019 |[39m                     companyId[33m:[39m company[33m?[39m[33m.[39mid[33m![39m[33m,[39m
+ [90m 1020 |[39m                     name[33m:[39m newContactData[33m.[39mname[33m,[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:1048:45
+Module not found: Can't resolve '@/actions/contacts'
+[0m [90m 1046 |[39m         onConfirm[33m=[39m{[36masync[39m () [33m=>[39m {
+ [90m 1047 |[39m           [36mif[39m (deleteContactModal[33m.[39mcontact) {
+[31m[1m>[22m[39m[90m 1048 |[39m             [36mconst[39m { deleteContact } [33m=[39m [36mawait[39m [36mimport[39m([32m'@/actions/contacts'[39m)[33m;[39m
+ [90m      |[39m                                             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 1049 |[39m             [36mconst[39m success [33m=[39m [36mawait[39m deleteContact(deleteContactModal[33m.[39mcontact[33m.[39mid)[33m;[39m
+ [90m 1050 |[39m             [36mif[39m (success) {
+ [90m 1051 |[39m               setContacts(prev [33m=>[39m prev[33m.[39mfilter(c [33m=>[39m c[33m.[39mid [33m!==[39m deleteContactModal[33m.[39mcontact[33m.[39mid))[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:41:1
+Module not found: Can't resolve '@/actions/proposals'
+[0m [90m 39 |[39m   addActivityComment
+ [90m 40 |[39m } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 41 |[39m [36mimport[39m { getProposalsByCompany } [36mfrom[39m [32m'@/actions/proposals'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 42 |[39m [36mimport[39m { getContactsByCompany } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m 43 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 44 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:896:52
+Module not found: Can't resolve '@/actions/proposals'
+[0m [90m 894 |[39m                     [36mreturn[39m[33m;[39m
+ [90m 895 |[39m                   }
+[31m[1m>[22m[39m[90m 896 |[39m                   [36mconst[39m { createProposal } [33m=[39m [36mawait[39m [36mimport[39m([32m'@/actions/proposals'[39m)[33m;[39m
+ [90m     |[39m                                                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 897 |[39m                   [36mconst[39m created [33m=[39m [36mawait[39m createProposal({
+ [90m 898 |[39m                     companyId[33m:[39m company[33m?[39m[33m.[39mid[33m![39m[33m,[39m
+ [90m 899 |[39m                     title[33m:[39m newProposalData[33m.[39mtitle[33m,[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:928:46
+Module not found: Can't resolve '@/actions/proposals'
+[0m [90m 926 |[39m         onConfirm[33m=[39m{[36masync[39m () [33m=>[39m {
+ [90m 927 |[39m           [36mif[39m (deleteProposalModal[33m.[39mproposal) {
+[31m[1m>[22m[39m[90m 928 |[39m             [36mconst[39m { deleteProposal } [33m=[39m [36mawait[39m [36mimport[39m([32m'@/actions/proposals'[39m)[33m;[39m
+ [90m     |[39m                                              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 929 |[39m             [36mconst[39m success [33m=[39m [36mawait[39m deleteProposal(deleteProposalModal[33m.[39mproposal[33m.[39mid)[33m;[39m
+ [90m 930 |[39m             [36mif[39m (success) {
+ [90m 931 |[39m               setProposals(prev [33m=>[39m prev[33m.[39mfilter(p [33m=>[39m p[33m.[39mid [33m!==[39m deleteProposalModal[33m.[39mproposal[33m.[39mid))[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:7:1
+Module not found: Can't resolve '@/actions/users'
+[0m [90m  5 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m[33m,[39m [33mUser[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m  9 |[39m
+ [90m 10 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mAktivitePlanlaPage[39m() {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:6:1
+Module not found: Can't resolve '@/actions/users'
+[0m [90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mBuilding2[39m[33m,[39m [33mPhone[39m[33m,[39m [33mCalendar[39m[33m,[39m [33mTrendingUp[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mActivity[39m[33m,[39m [33mUser[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 9 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:5:1
+Module not found: Can't resolve '@/actions/users'
+[0m [90m 3 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { [33mUser[39m[33m,[39m [33mUserRole[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mShield[39m[33m,[39m [33mBriefcase[39m[33m,[39m [33mChevronDown[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:31:1
+Module not found: Can't resolve '@/components/common/ConfirmModal'
+[0m [90m 29 |[39m [36mimport[39m { getAllActivities[33m,[39m createActivity[33m,[39m updateActivity[33m,[39m deleteActivity } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 30 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 31 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 32 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 33 |[39m
+ [90m 34 |[39m [36mconst[39m activityTypes[33m:[39m { type[33m:[39m [33mActivityType[39m[33m;[39m label[33m:[39m string[33m;[39m icon[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }[] [33m=[39m [[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:45:1
+Module not found: Can't resolve '@/components/common/ConfirmModal'
+[0m [90m 43 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 44 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 45 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 46 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 47 |[39m
+ [90m 48 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mCompanyDetailPage[39m() {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:20:1
+Module not found: Can't resolve '@/components/common/Modal'
+[0m [90m 18 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mContact[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 20 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 21 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 22 |[39m
+ [90m 23 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mPeoplePage[39m() {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:9:1
+Module not found: Can't resolve '@/components/common/Modal'
+[0m [90m  7 |[39m [36mimport[39m { getCompanies[33m,[39m createCompany } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m  8 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  9 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 10 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mCompanyFilter[39m[33m,[39m [33mCompanyStatus[39m[33m,[39m [33mActivity[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 12 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:30:1
+Module not found: Can't resolve '@/components/common/StatusBadge'
+[0m [90m 28 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 29 |[39m [36mimport[39m { getAllActivities[33m,[39m createActivity[33m,[39m updateActivity[33m,[39m deleteActivity } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 30 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 31 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+ [90m 32 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 33 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:21:1
+Module not found: Can't resolve '@/components/common/StatusBadge'
+[0m [90m 19 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 22 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 23 |[39m
+ [90m 24 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mDashboardPage[39m() {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:44:1
+Module not found: Can't resolve '@/components/common/StatusBadge'
+[0m [90m 42 |[39m [36mimport[39m { getContactsByCompany } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m 43 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 44 |[39m [36mimport[39m [33mStatusBadge[39m [36mfrom[39m [32m'@/components/common/StatusBadge'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 45 |[39m [36mimport[39m [33mConfirmModal[39m [36mfrom[39m [32m'@/components/common/ConfirmModal'[39m[33m;[39m
+ [90m 46 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 47 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:17:1
+Module not found: Can't resolve '@/components/companies'
+[0m [90m 15 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 17 |[39m [36mimport[39m { [33mCompanyCard[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 18 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:6:1
+Module not found: Can't resolve '@/components/companies'
+[0m [90m 4 |[39m [36mimport[39m { useRouter } [36mfrom[39m [32m'next/navigation'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mBuilding2[39m[33m,[39m [33mFilter[39m[33m,[39m [33mPlus[39m[33m,[39m [33mX[39m[33m,[39m [33mSave[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mCompanyCard[39m[33m,[39m [33mCompanySidebar[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { getCompanies[33m,[39m createCompany } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 9 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:26:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 24 |[39m   [33mSearch[39m
+ [90m 25 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 26 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 27 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+ [90m 28 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 29 |[39m [36mimport[39m { getAllActivities[33m,[39m createActivity[33m,[39m updateActivity[33m,[39m deleteActivity } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:19:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 17 |[39m [36mimport[39m { getAllContacts[33m,[39m createContact } [36mfrom[39m [32m'@/actions/contacts'[39m[33m;[39m
+ [90m 18 |[39m [36mimport[39m { [33mCompany[39m[33m,[39m [33mContact[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 19 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 20 |[39m [36mimport[39m [33mModal[39m [36mfrom[39m [32m'@/components/common/Modal'[39m[33m;[39m
+ [90m 21 |[39m [36mimport[39m [32m'./page.css'[39m[33m;[39m
+ [90m 22 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:16:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 14 |[39m   [33mBell[39m
+ [90m 15 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 16 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 17 |[39m [36mimport[39m { [33mCompanyCard[39m } [36mfrom[39m [32m'@/components/companies'[39m[33m;[39m
+ [90m 18 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:33:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 31 |[39m   [33mUserPlus[39m
+ [90m 32 |[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 33 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 34 |[39m [36mimport[39m { getCompanyById } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 35 |[39m [36mimport[39m {
+ [90m 36 |[39m   getActivitiesByCompany[33m,[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:5:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 3 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mCalendarPlus[39m[33m,[39m [33mSave[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mActivityType[39m[33m,[39m [33mCompany[39m[33m,[39m [33mUser[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx:7:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m  5 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m'next/link'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mUsers[39m[33m,[39m [33mBarChart3[39m[33m,[39m [33mSettings[39m[33m,[39m [33mCalendarPlus[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m [32m'./yonetim.css'[39m[33m;[39m
+ [90m  9 |[39m
+ [90m 10 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mYonetimLayout[39m({ children }[33m:[39m { children[33m:[39m [33mReact[39m[33m.[39m[33mReactNode[39m }) {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:4:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { getAllActivities } [36mfrom[39m [32m'@/actions/activities'[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { [33mBuilding2[39m[33m,[39m [33mPhone[39m[33m,[39m [33mCalendar[39m[33m,[39m [33mTrendingUp[39m } [36mfrom[39m [32m'lucide-react'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:4:1
+Module not found: Can't resolve '@/contexts/AuthContext'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect } [36mfrom[39m [32m'react'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m'@/contexts/AuthContext'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { getAllUsers } [36mfrom[39m [32m'@/actions/users'[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { getCompanies } [36mfrom[39m [32m'@/actions/companies'[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { [33mUser[39m[33m,[39m [33mUserRole[39m[33m,[39m [33mCompany[39m } [36mfrom[39m [32m'@/types'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component Browser]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Client Component SSR]
+    ./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:32:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:21:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:22:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:46:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:11:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:29:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:19:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:35:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:28:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:16:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:18:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:34:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:17:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:42:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:1017:51)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:1048:45)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:41:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:896:52)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:928:46)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:31:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:45:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:20:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:30:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:21:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:44:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:17:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/aktiviteler/page.tsx:26:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/kisiler/page.tsx:19:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/page.tsx:16:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/sirketler/[id]/page.tsx:33:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/aktivite-planla/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/layout.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./OneDrive/Belgeler/GitHub/AIESECB2BSALES2/src/app/yonetim/uyeler/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

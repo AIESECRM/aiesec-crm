@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="653bf385-00bb-49d0-bba3-175867fa4da8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/AIESECB2BSALES2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prisma/seed/seed.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prisma_error.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prisma_error.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/logo/dark.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/logo/fav.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/logo/light.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/logo/primary.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seed_error.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/activities.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/auth.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/companies.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/contacts.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/proposals.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/aktiviteler/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/kisiler/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/sirketler/[id]/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/sirketler/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/teklifler/page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/teklifler/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/yonetim/aktivite-planla/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/yonetim/layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/yonetim/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/yonetim/uyeler/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/yonetim/yonetim.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/Button/Button.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/ConfirmModal/ConfirmModal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/FilterPanel/FilterPanel.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/Modal/Modal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/ProfileModal/ProfileModal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/ProfileModal/ProfileModal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/common/StatusBadge/StatusBadge.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/companies/CompanyCard/CompanyCard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/companies/CompanySidebar/CompanySidebar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Header/Header.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Header/Header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Header/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/MainLayout/MainLayout.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/MainLayout/MainLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/MainLayout/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Sidebar/Sidebar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Sidebar/Sidebar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/Sidebar/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/layout/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/contexts/SearchContext.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/prisma.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/styles/base.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/styles/variables.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsc_error.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/aktiviteler/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/aktiviteler/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/kisiler/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/kisiler/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/sirketler/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/sirketler/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/sirketler/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/sirketler/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/companies/CompanyCard/CompanyCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/companies/CompanyCard/CompanyCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/companies/CompanySidebar/CompanySidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/companies/CompanySidebar/CompanySidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/mockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/mockData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="3AObnjceNfZ3ehzulpSokbP4FSF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "eren-Database",
+    "ignore.virus.scanning.warn.message": "true",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="npm.Next.js: server-side">
+    <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
+      <method v="2" />
+    </configuration>
+    <configuration name="Next.js: server-side" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-PY-252.28539.27" />
+        <option value="bundled-python-sdk-07523f343e4f-968fe969f28a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.28539.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="653bf385-00bb-49d0-bba3-175867fa4da8" name="Changes" comment="" />
+      <created>1772466734335</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772466734335</updated>
+      <workItem from="1772466736157" duration="7000" />
+      <workItem from="1772743234755" duration="13000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
