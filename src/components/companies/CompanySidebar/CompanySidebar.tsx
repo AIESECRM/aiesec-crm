@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+<<<<<<< HEAD
 import {
   Building2,
   FileText,
@@ -39,6 +40,42 @@ function formatRelativeTime(date: Date): string {
   if (diffDays < 7) return `${diffDays} gün önce`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)} hafta önce`;
   return `${Math.floor(diffDays / 30)} ay önce`;
+=======
+import { Building2, Phone, Mail, Eye, Settings, User } from 'lucide-react';
+import './CompanySidebar.css';
+
+const ACTIVITY_LABELS: Record<string, string> = {
+  COLD_CALL: 'Cold Call',
+  MEETING: 'Görüşme',
+  EMAIL: 'Email',
+  FOLLOW_UP: 'Takip',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  POSITIVE: 'Pozitif',
+  NEGATIVE: 'Negatif',
+  NO_ANSWER: 'Cevap Yok',
+  CALL_AGAIN: 'Tekrar Ara',
+  MEETING_PLANNED: 'Toplantı Planlandı',
+};
+
+function formatRelativeTime(timestamp: number): string {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = now - timestamp;
+  const days = Math.floor(diff / 86400);
+  if (days === 0) return 'Bugün';
+  if (days === 1) return '1 gün önce';
+  if (days < 7) return `${days} gün önce`;
+  if (days < 30) return `${Math.floor(days / 7)} hafta önce`;
+  return `${Math.floor(days / 30)} ay önce`;
+}
+
+interface CompanySidebarProps {
+  company: any;
+  recentActivities?: any[];
+  onViewProfile?: () => void;
+  onManageActivities?: () => void;
+>>>>>>> ortak-repo/main
 }
 
 export default function CompanySidebar({
@@ -47,6 +84,7 @@ export default function CompanySidebar({
   onViewProfile,
   onManageActivities
 }: CompanySidebarProps) {
+<<<<<<< HEAD
   const { permissions } = useAuth();
   const [isGenerating, setIsGenerating] = React.useState(false);
 
@@ -96,6 +134,16 @@ export default function CompanySidebar({
           </div>
           <div style={{ marginTop: '4px', fontSize: '14px', fontWeight: 500 }}>
             {company.category}
+=======
+  return (
+    <div className="company-sidebar">
+      <div className="company-sidebar__header">
+        <div className="company-sidebar__icon"><Building2 /></div>
+        <div className="company-sidebar__title">
+          <h2 className="company-sidebar__name">{company.name}</h2>
+          <div style={{ marginTop: '4px', fontSize: '13px', color: '#6b7280' }}>
+            {STATUS_LABELS[company.status] || company.status}
+>>>>>>> ortak-repo/main
           </div>
         </div>
       </div>
@@ -103,6 +151,7 @@ export default function CompanySidebar({
       <div className="company-sidebar__section">
         <div className="company-sidebar__section-header">
           <h3 className="company-sidebar__section-title">İletişim Bilgileri</h3>
+<<<<<<< HEAD
           {permissions.canEditCompany && (
             <button className="company-sidebar__section-edit">
               <Edit3 className="company-sidebar__section-edit-icon" />
@@ -151,6 +200,21 @@ export default function CompanySidebar({
                 <span style={{ fontSize: '13px', color: 'var(--text-light)' }}>Atanmış menajer yok</span>
               )}
             </div>
+=======
+        </div>
+        <div className="company-sidebar__info-item">
+          <Phone className="company-sidebar__info-icon" />
+          <div className="company-sidebar__info-content">
+            <div className="company-sidebar__info-label">Telefon</div>
+            <div className="company-sidebar__info-value">{company.phone || '—'}</div>
+          </div>
+        </div>
+        <div className="company-sidebar__info-item">
+          <Mail className="company-sidebar__info-icon" />
+          <div className="company-sidebar__info-content">
+            <div className="company-sidebar__info-label">E-Posta</div>
+            <div className="company-sidebar__info-value">{company.email || '—'}</div>
+>>>>>>> ortak-repo/main
           </div>
         </div>
       </div>
@@ -158,6 +222,7 @@ export default function CompanySidebar({
       {recentActivities.length > 0 && (
         <div className="company-sidebar__section">
           <div className="company-sidebar__section-header">
+<<<<<<< HEAD
             <h3 className="company-sidebar__section-title">Aktivite Özeti</h3>
             <button className="company-sidebar__section-edit">
               <Settings className="company-sidebar__section-edit-icon" />
@@ -177,6 +242,26 @@ export default function CompanySidebar({
               </div>
               <span className="company-sidebar__activity-date">
                 {formatRelativeTime(activity.completedAt || activity.createdAt)}
+=======
+            <h3 className="company-sidebar__section-title">Son Aktiviteler</h3>
+          </div>
+          {recentActivities.slice(0, 4).map((activity: any) => (
+            <div key={activity.id} className="company-sidebar__activity-item">
+              <div className="company-sidebar__activity-left">
+                <span style={{
+                  backgroundColor: '#e0f2fe', color: '#0369a1',
+                  padding: '3px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600'
+                }}>
+                  {ACTIVITY_LABELS[activity.type] || activity.type}
+                </span>
+              </div>
+              <div className="company-sidebar__activity-user">
+                <User className="company-sidebar__activity-user-icon" />
+                <span className="company-sidebar__activity-name">{activity.user?.name || '—'}</span>
+              </div>
+              <span className="company-sidebar__activity-date">
+                {formatRelativeTime(activity.date)}
+>>>>>>> ortak-repo/main
               </span>
             </div>
           ))}
@@ -184,6 +269,7 @@ export default function CompanySidebar({
       )}
 
       <div className="company-sidebar__actions">
+<<<<<<< HEAD
         <button
           className="company-sidebar__action-btn company-sidebar__action-btn--primary"
           onClick={onViewProfile}
@@ -223,3 +309,17 @@ export default function CompanySidebar({
     </div>
   );
 }
+=======
+        <button className="company-sidebar__action-btn company-sidebar__action-btn--primary" onClick={onViewProfile}>
+          <Eye className="company-sidebar__action-icon" />
+          Tam Profili Görüntüle
+        </button>
+        <button className="company-sidebar__action-btn company-sidebar__action-btn--secondary" onClick={onManageActivities}>
+          <Settings className="company-sidebar__action-icon" />
+          Aktiviteyi Yönet
+        </button>
+      </div>
+    </div>
+  );
+}
+>>>>>>> ortak-repo/main

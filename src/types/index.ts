@@ -1,5 +1,5 @@
 // User Role Types
-export type UserRole = 'MCP' | 'MCVP' | 'LCP' | 'LCVP' | 'TeamLeader' | 'TeamMember';
+export type UserRole = 'MCP' | 'MCVP' | 'LCP' | 'LCVP' | 'TL' | 'TM' | 'ADMIN';
 
 export interface User {
   id: string;
@@ -8,23 +8,27 @@ export interface User {
   role: UserRole;
   avatar?: string;
   branchId?: string; // e.g. "istanbul", "ankara" (şube)
+  chapter?: string;
+  status?: string;
   teamId?: string;   // For TLs and Members
   createdAt: Date;
 }
 
 // Company Types
-export type CompanyStatus = 'aktif' | 'pasif' | 'negatif' | 'pozitif' | 'cevap_yok' | 'tekrar_ara' | 'toplanti_planlandi';
+export type CompanyStatus = 'POSITIVE' | 'NEGATIVE' | 'NO_ANSWER' | 'CALL_AGAIN' | 'MEETING_PLANNED' | 'ACTIVE' | 'PASSIVE';
 
 export interface Company {
   id: string;
   name: string;
-  category: string;
-  location: string;
-  phone: string;
-  email: string;
+  category?: string;
+  location?: string;
+  phone?: string;
+  email?: string;
   website?: string;
   domain?: string | null;
   taxId?: string | null;
+  logoUrl?: string;
+  chapter?: string;
   status: CompanyStatus;
   activeProposals: number;
   contactCount: number;
@@ -33,6 +37,7 @@ export interface Company {
   assignedManagerIds: string[];
   managers?: User[];
   notes?: string;
+  _count?: { contacts: number; activities: number; offers?: number };
 }
 
 // Contact Types
@@ -45,10 +50,11 @@ export interface Contact {
   position?: string;
   isPrimary: boolean;
   createdAt: Date;
+  company?: { id: string; name: string; chapter?: string };
 }
 
 // Activity Types
-export type ActivityType = 'cold_call' | 'meeting' | 'email' | 'task' | 'proposal' | 'postponed';
+export type ActivityType = 'COLD_CALL' | 'MEETING' | 'EMAIL' | 'TASK' | 'PROPOSAL' | 'POSTPONED' | 'FOLLOW_UP';
 export type ActivityStatus = 'completed' | 'pending' | 'overdue' | 'cancelled';
 
 export interface ActivityComment {
@@ -71,10 +77,31 @@ export interface Activity {
   scheduledAt?: Date;
   completedAt?: Date;
   createdAt: Date;
+  user?: { id: string; name: string; role: string };
+  company?: { id: string; name: string; chapter?: string };
 }
 
-// Proposal/Deal Types
+// Offer/Proposal Types
+export type OfferProduct = 'GTA' | 'GV' | 'GTE';
+export type OfferDuration = 'SHORT' | 'MEDIUM' | 'LONG';
+export type OfferOpenStatus = 'NEW_OPEN' | 'RE_OPEN';
 export type DealStage = 'new_lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost';
+
+export interface Offer {
+  id: string;
+  title: string;
+  product: OfferProduct;
+  duration: OfferDuration;
+  openStatus: OfferOpenStatus;
+  value?: number;
+  fileUrl?: string;
+  companyId: string;
+  createdById: string;
+  createdAt: Date;
+  updatedAt: Date;
+  company?: { id: string; name: string; chapter?: string };
+  createdBy?: { id: string; name: string; role: string };
+}
 
 export interface Proposal {
   id: string;
@@ -102,6 +129,8 @@ export interface DashboardStats {
   conversionRate: number;
   activitiesCompleted: number;
   activitiesPending: number;
+  totalActivities: number;
+  totalOffers: number;
   coldCallsToday: number;
   meetingsBooked: number;
   newCompaniesThisWeek: number;
@@ -114,6 +143,7 @@ export interface CompanyFilter {
   hasProposal?: boolean;
   contactCount?: 'none' | 'some' | 'many';
   assignedTo?: string;
+  chapter?: string;
 }
 
 export interface ActivityFilter {
@@ -123,17 +153,6 @@ export interface ActivityFilter {
   companyId?: string;
   dateFrom?: Date;
   dateTo?: Date;
-}
-
-// Notification Types
-export interface Notification {
-  id: string;
-  userId: string;
-  title: string;
-  message: string;
-  type: 'info' | 'warning' | 'success' | 'error';
-  read: boolean;
-  createdAt: Date;
 }
 
 // Permission Helper Type
@@ -149,4 +168,19 @@ export interface RolePermissions {
   canViewGlobalStats: boolean;
   canFilterByTeam: boolean;
   canManageRoles: boolean;
+  canViewOffers: boolean;
+  canCreateOffer: boolean;
+  canViewAllChapters: boolean;
+  canApproveUsers: boolean;
+}
+
+// Notification Types
+export interface Notification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'success' | 'error';
+  read: boolean;
+  createdAt: Date;
 }
