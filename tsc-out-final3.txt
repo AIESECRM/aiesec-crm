@@ -1,9 +1,0 @@
-.next/dev/types/validator.ts(24,44): error TS2344: Type 'Route' does not satisfy the constraint '"/yonetim"'.
-  Type 'LayoutRoutes' is not assignable to type '"/yonetim"'.
-    Type '"/"' is not assignable to type '"/yonetim"'.
-.next/dev/types/validator.ts(24,75): error TS2344: Type 'Route' does not satisfy the constraint '"/yonetim"'.
-  Type 'LayoutRoutes' is not assignable to type '"/yonetim"'.
-    Type '"/"' is not assignable to type '"/yonetim"'.
-.next/dev/types/validator.ts(87,39): error TS2307: Cannot find module '../../../src/app/teklifler/page.js' or its corresponding type declarations.
-.next/dev/types/validator.ts(129,39): error TS2307: Cannot find module '../../../src/app/layout.js' or its corresponding type declarations.
-

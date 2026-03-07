@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { verifyCompanyAccess } from "@/lib/authz";
-import { logAudit } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -29,12 +27,8 @@ export async function GET(req: NextRequest) {
   const where: any = {};
 
   if (companyId) {
-    where.companyId = companyId;
-    // SECURITY: Ensure user has access to this specific company's offers
-    const hasAccess = await verifyCompanyAccess(user.id, companyId);
-    if (!hasAccess) return NextResponse.json({ error: "Bu şirketin tekliflerini görme yetkiniz yok!" }, { status: 403 });
+    where.companyId = Number(companyId);
   } else if (!NATIONAL_ROLES.includes(user.role)) {
-    // SECURITY: Regional filtering
     where.company = { chapter: user.chapter };
   } else if (chapter) {
     where.company = { chapter };
@@ -47,11 +41,12 @@ export async function GET(req: NextRequest) {
     where,
     include: {
       company: { select: { id: true, name: true, chapter: true } },
-      creator: { select: { id: true, name: true, role: true } },
+      createdBy: { select: { id: true, name: true, role: true } },
     },
     orderBy: { createdAt: "desc" },
   });
 
+  // Total open hesapla
   const newOpen = offers.filter(o => o.openStatus === "NEW_OPEN").length;
   const reOpen = offers.filter(o => o.openStatus === "RE_OPEN").length;
   const totalOpen = newOpen + reOpen;
@@ -69,15 +64,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Teklif ekleme yetkiniz yok!" }, { status: 403 });
   }
 
-  const { title, product, duration, openStatus, value, companyId, contactId } = await req.json();
+  const { title, product, duration, openStatus, value, companyId } = await req.json();
 
   if (!title || !product || !duration || !companyId) {
     return NextResponse.json({ error: "Başlık, ürün, dönem ve şirket zorunludur!" }, { status: 400 });
   }
-
-  // SECURITY: Prevent adding offers to companies user doesn't manage
-  const hasAccess = await verifyCompanyAccess(user.id, companyId);
-  if (!hasAccess) return NextResponse.json({ error: "Bu şirkete teklif ekleme yetkiniz yok!" }, { status: 403 });
 
   const offer = await prisma.offer.create({
     data: {
@@ -86,13 +77,12 @@ export async function POST(req: NextRequest) {
       duration,
       openStatus: openStatus || "NEW_OPEN",
       value: value ? Number(value) : null,
-      companyId: companyId,
-      createdById: user.id,
-      contactId: contactId || null,
+      companyId: Number(companyId),
+      createdById: Number(user.id),
+      createdAt: Math.floor(Date.now() / 1000),
+      updatedAt: Math.floor(Date.now() / 1000),
     },
   });
-
-  await logAudit(user.id, "CREATE_OFFER", offer.id, undefined, JSON.stringify(offer));
 
   return NextResponse.json({ success: true, offer });
 }

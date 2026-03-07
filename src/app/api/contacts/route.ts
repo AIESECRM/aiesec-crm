@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const where: any = {};
 
   if (companyId) {
-    where.companyId = companyId;
+    where.companyId = Number(companyId);
   } else if (!NATIONAL_ROLES.includes(user.role)) {
     where.company = { chapter: user.chapter };
   }
@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
       name,
       email: email || null,
       phone: phone || null,
-      companyId: companyId,
+      companyId: Number(companyId),
+      createdAt: Math.floor(Date.now() / 1000),
     },
   });
 
