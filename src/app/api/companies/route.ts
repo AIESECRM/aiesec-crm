@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   const companies = await prisma.company.findMany({
     where,
     include: {
-      creator: { select: { id: true, name: true } },
+      createdBy: { select: { id: true, name: true } },
       _count: { select: { contacts: true, activities: true, offers: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
       status: status || "NO_ANSWER",
       notes: notes || null,
       chapter: companyChapter || null,
-      createdById: user.id,
+      createdById: Number(user.id),
+      createdAt: Math.floor(Date.now() / 1000),
+      updatedAt: Math.floor(Date.now() / 1000),
     },
   });
 

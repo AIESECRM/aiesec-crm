@@ -5,9 +5,8 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isLoginPage = req.nextUrl.pathname === "/login";
   const isRegisterPage = req.nextUrl.pathname === "/login/register";
-  const isWaitingPage = req.nextUrl.pathname === "/onay-bekleniyor";
 
-  if (!isLoggedIn && !isLoginPage && !isRegisterPage && !isWaitingPage) {
+  if (!isLoggedIn && !isLoginPage && !isRegisterPage) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -19,5 +18,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|logo|manifest\\.webmanifest|.*\\.svg$|.*\\.png$|.*\\.ico$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
