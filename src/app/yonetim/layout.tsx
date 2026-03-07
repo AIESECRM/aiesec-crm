@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Users, BarChart3, Settings, CalendarPlus, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,13 @@ import './yonetim.css';
 
 export default function YonetimLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const { permissions } = useAuth();
+    const { permissions } = useAuth() as any;
+    const isEB = ["MCVP", "MCP", "ADMIN"].includes(user?.role);
+    const isLCVP = ["LCVP", "LCP"].includes(user?.role);
+
+    if (!isEB && !isLCVP) {
+        return <div style={{ padding: '40px', textAlign: 'center' }}>Bu sayfayı görüntüleme yetkiniz yok.</div>;
+    }
 
     if (!permissions.canViewTeamStats) {
         return <div style={{ padding: 'var(--spacing-2xl)', textAlign: 'center' }}>Bu sayfayı görüntüleme yetkiniz yok.</div>;
