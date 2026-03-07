@@ -27,7 +27,8 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                 });
             }
 
-            // 3. Transfer Proposals
+            // 3. Transfer Proposals (String comparison since ownerId is String/UUID)
+            // Note: ownerName is sometimes used for denormalization
             await tx.proposal.updateMany({
                 where: { ownerId: fromUserId },
                 data: {
@@ -36,12 +37,11 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                 }
             });
 
-            // 4. Transfer Activities (optional, but good for reporting)
+            // 4. Transfer Activities
             await tx.activity.updateMany({
                 where: { userId: fromUserId },
                 data: {
-                    userId: toUserId,
-                    userName: toUser.name
+                    userId: toUserId
                 }
             });
 

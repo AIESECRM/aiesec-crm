@@ -1,7 +1,7 @@
 ﻿'use server'
 
 import prisma from '@/lib/prisma'
-import { Activity, ActivityComment } from '@/types'
+import { Activity, ActivityComment, ActivityType, ActivityStatus } from '@/types'
 import { verifyCompanyAccess, verifyActivityAccess } from '@/lib/authz'
 import { logAudit } from '@/lib/audit'
 import { z } from 'zod'
@@ -10,8 +10,8 @@ const activitySchema = z.object({
     companyId: z.string().optional(),
     userId: z.string().optional(),
     userName: z.string().optional(),
-    type: z.enum(['cold_call', 'postponed', 'meeting', 'proposal', 'task']).optional(),
-    status: z.enum(['pending', 'completed', 'canceled']).optional(),
+    type: z.string().optional(),
+    status: z.string().optional(),
     notes: z.string().optional().nullable(),
     scheduledAt: z.union([z.date(), z.string()]).optional().nullable(),
     completedAt: z.union([z.date(), z.string()]).optional().nullable(),
@@ -22,8 +22,8 @@ const activitySchema = z.object({
 function mapActivity(prismaActivity: any): Activity {
     return {
         ...prismaActivity,
-        type: prismaActivity.type as any,
-        status: prismaActivity.status as any,
+        type: prismaActivity.type as ActivityType,
+        status: prismaActivity.status as ActivityStatus,
         comments: prismaActivity.comments?.map((c: any) => ({
             ...c,
             createdAt: c.createdAt
@@ -61,11 +61,11 @@ export async function getAllActivities(userId: string): Promise<Activity[]> {
         if (!dbUser) return [];
 
         let whereClause: any = {};
-        if (dbUser.role === 'TeamMember') {
+        if (dbUser.role === 'TM') {
             whereClause = { company: { managers: { some: { id: dbUser.id } } } };
         } else if (dbUser.role === 'LCP' || dbUser.role === 'LCVP') {
-            whereClause = { company: { managers: { some: { branchId: dbUser.branchId } } } };
-        } else if (dbUser.role === 'TeamLeader') {
+            whereClause = { company: { chapter: dbUser.chapter } };
+        } else if (dbUser.role === 'TL') {
             whereClause = { company: { managers: { some: { teamId: dbUser.teamId } } } };
         }
 
@@ -99,16 +99,18 @@ export async function createActivity(data: Partial<Activity>, userId: string): P
         const hasAccess = await verifyCompanyAccess(userId, data.companyId);
         if (!hasAccess) return null;
 
+        const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+        if (!dbUser) return null;
+
         const newActivity = await prisma.activity.create({
             data: {
-                companyId: data.companyId!,
-                userId: data.userId!,
-                userName: data.userName!,
-                type: data.type || 'task',
+                companyId: data.companyId,
+                userId: userId,
+                type: data.type || 'TASK',
                 status: data.status || 'pending',
                 notes: data.notes || '',
-                scheduledAt: data.scheduledAt,
-                completedAt: data.completedAt,
+                scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
+                completedAt: data.completedAt ? new Date(data.completedAt) : null,
                 contactId: data.contactId,
             },
             include: {
@@ -149,8 +151,8 @@ export async function updateActivity(id: string, data: Partial<Activity>, userId
                 type: data.type,
                 status: data.status,
                 notes: data.notes,
-                completedAt: data.completedAt,
-                scheduledAt: data.scheduledAt
+                completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
+                scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : undefined
             },
             include: { comments: true }
         })
@@ -159,7 +161,7 @@ export async function updateActivity(id: string, data: Partial<Activity>, userId
             userId,
             'UPDATE_ACTIVITY',
             updated.id,
-            undefined, // Optionally pass existing object here, skipped for brevity
+            undefined,
             JSON.stringify(updated)
         )
 
@@ -192,7 +194,10 @@ export async function addActivityComment(activityId: string, author: string, tex
             JSON.stringify(newComment)
         )
 
-        return newComment
+        return {
+            ...newComment,
+            createdAt: newComment.createdAt
+        }
     } catch (error) {
         console.error(`Failed to add comment to activity ${activityId}:`, error)
         return null

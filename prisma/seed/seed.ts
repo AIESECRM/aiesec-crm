@@ -1,101 +1,43 @@
 import 'dotenv/config'
-import { PrismaClient } from '../generated/client'
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
-    console.log('Clearing existing data...')
+    console.log('Veritabanı temizleniyor...')
+    await prisma.auditLog.deleteMany()
     await prisma.activityComment.deleteMany()
     await prisma.activity.deleteMany()
+    await prisma.offer.deleteMany()
     await prisma.proposal.deleteMany()
     await prisma.notification.deleteMany()
     await prisma.contact.deleteMany()
     await prisma.company.deleteMany()
+    await prisma.handoverHistory.deleteMany()
     await prisma.user.deleteMany()
 
-    console.log('Seeding mock users...')
+    console.log('İlk Admin kullanıcısı oluşturuluyor...')
 
-    // Create test Users matching our mockData.ts roles
-    const currentUser = await prisma.user.create({
+    const hashedPassword = await bcrypt.hash('admin123', 12)
+
+    await prisma.user.create({
         data: {
-            id: '1',
-            name: 'Ahmet Yılmaz',
-            email: 'ahmet@aiesec.org',
-            role: 'LCVP',
-            avatar: 'https://i.pravatar.cc/150?u=1'
+            name: 'AIESEC Admin',
+            email: 'admin@aiesec.net',
+            password: hashedPassword,
+            role: 'ADMIN',
+            chapter: 'Türkiye',
+            status: 'ACTIVE'
         }
     })
 
-    // Managers
-    const authUser = await prisma.user.create({
-        data: {
-            id: '2',
-            name: 'Ayşe Demir',
-            email: 'ayse@aiesec.org',
-            role: 'TeamLeader', // or Menajer depending on how the frontend tracks
-            avatar: 'https://i.pravatar.cc/150?u=2'
-        }
-    })
-
-    const thirdUser = await prisma.user.create({
-        data: {
-            id: '3',
-            name: 'Mehmet Kaya',
-            email: 'mehmet@aiesec.org',
-            role: 'TeamMember',
-            avatar: 'https://i.pravatar.cc/150?u=3'
-        }
-    })
-
-    const lcpUser = await prisma.user.create({
-        data: {
-            id: '4',
-            name: 'Canan Öz',
-            email: 'canan@aiesec.org',
-            role: 'LCP',
-            avatar: 'https://i.pravatar.cc/150?u=4'
-        }
-    })
-
-    console.log('Seeding mock companies...')
-
-    // Create test Companies
-    await prisma.company.create({
-        data: {
-            id: '1',
-            name: 'TechFlow Solutions',
-            category: 'Yazılım',
-            location: 'İstanbul, Türkiye',
-            phone: '+90 555 123 4567',
-            email: 'info@techflow.com',
-            website: 'www.techflow.com',
-            status: 'aktif',
-            activeProposals: 2,
-            contactCount: 3,
-            managers: {
-                connect: [{ id: currentUser.id }, { id: authUser.id }] // Ahmet and Ayşe
-            }
-        }
-    })
-
-    await prisma.company.create({
-        data: {
-            id: '2',
-            name: 'Global Lojistik A.Ş.',
-            category: 'Lojistik',
-            location: 'Kocaeli, Türkiye',
-            phone: '+90 555 987 6543',
-            email: 'contact@globallojistik.com',
-            status: 'toplanti_planlandi',
-            activeProposals: 1,
-            contactCount: 2,
-            managers: {
-                connect: [{ id: thirdUser.id }] // Mehmet
-            }
-        }
-    })
-
-    console.log('Seed completed successfully.')
+    console.log('-----------------------------------------')
+    console.log('Seed Başarıyla Tamamlandı!')
+    console.log('Giriş Bilgileri:')
+    console.log('Email: admin@aiesec.net')
+    console.log('Şifre: admin123')
+    console.log('-----------------------------------------')
 }
 
 main()

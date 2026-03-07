@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const where: any = {};
 
   if (companyId) {
-    where.companyId = Number(companyId);
+    where.companyId = companyId;
   } else if (NATIONAL_ROLES.includes(user.role)) {
     // Tüm şubeleri görebilir
   } else if (CHAPTER_ROLES.includes(user.role)) {
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     where.company = { chapter: user.chapter };
   } else {
     // TM/TL sadece kendi aktiviteleri
-    where.userId = Number(user.id);
+    where.userId = user.id;
   }
 
   if (type) where.type = type;
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       user: { select: { id: true, name: true, role: true } },
       company: { select: { id: true, name: true, chapter: true } },
     },
-    orderBy: { date: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 
   return NextResponse.json({ activities });
@@ -59,11 +59,10 @@ export async function POST(req: NextRequest) {
   const activity = await prisma.activity.create({
     data: {
       type,
-      note: note || null,
-      date: date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(Date.now() / 1000),
-      userId: Number(user.id),
-      companyId: Number(companyId),
-      createdAt: Math.floor(Date.now() / 1000),
+      notes: note || null,
+      scheduledAt: date ? new Date(date) : new Date(),
+      userId: user.id,
+      companyId: companyId,
     },
   });
 

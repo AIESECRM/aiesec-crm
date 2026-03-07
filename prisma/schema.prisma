@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
 }
 
 datasource db {
@@ -11,106 +10,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enums
-enum Role {
-  TM
-  TL
-  LCVP
-  LCP
-  MCVP
-  MCP
-  ADMIN
-}
-
-enum Chapter {
-  ADANA
-  ANKARA
-  ANTALYA
-  BURSA
-  DENIZLI
-  DOGU_AKDENIZ
-  ESKISEHIR
-  GAZIANTEP
-  ISTANBUL
-  ISTANBUL_ASYA
-  BATI_ISTANBUL
-  IZMIR
-  KOCAELI
-  KONYA
-  KUTAHYA
-  SAKARYA
-  TRABZON
-}
-
-enum CompanyStatus {
-  POSITIVE
-  NEGATIVE
-  NO_ANSWER
-  CALL_AGAIN
-  MEETING_PLANNED
-  ACTIVE
-  PASSIVE
-}
-
-enum OfferStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
-enum OfferProduct {
-  GTA
-  GV
-  GTE
-}
-
-enum OfferDuration {
-  SHORT
-  MEDIUM
-  LONG
-}
-
-enum OfferOpenStatus {
-  NEW_OPEN
-  RE_OPEN
-}
-
-enum UserStatus {
-  PENDING
-  ACTIVE
-  REJECTED
-}
-
-enum ActivityType {
-  COLD_CALL
-  MEETING
-  EMAIL
-  FOLLOW_UP
-  TASK
-  PROPOSAL
-  POSTPONED
-}
+// SQL Server doesn't support enums. Using String + @default instead.
 
 model User {
-  id        String     @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  email     String     @unique
+  email     String    @unique
   password  String?
-  role      String     // e.g. "MCP", "MCVP", "LCP", "LCVP", "TL", "TM", "ADMIN"
+  role      String    // e.g. "MCP", "MCVP", "LCP", "LCVP", "TL", "TM", "ADMIN"
   avatar    String?
   branchId  String?
   chapter   String?
-  status    String     @default("ACTIVE")
+  status    String    @default("ACTIVE") // e.g. "PENDING", "ACTIVE", "REJECTED"
   teamId    String?
-  createdAt DateTime   @default(now())
+  createdAt DateTime  @default(now())
 
   // Relations
   managedCompanies Company[]  @relation("CompanyManagers")
   activities       Activity[] @relation("UserActivities")
+  createdCompanies Company[]  @relation("CompanyCreator")
+  offers           Offer[]    @relation("OfferCreator")
 }
 
 model Company {
-  id              String        @id @default(uuid())
+  id              String   @id @default(uuid())
   name            String
   category        String?
   location        String?
@@ -121,20 +44,23 @@ model Company {
   taxId           String?
   logoUrl         String?
   chapter         String?
-  status          String        @default("NO_ANSWER")
-  activeProposals Int           @default(0)
-  contactCount    Int           @default(0)
-  notes           String?       @db.Text
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  status          String   @default("NO_ANSWER")
+  activeProposals Int      @default(0)
+  contactCount    Int      @default(0)
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdById     String?
 
   // Many-to-Many relation with Users acting as Managers
-  managers        User[]        @relation("CompanyManagers")
+  managers User[] @relation("CompanyManagers")
 
   // Relations
-  contacts        Contact[]
-  activities      Activity[]
-  proposals       Proposal[]
+  creator    User?      @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  contacts   Contact[]
+  activities Activity[]
+  proposals  Proposal[]
+  offers     Offer[]
 }
 
 model Contact {
@@ -149,29 +75,29 @@ model Contact {
 
   // Relations
   company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  activities Activity[] // optional association
-  proposals  Proposal[] // optional association
+  activities Activity[]
+  proposals  Proposal[]
+  offers     Offer[]
 }
 
 model Activity {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   companyId   String
   contactId   String?
   userId      String
-  userName    String
-  type        String    // e.g. "COLD_CALL", "MEETING", "EMAIL", "TASK", "PROPOSAL", "POSTPONED", "FOLLOW_UP"
-  status      String    @default("pending") // e.g. "completed", "pending", "overdue", "cancelled"
-  notes       String?   @db.Text
+  type        String   // e.g. "COLD_CALL", "MEETING", "EMAIL", "TASK", "PROPOSAL", "POSTPONED", "FOLLOW_UP"
+  status      String   @default("pending")
+  notes       String?  @db.Text
   scheduledAt DateTime?
   completedAt DateTime?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
 
-  comments    ActivityComment[]
+  comments ActivityComment[]
 
   // Relations
-  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  contact     Contact?  @relation(fields: [contactId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user        User      @relation("UserActivities", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user    User     @relation("UserActivities", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model ActivityComment {
@@ -181,7 +107,27 @@ model ActivityComment {
   author     String
   createdAt  DateTime @default(now())
 
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+}
+
+model Offer {
+  id          String   @id @default(uuid())
+  title       String
+  product     String   // "GTA", "GV", "GTE"
+  duration    String   // "SHORT", "MEDIUM", "LONG"
+  openStatus  String   // "NEW_OPEN", "RE_OPEN"
+  value       Float?
+  fileUrl     String?
+  companyId   String
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contactId   String?
+
+  // Relations
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator User     @relation("OfferCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Proposal {
@@ -191,7 +137,7 @@ model Proposal {
   title          String
   value          Float
   currency       String
-  stage          String    // e.g. "new_lead", "qualified", "proposal", "negotiation", "closed_won", "closed_lost"
+  stage          String
   probability    Int
   ownerId        String
   ownerName      String
@@ -201,8 +147,8 @@ model Proposal {
   updatedAt      DateTime  @updatedAt
 
   // Relations
-  company        Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  contact        Contact?  @relation(fields: [contactId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Notification {
@@ -210,7 +156,7 @@ model Notification {
   userId    String
   title     String
   message   String   @db.Text
-  type      String   // e.g. "info", "warning", "success", "error"
+  type      String   @default("info")
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }

@@ -3,92 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-<<<<<<< HEAD
+import { signOut } from 'next-auth/react';
 import {
   Home,
   Building2,
   Users,
-=======
-import { signOut } from 'next-auth/react';
-import { 
-  Home, 
-  Building2, 
-  Users, 
->>>>>>> ortak-repo/main
   DollarSign,
   ListTodo,
   Menu,
   X,
-<<<<<<< HEAD
-  Settings
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types';
-import './Sidebar.css';
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  requiresPermission?: keyof typeof permissionMap;
-  requiresAdmin?: boolean;
-}
-
-const permissionMap = {
-  viewDeals: 'canViewDeals',
-} as const;
-
-const navItems: NavItem[] = [
-  {
-    href: '/',
-    label: 'Anasayfa',
-    icon: <Home className="sidebar__nav-icon" />,
-  },
-  {
-    href: '/sirketler',
-    label: 'Şirketler',
-    icon: <Building2 className="sidebar__nav-icon" />,
-  },
-  {
-    href: '/kisiler',
-    label: 'Kişiler',
-    icon: <Users className="sidebar__nav-icon" />,
-  },
-  {
-    href: '/teklifler',
-    label: 'Teklifler',
-    icon: <DollarSign className="sidebar__nav-icon" />,
-    requiresPermission: 'viewDeals',
-  },
-  {
-    href: '/aktiviteler',
-    label: 'Aktiviteler',
-    icon: <ListTodo className="sidebar__nav-icon" />,
-  },
-  {
-    href: '/yonetim',
-    label: 'Yönetim Paneli',
-    icon: <Settings className="sidebar__nav-icon" />,
-    requiresAdmin: true,
-  },
-];
-
-const roleLabels: Record<UserRole, string> = {
-  MCP: 'MCP',
-  MCVP: 'MCVP',
-  LCP: 'LCP',
-  LCVP: 'LCVP',
-  TeamLeader: 'Team Leader',
-  TeamMember: 'Takım Üyesi',
-};
-
-export default function Sidebar() {
-  const pathname = usePathname();
-  const { user, permissions, isAdmin, switchRole } = useAuth();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  // Close mobile menu on route change
-=======
+  Settings,
   LogOut
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -96,18 +20,13 @@ import './Sidebar.css';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { user, permissions, status } = useAuth();
+  const { user, permissions, isAdmin, status } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
->>>>>>> ortak-repo/main
   useEffect(() => {
     setIsMobileOpen(false);
   }, [pathname]);
 
-<<<<<<< HEAD
-  // Close mobile menu on escape key
-=======
->>>>>>> ortak-repo/main
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsMobileOpen(false);
@@ -116,25 +35,7 @@ export default function Sidebar() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
-<<<<<<< HEAD
-  const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/';
-    }
-    return pathname.startsWith(href);
-  };
-
-  const filteredNavItems = navItems.filter(item => {
-    if (item.requiresPermission === 'viewDeals') {
-      return permissions.canViewDeals;
-    }
-    if (item.requiresAdmin) {
-      return isAdmin;
-    }
-    return true;
-  });
-=======
-  if (status === 'loading' || !user) return null;
+  if (status === 'loading') return null;
 
   const navItems = [
     {
@@ -167,6 +68,12 @@ export default function Sidebar() {
       icon: <ListTodo className="sidebar__nav-icon" />,
       show: true,
     },
+    {
+      href: '/yonetim',
+      label: 'Yönetim Paneli',
+      icon: <Settings className="sidebar__nav-icon" />,
+      show: isAdmin,
+    },
   ];
 
   const isActive = (href: string) => {
@@ -181,8 +88,8 @@ export default function Sidebar() {
     LCP: 'LCP',
     MCVP: 'MCVP',
     MCP: 'MCP',
+    ADMIN: 'Admin',
   };
->>>>>>> ortak-repo/main
 
   return (
     <>
@@ -210,20 +117,11 @@ export default function Sidebar() {
 
         <nav className="sidebar__nav">
           <ul className="sidebar__nav-list">
-<<<<<<< HEAD
-            {filteredNavItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`sidebar__nav-item ${isActive(item.href) ? 'sidebar__nav-item--active' : ''
-                    }`}
-=======
             {navItems.filter(item => item.show).map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   className={`sidebar__nav-item ${isActive(item.href) ? 'sidebar__nav-item--active' : ''}`}
->>>>>>> ortak-repo/main
                 >
                   {item.icon}
                   <span className="sidebar__nav-label">{item.label}</span>
@@ -233,38 +131,21 @@ export default function Sidebar() {
           </ul>
         </nav>
 
-<<<<<<< HEAD
-        {/* Role Switcher for Demo */}
-        <div className="sidebar__footer">
-          <div className="sidebar__role-switcher">
-            <div className="sidebar__role-label">Rol Değiştir</div>
-            <select
-              className="sidebar__role-select"
-              value={user.role}
-              onChange={(e) => switchRole(e.target.value as UserRole)}
+        {user && (
+          <div className="sidebar__footer">
+            <div className="sidebar__user-info">
+              <div className="sidebar__user-name">{user.name}</div>
+              <div className="sidebar__user-role">{ROLE_LABELS[user.role] || user.role}</div>
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="sidebar__logout-btn"
             >
-              {Object.entries(roleLabels).map(([role, label]) => (
-                <option key={role} value={role}>
-                  {label}
-                </option>
-              ))}
-            </select>
+              <LogOut size={16} />
+              <span>Çıkış Yap</span>
+            </button>
           </div>
-=======
-        <div className="sidebar__footer">
-          <div className="sidebar__user-info">
-            <div className="sidebar__user-name">{user.name}</div>
-            <div className="sidebar__user-role">{ROLE_LABELS[user.role] || user.role}</div>
-          </div>
-          <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            className="sidebar__logout-btn"
-          >
-            <LogOut size={16} />
-            <span>Çıkış Yap</span>
-          </button>
->>>>>>> ortak-repo/main
-        </div>
+        )}
       </aside>
 
       {isMobileOpen && (
@@ -276,8 +157,4 @@ export default function Sidebar() {
       )}
     </>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ortak-repo/main

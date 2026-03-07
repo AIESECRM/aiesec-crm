@@ -1,14 +1,14 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { Company, User } from '@/types'
+import { Company } from '@/types'
 import { logAudit } from '@/lib/audit'
 import { verifyCompanyAccess } from '@/lib/authz'
 import { z } from 'zod'
 
 const companySchema = z.object({
     name: z.string().min(2, "Şirket adı en az 2 karakter olmalıdır"),
-    category: z.string().min(1, "Sektör zorunludur"),
+    category: z.string().min(1, "Sektör zorunludur").optional().nullable(),
     location: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
     email: z.string().email("Geçerli bir e-posta adresi girin").optional().nullable().or(z.literal('')),
@@ -16,14 +16,14 @@ const companySchema = z.object({
     domain: z.string().optional().nullable(),
     taxId: z.string().optional().nullable(),
     status: z.string().optional(),
-    notes: z.string().optional().nullable()
+    notes: z.string().optional().nullable(),
+    chapter: z.string().optional().nullable(),
 });
 
 // Map a Prisma Company (with nested managers) to our Frontend Company type
 function mapCompany(prismaCompany: any): Company {
     return {
         ...prismaCompany,
-        role: prismaCompany.role as any, // Not used strictly in Company interface but just in case
         // Extract strictly the IDs of the managers for the frontend
         assignedManagerIds: prismaCompany.managers?.map((m: any) => m.id) || []
     }
@@ -35,12 +35,10 @@ export async function getCompanies(userId: string): Promise<Company[]> {
         if (!dbUser) return [];
 
         let whereClause: any = {};
-        if (dbUser.role === 'TeamMember') {
+        if (dbUser.role === 'TM') {
             whereClause = { managers: { some: { id: dbUser.id } } };
-        } else if (dbUser.role === 'LCP' || dbUser.role === 'LCVP') {
-            whereClause = { managers: { some: { branchId: dbUser.branchId } } };
-        } else if (dbUser.role === 'TeamLeader') {
-            whereClause = { managers: { some: { teamId: dbUser.teamId } } };
+        } else if (dbUser.role === 'LCP' || dbUser.role === 'LCVP' || dbUser.role === 'TL') {
+            whereClause = { chapter: dbUser.chapter };
         }
 
         const companies = await prisma.company.findMany({
@@ -103,18 +101,22 @@ export async function createCompany(data: Partial<Company>, creatorId: string): 
             }
         }
 
+        const dbUser = await prisma.user.findUnique({ where: { id: creatorId } });
+
         const newCompany = await prisma.company.create({
             data: {
                 name: data.name!,
-                category: data.category!,
+                category: data.category || '',
                 location: data.location || '',
                 phone: data.phone || '',
                 email: data.email || '',
                 website: data.website || '',
                 domain: data.domain || null,
                 taxId: data.taxId || null,
-                status: data.status || 'aktif',
+                status: data.status || 'NO_ANSWER',
                 notes: data.notes || '',
+                chapter: data.chapter || dbUser?.chapter || null,
+                createdById: creatorId,
                 managers: {
                     connect: { id: creatorId }
                 }
@@ -200,6 +202,7 @@ export async function updateCompany(id: string, data: Partial<Company>, userId: 
                 taxId: data.taxId,
                 status: data.status,
                 notes: data.notes,
+                chapter: data.chapter,
             },
             include: {
                 managers: true
@@ -227,8 +230,7 @@ export async function deleteCompany(id: string, userId: string): Promise<boolean
         const hasAccess = await verifyCompanyAccess(userId, id);
         if (!hasAccess) return false;
 
-        // Cascade delete should handle related entities depending on schema, otherwise manual deletion might be needed.
-        // Assumes Prisma Schema is set up with onDelete: Cascade for contacts, proposals, activities.
+        // Cascade delete should handle related entities depending on schema
         await prisma.company.delete({
             where: { id }
         });

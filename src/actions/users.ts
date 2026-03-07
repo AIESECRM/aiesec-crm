@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { User } from '@/types'
+import { User, UserRole } from '@/types'
 
 // Map Prisma User to Frontend User type
 function mapUser(prismaUser: any): User {
@@ -9,9 +9,11 @@ function mapUser(prismaUser: any): User {
         id: prismaUser.id,
         name: prismaUser.name,
         email: prismaUser.email,
-        role: prismaUser.role as User['role'],
+        role: prismaUser.role as UserRole,
         avatar: prismaUser.avatar || undefined,
         branchId: prismaUser.branchId || undefined,
+        chapter: prismaUser.chapter || undefined,
+        status: prismaUser.status || undefined,
         teamId: prismaUser.teamId || undefined,
         createdAt: prismaUser.createdAt,
     }
@@ -26,5 +28,15 @@ export async function getAllUsers(): Promise<User[]> {
     } catch (error) {
         console.error('Failed to fetch all users:', error);
         return [];
+    }
+}
+
+export async function getUserById(id: string): Promise<User | null> {
+    try {
+        const user = await prisma.user.findUnique({ where: { id } });
+        return user ? mapUser(user) : null;
+    } catch (error) {
+        console.error(`Failed to fetch user ${id}:`, error);
+        return null;
     }
 }

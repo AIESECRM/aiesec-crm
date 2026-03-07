@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAllUsers } from '@/actions/users';
 import { executeHandover } from '@/actions/handover';
 import { User } from '@/types';
 import { RefreshCw, Save } from 'lucide-react';
@@ -21,9 +20,15 @@ export default function HandoverPage() {
         async function fetchUsers() {
             if (!user) return;
             setIsLoading(true);
-            const fetchedUsers = await getAllUsers();
-            // Typically an LCVP or LCP would see members of their branch
-            setUsers(fetchedUsers.filter(u => u.branchId === user.branchId));
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const fetchedUsers = data.users || [];
+                // Filter by same chapter
+                setUsers(fetchedUsers.filter((u: User) => u.chapter === user.chapter));
+            } catch (err) {
+                console.error(err);
+            }
             setIsLoading(false);
         }
         fetchUsers();
@@ -63,30 +68,28 @@ export default function HandoverPage() {
     }
 
     return (
-        <div className="yonetim-content" style={{ maxWidth: '600px' }}>
-            <h2 className="yonetim-page-header">
-                <RefreshCw className="yonetim-page-icon" size={24} />
+        <div style={{ maxWidth: '600px', padding: '24px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                <RefreshCw size={24} />
                 Devir Teslim (Handover) İşlemi
             </h2>
 
-            <div style={{ padding: 'var(--spacing-lg)', backgroundColor: 'var(--bg-light)', borderRadius: 'var(--border-radius)', marginBottom: 'var(--spacing-xl)' }}>
-                <p style={{ fontSize: '14px', color: 'var(--text-light)', lineHeight: '1.5' }}>
-                    Bu modül ile görevi bırakan, değişen veya ayrılan bir üyenin sorumluluğundaki tüm şirketleri,
-                    teklifleri ve beklemedeki aktiviteleri tek bir işlemle başka bir üyeye aktarabilirsiniz.
+            <div style={{ padding: '16px', backgroundColor: '#f3f4f6', borderRadius: '12px', marginBottom: '24px' }}>
+                <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
+                    Bu modül ile görevi bırakan bir üyenin tüm portföyünü (şirketler, teklifler, aktiviteler) tek bir işlemle başka bir üyeye aktarabilirsiniz.
                     <br /><br />
                     <strong>Dikkat:</strong> Bu işlem geri alınamaz.
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="yonetim-form-group">
-                    <label className="yonetim-label">Kaynak Üye (Devreden)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Kaynak Üye (Devreden)</label>
                     <select
-                        className="yonetim-select"
+                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                         value={fromUserId}
                         onChange={(e) => setFromUserId(e.target.value)}
                         required
-                        style={{ width: '100%' }}
                     >
                         <option value="" disabled>Üye Seçin...</option>
                         {users.map(u => (
@@ -95,14 +98,13 @@ export default function HandoverPage() {
                     </select>
                 </div>
 
-                <div className="yonetim-form-group">
-                    <label className="yonetim-label">Hedef Üye (Devralan)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Hedef Üye (Devralan)</label>
                     <select
-                        className="yonetim-select"
+                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                         value={toUserId}
                         onChange={(e) => setToUserId(e.target.value)}
                         required
-                        style={{ width: '100%' }}
                     >
                         <option value="" disabled>Üye Seçin...</option>
                         {users.map(u => (
@@ -111,15 +113,14 @@ export default function HandoverPage() {
                     </select>
                 </div>
 
-                <div className="yonetim-form-group">
-                    <label className="yonetim-label">Devir Sebebi (Opsiyonel)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Devir Sebebi (Opsiyonel)</label>
                     <textarea
-                        className="yonetim-select"
+                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', minHeight: '80px' }}
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
-                        placeholder="Örn: Görev değişikliği, ekipten ayrılma..."
+                        placeholder="Örn: Görev değişikliği..."
                         rows={3}
-                        style={{ width: '100%', resize: 'vertical', cursor: 'text' }}
                     />
                 </div>
 
@@ -127,19 +128,18 @@ export default function HandoverPage() {
                     type="submit"
                     disabled={isSubmitting}
                     style={{
-                        marginTop: '8px',
+                        padding: '12px',
+                        backgroundColor: isSubmitting ? '#9ca3af' : '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        fontSize: '16px',
+                        cursor: isSubmitting ? 'not-allowed' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        padding: '12px 16px',
-                        backgroundColor: isSubmitting ? 'var(--text-light)' : 'var(--status-negative)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 'var(--border-radius)',
-                        cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                        fontSize: '15px',
-                        fontWeight: 600
+                        gap: '8px'
                     }}
                 >
                     <Save size={18} /> {isSubmitting ? 'Aktarılıyor...' : 'Devri Başlat'}

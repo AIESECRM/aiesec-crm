@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAllActivities } from '@/actions/activities';
-import { getAllUsers } from '@/actions/users';
 import { Building2, Phone, Calendar, TrendingUp } from 'lucide-react';
 import { Activity, User } from '@/types';
 
 export default function YonetimPage() {
-    const { user } = useAuth();
+    const context = useAuth() as any;
+    const user = context?.user;
+
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [allActivities, setAllActivities] = useState<Activity[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -17,86 +17,93 @@ export default function YonetimPage() {
         async function fetchData() {
             if (!user) return;
             setIsLoading(true);
-            const [fetchedUsers, fetchedActivities] = await Promise.all([
-                getAllUsers(),
-                getAllActivities(user.id)
-            ]);
-            setAllUsers(fetchedUsers);
-            setAllActivities(fetchedActivities);
+            try {
+                const [usersRes, activitiesRes] = await Promise.all([
+                    fetch('/api/admin/users'),
+                    fetch('/api/activities')
+                ]);
+                const usersData = await usersRes.json();
+                const activitiesData = await activitiesRes.json();
+
+                setAllUsers(usersData.users || []);
+                setAllActivities(activitiesData.activities || []);
+            } catch (err) {
+                console.error(err);
+            }
             setIsLoading(false);
         }
         fetchData();
     }, [user]);
 
     if (isLoading || !user) {
-        return <div className="yonetim-content" style={{ padding: '40px', textAlign: 'center' }}>Yükleniyor...</div>;
+        return <div style={{ padding: '40px', textAlign: 'center' }}>Yükleniyor...</div>;
     }
 
-    // Basic stats for the branch members
-    const branchUsers = allUsers.filter(u => u.branchId === user.branchId);
+    // Filter by chapter
+    const branchUsers = allUsers.filter(u => u.chapter === user.chapter);
     const branchUserIds = branchUsers.map(u => u.id);
 
     const branchActivities = allActivities.filter(a => branchUserIds.includes(a.userId));
 
     // Calculate basic performance
-    const coldCalls = branchActivities.filter(a => a.type === 'cold_call').length;
-    const meetings = branchActivities.filter(a => a.type === 'meeting').length;
+    const coldCalls = branchActivities.filter(a => a.type === 'COLD_CALL').length;
+    const meetings = branchActivities.filter(a => a.type === 'MEETING').length;
     const companiesHandled = new Set(branchActivities.map(a => a.companyId)).size;
 
     return (
-        <div className="yonetim-content">
-            <h2 className="yonetim-page-header">
-                <TrendingUp className="yonetim-page-icon" size={24} />
-                Şube Genel Durumu ({user.branchId?.toUpperCase()})
+        <div style={{ padding: '24px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                <TrendingUp size={24} />
+                Şube Genel Durumu ({user.chapter || 'Belirtilmedi'})
             </h2>
 
-            <div className="yonetim-stats-grid">
-                <div className="yonetim-stat-card">
-                    <div className="yonetim-stat-card__header">
-                        <h3 className="yonetim-stat-card__title">Toplam Cold Call</h3>
-                        <div className="yonetim-stat-card__icon"><Phone size={20} /></div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>Toplam Cold Call</h3>
+                        <Phone size={20} color="#2563eb" />
                     </div>
-                    <p className="yonetim-stat-card__value">{coldCalls}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{coldCalls}</p>
                 </div>
 
-                <div className="yonetim-stat-card">
-                    <div className="yonetim-stat-card__header">
-                        <h3 className="yonetim-stat-card__title">Toplantı</h3>
-                        <div className="yonetim-stat-card__icon"><Calendar size={20} /></div>
+                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>Toplantı</h3>
+                        <Calendar size={20} color="#059669" />
                     </div>
-                    <p className="yonetim-stat-card__value">{meetings}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{meetings}</p>
                 </div>
 
-                <div className="yonetim-stat-card">
-                    <div className="yonetim-stat-card__header">
-                        <h3 className="yonetim-stat-card__title">İlgilenilen Şirket</h3>
-                        <div className="yonetim-stat-card__icon"><Building2 size={20} /></div>
+                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>İlgilenilen Şirket</h3>
+                        <Building2 size={20} color="#7c3aed" />
                     </div>
-                    <p className="yonetim-stat-card__value">{companiesHandled}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{companiesHandled}</p>
                 </div>
             </div>
 
-            <h3 className="yonetim-page-header" style={{ marginTop: 'var(--spacing-2xl)' }}>Üye Performans Tablosu</h3>
-            <div className="yonetim-members-list">
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Üye Performans Tablosu</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
                 {branchUsers.map(member => {
                     const memberActivities = branchActivities.filter(a => a.userId === member.id);
-                    const mCalls = memberActivities.filter(a => a.type === 'cold_call').length;
-                    const mMeetings = memberActivities.filter(a => a.type === 'meeting').length;
+                    const mCalls = memberActivities.filter(a => a.type === 'COLD_CALL').length;
+                    const mMeetings = memberActivities.filter(a => a.type === 'MEETING').length;
 
                     return (
-                        <div key={member.id} className="yonetim-member-card">
-                            <div className="yonetim-member-info">
-                                <span className="yonetim-member-name">{member.name}</span>
-                                <span className="yonetim-member-role">{member.role}</span>
+                        <div key={member.id} style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ fontWeight: '600', fontSize: '16px' }}>{member.name}</span>
+                                <span style={{ fontSize: '12px', color: '#6b7280' }}>{member.role}</span>
                             </div>
-                            <div className="yonetim-member-stats">
-                                <div className="yonetim-member-stat">
-                                    <span className="yonetim-member-stat-label">Calls</span>
-                                    <span className="yonetim-member-stat-value">{mCalls}</span>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <span style={{ display: 'block', fontSize: '10px', color: '#9ca3af', fontWeight: 'bold' }}>CALLS</span>
+                                    <span style={{ fontWeight: 'bold', color: '#2563eb' }}>{mCalls}</span>
                                 </div>
-                                <div className="yonetim-member-stat">
-                                    <span className="yonetim-member-stat-label">Meetings</span>
-                                    <span className="yonetim-member-stat-value">{mMeetings}</span>
+                                <div style={{ textAlign: 'center' }}>
+                                    <span style={{ display: 'block', fontSize: '10px', color: '#9ca3af', fontWeight: 'bold' }}>MEETS</span>
+                                    <span style={{ fontWeight: 'bold', color: '#059669' }}>{mMeetings}</span>
                                 </div>
                             </div>
                         </div>

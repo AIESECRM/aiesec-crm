@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarPlus, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getCompanies } from '@/actions/companies';
-import { getAllUsers } from '@/actions/users';
 import { ActivityType, Company, User } from '@/types';
 
 export default function AktivitePlanlaPage() {
@@ -14,7 +12,7 @@ export default function AktivitePlanlaPage() {
     const [selectedManagerId, setSelectedManagerId] = useState<string>('');
     const [date, setDate] = useState<string>('');
     const [time, setTime] = useState<string>('');
-    const [type, setType] = useState<ActivityType>('cold_call');
+    const [type, setType] = useState<ActivityType>('COLD_CALL');
     const [notes, setNotes] = useState<string>('');
 
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -25,16 +23,23 @@ export default function AktivitePlanlaPage() {
         async function loadData() {
             setIsLoading(true);
             if (!user) return;
-            const [fetchedCompanies, fetchedUsers] = await Promise.all([
-                getCompanies(user.id),
-                getAllUsers()
-            ]);
-            setCompanies(fetchedCompanies);
-            setUsers(fetchedUsers);
+            try {
+                const [companiesRes, usersRes] = await Promise.all([
+                    fetch('/api/companies'),
+                    fetch('/api/admin/users')
+                ]);
+                const companiesData = await companiesRes.json();
+                const usersData = await usersRes.json();
+
+                setCompanies(companiesData.companies || []);
+                setUsers(usersData.users || []);
+            } catch (err) {
+                console.error(err);
+            }
             setIsLoading(false);
         }
         loadData();
-    }, []);
+    }, [user]);
 
     // When company changes, try to default manager
     useEffect(() => {
@@ -48,29 +53,43 @@ export default function AktivitePlanlaPage() {
         }
     }, [selectedCompanyId, user, companies]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedCompanyId || !selectedManagerId || !date || !time) {
             alert('Lütfen gerekli tüm alanları doldurun.');
             return;
         }
 
-        // Simulate save
-        alert('Aktivite başarıyla planlandı ve ilgili menajere bildirim gönderildi! (Demo)');
+        const res = await fetch('/api/activities', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                companyId: selectedCompanyId,
+                userId: selectedManagerId,
+                type: type,
+                notes: notes,
+                scheduledAt: `${date}T${time}:00`
+            })
+        });
 
-        // Reset form
-        setSelectedCompanyId('');
-        setSelectedManagerId('');
-        setDate('');
-        setTime('');
-        setType('cold_call');
-        setNotes('');
+        if (res.ok) {
+            alert('Aktivite başarıyla planlandı!');
+            // Reset form
+            setSelectedCompanyId('');
+            setSelectedManagerId('');
+            setDate('');
+            setTime('');
+            setType('COLD_CALL');
+            setNotes('');
+        } else {
+            alert('Bir hata oluştu.');
+        }
     };
 
     return (
-        <div className="yonetim-content" style={{ maxWidth: '600px' }}>
-            <h2 className="yonetim-page-header">
-                <CalendarPlus className="yonetim-page-icon" size={24} />
+        <div style={{ maxWidth: '600px', padding: '24px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                <CalendarPlus size={24} />
                 Ek Aktivite Planla
             </h2>
 
@@ -79,14 +98,13 @@ export default function AktivitePlanlaPage() {
             ) : (
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-                    <div className="yonetim-form-group">
-                        <label className="yonetim-label">Şirket Seçimi</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Şirket Seçimi</label>
                         <select
-                            className="yonetim-select"
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                             value={selectedCompanyId}
                             onChange={(e) => setSelectedCompanyId(e.target.value)}
                             required
-                            style={{ width: '100%' }}
                         >
                             <option value="" disabled>Şirket Seç...</option>
                             {companies.map(c => (
@@ -95,96 +113,87 @@ export default function AktivitePlanlaPage() {
                         </select>
                     </div>
 
-                    <div className="yonetim-form-group">
-                        <label className="yonetim-label">Menajer / Yetkili</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Menajer / Yetkili</label>
                         <select
-                            className="yonetim-select"
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                             value={selectedManagerId}
                             onChange={(e) => setSelectedManagerId(e.target.value)}
                             required
-                            style={{ width: '100%' }}
                         >
                             <option value="" disabled>Menajer Seç...</option>
                             {users.map(u => (
                                 <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
                             ))}
                         </select>
-                        <span style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '2px' }}>
-                            Varsayılan olarak şirketin bir menajeri seçilir. İsterseniz değiştirebilirsiniz.
-                        </span>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                        <div className="yonetim-form-group" style={{ flex: 1 }}>
-                            <label className="yonetim-label">Tarih</label>
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Tarih</label>
                             <input
                                 type="date"
-                                className="yonetim-select"
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
                                 required
-                                style={{ width: '100%', cursor: 'text' }}
                             />
                         </div>
-                        <div className="yonetim-form-group" style={{ flex: 1 }}>
-                            <label className="yonetim-label">Saat</label>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Saat</label>
                             <input
                                 type="time"
-                                className="yonetim-select"
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                                 value={time}
                                 onChange={(e) => setTime(e.target.value)}
                                 required
-                                style={{ width: '100%', cursor: 'text' }}
                             />
                         </div>
                     </div>
 
-                    <div className="yonetim-form-group">
-                        <label className="yonetim-label">Aktivite Tipi</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Aktivite Tipi</label>
                         <select
-                            className="yonetim-select"
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
                             value={type}
                             onChange={(e) => setType(e.target.value as ActivityType)}
-                            style={{ width: '100%' }}
                         >
-                            <option value="cold_call">Cold Call</option>
-                            <option value="meeting">Toplantı</option>
-                            <option value="email">E-posta</option>
-                            <option value="task">Görev</option>
-                            <option value="proposal">Teklif İletimi</option>
-                            <option value="postponed">Ertelenmiş İşlem</option>
+                            <option value="COLD_CALL">Cold Call</option>
+                            <option value="MEETING">Toplantı</option>
+                            <option value="EMAIL">E-posta</option>
+                            <option value="TASK">Görev</option>
+                            <option value="PROPOSAL">Teklif İletimi</option>
+                            <option value="POSTPONED">Ertelenmiş İşlem</option>
+                            <option value="FOLLOW_UP">Takip</option>
                         </select>
                     </div>
 
-                    <div className="yonetim-form-group">
-                        <label className="yonetim-label">Aktivite Detayları / Notlar</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Notlar</label>
                         <textarea
-                            className="yonetim-select"
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', minHeight: '100px' }}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Aktivitenin amacı, konuşulacak konular vb. detaylar..."
-                            rows={4}
+                            placeholder="Aktivite detayları..."
                             required
-                            style={{ width: '100%', resize: 'vertical', cursor: 'text' }}
                         />
                     </div>
 
                     <button
                         type="submit"
                         style={{
-                            marginTop: '8px',
+                            padding: '12px',
+                            backgroundColor: '#2563eb',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: '600',
+                            fontSize: '16px',
+                            cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px',
-                            padding: '12px 16px',
-                            backgroundColor: 'var(--primary-500)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: 'var(--border-radius)',
-                            cursor: 'pointer',
-                            fontSize: '15px',
-                            fontWeight: 600
+                            gap: '8px'
                         }}
                     >
                         <Save size={18} /> Planla ve Bildir

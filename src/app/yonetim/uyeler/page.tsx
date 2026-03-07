@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAllUsers } from '@/actions/users';
-import { getCompanies } from '@/actions/companies';
 import { User, UserRole, Company } from '@/types';
-import { Shield, Briefcase, ChevronDown } from 'lucide-react';
+import { Shield, Briefcase } from 'lucide-react';
 
 export default function RoleManagementPage() {
-    const { user, permissions } = useAuth();
+    const context = useAuth() as any;
+    const user = context?.user;
+    const permissions = context?.permissions;
+
     const [users, setUsers] = useState<User[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -17,12 +18,19 @@ export default function RoleManagementPage() {
         async function fetchData() {
             if (!user) return;
             setIsLoading(true);
-            const [fetchedUsers, fetchedCompanies] = await Promise.all([
-                getAllUsers(),
-                getCompanies(user.id)
-            ]);
-            setUsers(fetchedUsers.filter(u => u.branchId === user.branchId));
-            setCompanies(fetchedCompanies);
+            try {
+                const [usersRes, companiesRes] = await Promise.all([
+                    fetch('/api/admin/users'),
+                    fetch('/api/companies')
+                ]);
+                const usersData = await usersRes.json();
+                const companiesData = await companiesRes.json();
+
+                setUsers((usersData.users || []).filter((u: User) => u.chapter === user.chapter));
+                setCompanies(companiesData.companies || []);
+            } catch (err) {
+                console.error(err);
+            }
             setIsLoading(false);
         }
         fetchData();
@@ -33,11 +41,10 @@ export default function RoleManagementPage() {
     }
 
     if (!permissions?.canManageRoles) {
-        return <div style={{ padding: 'var(--spacing-2xl)', textAlign: 'center', color: 'var(--status-negative)' }}>Rol yönetimi için yetkiniz bulunmamaktadır.</div>;
+        return <div style={{ padding: '48px', textAlign: 'center', color: '#ef4444' }}>Rol yönetimi için yetkiniz bulunmamaktadır.</div>;
     }
 
-    const handleRoleChange = (userId: string, newRole: UserRole) => {
-        // Only LCPs can assign/demote LCVP
+    const handleRoleChange = async (userId: string, newRole: UserRole) => {
         if (newRole === 'LCVP' && user.role !== 'LCP') {
             alert('Sadece LCP LCVP ataması yapabilir.');
             return;
@@ -49,46 +56,50 @@ export default function RoleManagementPage() {
             return;
         }
 
-        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
-        alert('Rol başarıyla güncellendi.');
+        const res = await fetch('/api/admin/users', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, action: 'change-role', role: newRole })
+        });
+
+        if (res.ok) {
+            setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+            alert('Rol başarıyla güncellendi.');
+        }
     };
 
     const handleCompanyAssign = (userId: string, companyId: string) => {
-        // Mock adding user as manager
         alert(`Kullanıcı başarıyla şirkete menajer olarak atandı! (Demo)`);
     };
 
-    // Roles available to assign (filtered by current user role)
     const assignableRoles: UserRole[] = user.role === 'LCP'
-        ? ['LCVP', 'TeamLeader', 'TeamMember']
-        : ['TeamLeader', 'TeamMember'];
+        ? ['LCVP', 'TL', 'TM']
+        : ['TL', 'TM'];
 
     return (
-        <div className="yonetim-content">
-            <h2 className="yonetim-page-header">
-                <Shield className="yonetim-page-icon" size={24} />
+        <div style={{ padding: '24px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                <Shield size={24} />
                 Üye ve Rol Yönetimi
             </h2>
 
-            <div className="yonetim-members-list">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {users.map(member => (
-                    <div key={member.id} className="yonetim-member-card">
-                        <div className="yonetim-member-info" style={{ flex: 1 }}>
-                            <span className="yonetim-member-name" style={{ fontSize: '18px' }}>{member.name}</span>
-                            <span className="yonetim-member-role" style={{ color: 'var(--primary-400)', fontWeight: 500 }}>{member.role}</span>
-                            <span style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '4px' }}>{member.email}</span>
+                    <div key={member.id} style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '18px', fontWeight: '600' }}>{member.name}</span>
+                            <span style={{ color: '#2563eb', fontWeight: '500', fontSize: '14px' }}>{member.role}</span>
+                            <span style={{ fontSize: '13px', color: '#6b7280' }}>{member.email}</span>
                         </div>
 
-                        <div style={{ display: 'flex', gap: 'var(--spacing-xl)', alignItems: 'center', flexWrap: 'wrap' }}>
-
-                            {/* Role Assignment */}
-                            <div className="yonetim-form-group">
-                                <label className="yonetim-label">Rol Ata</label>
+                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <label style={{ fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Rol Ata</label>
                                 <select
-                                    className="yonetim-select"
+                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px' }}
                                     value={member.role}
                                     onChange={(e) => handleRoleChange(member.id, e.target.value as UserRole)}
-                                    disabled={member.role === 'LCP'} // LCP cannot be changed here
+                                    disabled={member.role === 'LCP' || member.role === 'ADMIN'}
                                 >
                                     <option value={member.role} disabled>{member.role}</option>
                                     {assignableRoles.filter(r => r !== member.role).map(role => (
@@ -97,13 +108,12 @@ export default function RoleManagementPage() {
                                 </select>
                             </div>
 
-                            {/* Company Assignment */}
-                            <div className="yonetim-form-group">
-                                <label className="yonetim-label">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <label style={{ fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>
                                     <Briefcase size={12} /> Menajer Ata
                                 </label>
                                 <select
-                                    className="yonetim-select"
+                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px' }}
                                     defaultValue=""
                                     onChange={(e) => handleCompanyAssign(member.id, e.target.value)}
                                 >
@@ -113,7 +123,6 @@ export default function RoleManagementPage() {
                                     ))}
                                 </select>
                             </div>
-
                         </div>
                     </div>
                 ))}

@@ -18,23 +18,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: credentials.email as string },
         });
 
-        if (!user) return null;
+        if (!user || !user.password) return null;
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
-
+        const isValid = await bcrypt.compare(credentials.password as string, user.password);
         if (!isValid) return null;
 
-        // Status'u da döndür, login sayfasında kontrol edilecek
+        if (user.status !== "ACTIVE") {
+          throw new Error("Hesabınız henüz onaylanmamış veya askıya alınmış.");
+        }
+
         return {
-          id: String(user.id),
+          id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
           chapter: user.chapter,
-          status: user.status,
+          status: user.status
         };
       },
     }),

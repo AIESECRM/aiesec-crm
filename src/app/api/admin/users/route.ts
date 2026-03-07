@@ -47,7 +47,7 @@ export async function PATCH(req: NextRequest) {
   if (action === "approve") {
     await prisma.user.update({
       where: { id: userId },
-      data: { status: "ACTIVE", updatedAt: Math.floor(Date.now() / 1000) },
+      data: { status: "ACTIVE" },
     });
     return NextResponse.json({ success: true, message: "Kullanıcı onaylandı!" });
   }
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest) {
   if (action === "reject") {
     await prisma.user.update({
       where: { id: userId },
-      data: { status: "REJECTED", updatedAt: Math.floor(Date.now() / 1000) },
+      data: { status: "REJECTED" },
     });
     return NextResponse.json({ success: true, message: "Kullanıcı reddedildi!" });
   }
@@ -63,7 +63,7 @@ export async function PATCH(req: NextRequest) {
   if (action === "change-role") {
     await prisma.user.update({
       where: { id: userId },
-      data: { role, updatedAt: Math.floor(Date.now() / 1000) },
+      data: { role },
     });
     return NextResponse.json({ success: true, message: "Rol güncellendi!" });
   }

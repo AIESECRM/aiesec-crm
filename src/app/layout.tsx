@@ -1,17 +1,10 @@
-<<<<<<< HEAD
 import type { Metadata, Viewport } from "next";
-import { Open_Sans } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { SearchProvider } from "@/contexts/SearchContext";
-import MainLayout from "@/components/layout/MainLayout";
-=======
-import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { SearchProvider } from "@/contexts/SearchContext";
 import SessionProviderWrapper from "@/components/layout/SessionProviderWrapper";
->>>>>>> ortak-repo/main
+import { AuthProvider } from "@/contexts/AuthContext";
+import MainLayout from "@/components/layout/MainLayout";
 
 const openSans = Open_Sans({
   variable: "--font-main",
@@ -22,7 +15,6 @@ const openSans = Open_Sans({
 export const metadata: Metadata = {
   title: "AIESEC B2B Sales - Yönetim Paneli",
   description: "AIESEC B2B CRM ve Satış Yönetim Sistemi",
-<<<<<<< HEAD
   applicationName: "AIESEC CRM",
   manifest: "/manifest.webmanifest",
   formatDetection: {
@@ -33,8 +25,6 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "AIESEC CRM",
   },
-=======
->>>>>>> ortak-repo/main
   icons: {
     icon: "/logo/fav.svg",
     shortcut: "/logo/fav.svg",
@@ -42,7 +32,6 @@ export const metadata: Metadata = {
   },
 };
 
-<<<<<<< HEAD
 export const viewport: Viewport = {
   themeColor: "#037EF3",
   width: "device-width",
@@ -50,8 +39,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-=======
->>>>>>> ortak-repo/main
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -60,26 +47,16 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${openSans.variable}`}>
-<<<<<<< HEAD
-        <AuthProvider>
-          <SearchProvider>
-            <MainLayout>
-              {children}
-            </MainLayout>
-          </SearchProvider>
-        </AuthProvider>
-      </body>
-    </html>
-  );
-}
-=======
         <SessionProviderWrapper>
-          <SearchProvider>
-            {children}
-          </SearchProvider>
+          <AuthProvider>
+            <SearchProvider>
+              <MainLayout>
+                {children}
+              </MainLayout>
+            </SearchProvider>
+          </AuthProvider>
         </SessionProviderWrapper>
       </body>
     </html>
   );
 }
->>>>>>> ortak-repo/main

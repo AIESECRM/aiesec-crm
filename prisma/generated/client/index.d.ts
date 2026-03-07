@@ -1677,9 +1677,12 @@ export namespace Prisma {
     id: string | null
     name: string | null
     email: string | null
+    password: string | null
     role: string | null
     avatar: string | null
     branchId: string | null
+    chapter: string | null
+    status: string | null
     teamId: string | null
     createdAt: Date | null
   }
@@ -1688,9 +1691,12 @@ export namespace Prisma {
     id: string | null
     name: string | null
     email: string | null
+    password: string | null
     role: string | null
     avatar: string | null
     branchId: string | null
+    chapter: string | null
+    status: string | null
     teamId: string | null
     createdAt: Date | null
   }
@@ -1699,9 +1705,12 @@ export namespace Prisma {
     id: number
     name: number
     email: number
+    password: number
     role: number
     avatar: number
     branchId: number
+    chapter: number
+    status: number
     teamId: number
     createdAt: number
     _all: number
@@ -1712,9 +1721,12 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    password?: true
     role?: true
     avatar?: true
     branchId?: true
+    chapter?: true
+    status?: true
     teamId?: true
     createdAt?: true
   }
@@ -1723,9 +1735,12 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    password?: true
     role?: true
     avatar?: true
     branchId?: true
+    chapter?: true
+    status?: true
     teamId?: true
     createdAt?: true
   }
@@ -1734,9 +1749,12 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    password?: true
     role?: true
     avatar?: true
     branchId?: true
+    chapter?: true
+    status?: true
     teamId?: true
     createdAt?: true
     _all?: true
@@ -1818,9 +1836,12 @@ export namespace Prisma {
     id: string
     name: string
     email: string
+    password: string | null
     role: string
     avatar: string | null
     branchId: string | null
+    chapter: string | null
+    status: string
     teamId: string | null
     createdAt: Date
     _count: UserCountAggregateOutputType | null
@@ -1846,9 +1867,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    password?: boolean
     role?: boolean
     avatar?: boolean
     branchId?: boolean
+    chapter?: boolean
+    status?: boolean
     teamId?: boolean
     createdAt?: boolean
     managedCompanies?: boolean | User$managedCompaniesArgs<ExtArgs>
@@ -1861,9 +1885,12 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    password?: boolean
     role?: boolean
     avatar?: boolean
     branchId?: boolean
+    chapter?: boolean
+    status?: boolean
     teamId?: boolean
     createdAt?: boolean
   }
@@ -1884,9 +1911,12 @@ export namespace Prisma {
       id: string
       name: string
       email: string
+      password: string | null
       role: string
       avatar: string | null
       branchId: string | null
+      chapter: string | null
+      status: string
       teamId: string | null
       createdAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2263,9 +2293,12 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
     readonly avatar: FieldRef<"User", 'String'>
     readonly branchId: FieldRef<"User", 'String'>
+    readonly chapter: FieldRef<"User", 'String'>
+    readonly status: FieldRef<"User", 'String'>
     readonly teamId: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
   }
@@ -2652,6 +2685,8 @@ export namespace Prisma {
     website: string | null
     domain: string | null
     taxId: string | null
+    logoUrl: string | null
+    chapter: string | null
     status: string | null
     activeProposals: number | null
     contactCount: number | null
@@ -2670,6 +2705,8 @@ export namespace Prisma {
     website: string | null
     domain: string | null
     taxId: string | null
+    logoUrl: string | null
+    chapter: string | null
     status: string | null
     activeProposals: number | null
     contactCount: number | null
@@ -2688,6 +2725,8 @@ export namespace Prisma {
     website: number
     domain: number
     taxId: number
+    logoUrl: number
+    chapter: number
     status: number
     activeProposals: number
     contactCount: number
@@ -2718,6 +2757,8 @@ export namespace Prisma {
     website?: true
     domain?: true
     taxId?: true
+    logoUrl?: true
+    chapter?: true
     status?: true
     activeProposals?: true
     contactCount?: true
@@ -2736,6 +2777,8 @@ export namespace Prisma {
     website?: true
     domain?: true
     taxId?: true
+    logoUrl?: true
+    chapter?: true
     status?: true
     activeProposals?: true
     contactCount?: true
@@ -2754,6 +2797,8 @@ export namespace Prisma {
     website?: true
     domain?: true
     taxId?: true
+    logoUrl?: true
+    chapter?: true
     status?: true
     activeProposals?: true
     contactCount?: true
@@ -2852,13 +2897,15 @@ export namespace Prisma {
   export type CompanyGroupByOutputType = {
     id: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category: string | null
+    location: string | null
+    phone: string | null
+    email: string | null
     website: string | null
     domain: string | null
     taxId: string | null
+    logoUrl: string | null
+    chapter: string | null
     status: string
     activeProposals: number
     contactCount: number
@@ -2896,6 +2943,8 @@ export namespace Prisma {
     website?: boolean
     domain?: boolean
     taxId?: boolean
+    logoUrl?: boolean
+    chapter?: boolean
     status?: boolean
     activeProposals?: boolean
     contactCount?: boolean
@@ -2920,6 +2969,8 @@ export namespace Prisma {
     website?: boolean
     domain?: boolean
     taxId?: boolean
+    logoUrl?: boolean
+    chapter?: boolean
     status?: boolean
     activeProposals?: boolean
     contactCount?: boolean
@@ -2947,13 +2998,15 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      category: string
-      location: string
-      phone: string
-      email: string
+      category: string | null
+      location: string | null
+      phone: string | null
+      email: string | null
       website: string | null
       domain: string | null
       taxId: string | null
+      logoUrl: string | null
+      chapter: string | null
       status: string
       activeProposals: number
       contactCount: number
@@ -3342,6 +3395,8 @@ export namespace Prisma {
     readonly website: FieldRef<"Company", 'String'>
     readonly domain: FieldRef<"Company", 'String'>
     readonly taxId: FieldRef<"Company", 'String'>
+    readonly logoUrl: FieldRef<"Company", 'String'>
+    readonly chapter: FieldRef<"Company", 'String'>
     readonly status: FieldRef<"Company", 'String'>
     readonly activeProposals: FieldRef<"Company", 'Int'>
     readonly contactCount: FieldRef<"Company", 'Int'>
@@ -4716,7 +4771,6 @@ export namespace Prisma {
     companyId: string | null
     contactId: string | null
     userId: string | null
-    userName: string | null
     type: string | null
     status: string | null
     notes: string | null
@@ -4730,7 +4784,6 @@ export namespace Prisma {
     companyId: string | null
     contactId: string | null
     userId: string | null
-    userName: string | null
     type: string | null
     status: string | null
     notes: string | null
@@ -4744,7 +4797,6 @@ export namespace Prisma {
     companyId: number
     contactId: number
     userId: number
-    userName: number
     type: number
     status: number
     notes: number
@@ -4760,7 +4812,6 @@ export namespace Prisma {
     companyId?: true
     contactId?: true
     userId?: true
-    userName?: true
     type?: true
     status?: true
     notes?: true
@@ -4774,7 +4825,6 @@ export namespace Prisma {
     companyId?: true
     contactId?: true
     userId?: true
-    userName?: true
     type?: true
     status?: true
     notes?: true
@@ -4788,7 +4838,6 @@ export namespace Prisma {
     companyId?: true
     contactId?: true
     userId?: true
-    userName?: true
     type?: true
     status?: true
     notes?: true
@@ -4875,7 +4924,6 @@ export namespace Prisma {
     companyId: string
     contactId: string | null
     userId: string
-    userName: string
     type: string
     status: string
     notes: string | null
@@ -4906,7 +4954,6 @@ export namespace Prisma {
     companyId?: boolean
     contactId?: boolean
     userId?: boolean
-    userName?: boolean
     type?: boolean
     status?: boolean
     notes?: boolean
@@ -4926,7 +4973,6 @@ export namespace Prisma {
     companyId?: boolean
     contactId?: boolean
     userId?: boolean
-    userName?: boolean
     type?: boolean
     status?: boolean
     notes?: boolean
@@ -4956,7 +5002,6 @@ export namespace Prisma {
       companyId: string
       contactId: string | null
       userId: string
-      userName: string
       type: string
       status: string
       notes: string | null
@@ -5340,7 +5385,6 @@ export namespace Prisma {
     readonly companyId: FieldRef<"Activity", 'String'>
     readonly contactId: FieldRef<"Activity", 'String'>
     readonly userId: FieldRef<"Activity", 'String'>
-    readonly userName: FieldRef<"Activity", 'String'>
     readonly type: FieldRef<"Activity", 'String'>
     readonly status: FieldRef<"Activity", 'String'>
     readonly notes: FieldRef<"Activity", 'String'>
@@ -10173,9 +10217,12 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     email: 'email',
+    password: 'password',
     role: 'role',
     avatar: 'avatar',
     branchId: 'branchId',
+    chapter: 'chapter',
+    status: 'status',
     teamId: 'teamId',
     createdAt: 'createdAt'
   };
@@ -10193,6 +10240,8 @@ export namespace Prisma {
     website: 'website',
     domain: 'domain',
     taxId: 'taxId',
+    logoUrl: 'logoUrl',
+    chapter: 'chapter',
     status: 'status',
     activeProposals: 'activeProposals',
     contactCount: 'contactCount',
@@ -10223,7 +10272,6 @@ export namespace Prisma {
     companyId: 'companyId',
     contactId: 'contactId',
     userId: 'userId',
-    userName: 'userName',
     type: 'type',
     status: 'status',
     notes: 'notes',
@@ -10370,9 +10418,12 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     branchId?: StringNullableFilter<"User"> | string | null
+    chapter?: StringNullableFilter<"User"> | string | null
+    status?: StringFilter<"User"> | string
     teamId?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     managedCompanies?: CompanyListRelationFilter
@@ -10383,9 +10434,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    password?: SortOrderInput | SortOrder
     role?: SortOrder
     avatar?: SortOrderInput | SortOrder
     branchId?: SortOrderInput | SortOrder
+    chapter?: SortOrderInput | SortOrder
+    status?: SortOrder
     teamId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     managedCompanies?: CompanyOrderByRelationAggregateInput
@@ -10399,9 +10453,12 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     branchId?: StringNullableFilter<"User"> | string | null
+    chapter?: StringNullableFilter<"User"> | string | null
+    status?: StringFilter<"User"> | string
     teamId?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     managedCompanies?: CompanyListRelationFilter
@@ -10412,9 +10469,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    password?: SortOrderInput | SortOrder
     role?: SortOrder
     avatar?: SortOrderInput | SortOrder
     branchId?: SortOrderInput | SortOrder
+    chapter?: SortOrderInput | SortOrder
+    status?: SortOrder
     teamId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -10429,9 +10489,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
+    password?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: StringWithAggregatesFilter<"User"> | string
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     branchId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    chapter?: StringNullableWithAggregatesFilter<"User"> | string | null
+    status?: StringWithAggregatesFilter<"User"> | string
     teamId?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -10442,13 +10505,15 @@ export namespace Prisma {
     NOT?: CompanyWhereInput | CompanyWhereInput[]
     id?: StringFilter<"Company"> | string
     name?: StringFilter<"Company"> | string
-    category?: StringFilter<"Company"> | string
-    location?: StringFilter<"Company"> | string
-    phone?: StringFilter<"Company"> | string
-    email?: StringFilter<"Company"> | string
+    category?: StringNullableFilter<"Company"> | string | null
+    location?: StringNullableFilter<"Company"> | string | null
+    phone?: StringNullableFilter<"Company"> | string | null
+    email?: StringNullableFilter<"Company"> | string | null
     website?: StringNullableFilter<"Company"> | string | null
     domain?: StringNullableFilter<"Company"> | string | null
     taxId?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    chapter?: StringNullableFilter<"Company"> | string | null
     status?: StringFilter<"Company"> | string
     activeProposals?: IntFilter<"Company"> | number
     contactCount?: IntFilter<"Company"> | number
@@ -10464,13 +10529,15 @@ export namespace Prisma {
   export type CompanyOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    category?: SortOrder
-    location?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
+    category?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     domain?: SortOrderInput | SortOrder
     taxId?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    chapter?: SortOrderInput | SortOrder
     status?: SortOrder
     activeProposals?: SortOrder
     contactCount?: SortOrder
@@ -10489,13 +10556,15 @@ export namespace Prisma {
     OR?: CompanyWhereInput[]
     NOT?: CompanyWhereInput | CompanyWhereInput[]
     name?: StringFilter<"Company"> | string
-    category?: StringFilter<"Company"> | string
-    location?: StringFilter<"Company"> | string
-    phone?: StringFilter<"Company"> | string
-    email?: StringFilter<"Company"> | string
+    category?: StringNullableFilter<"Company"> | string | null
+    location?: StringNullableFilter<"Company"> | string | null
+    phone?: StringNullableFilter<"Company"> | string | null
+    email?: StringNullableFilter<"Company"> | string | null
     website?: StringNullableFilter<"Company"> | string | null
     domain?: StringNullableFilter<"Company"> | string | null
     taxId?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    chapter?: StringNullableFilter<"Company"> | string | null
     status?: StringFilter<"Company"> | string
     activeProposals?: IntFilter<"Company"> | number
     contactCount?: IntFilter<"Company"> | number
@@ -10511,13 +10580,15 @@ export namespace Prisma {
   export type CompanyOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    category?: SortOrder
-    location?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
+    category?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     domain?: SortOrderInput | SortOrder
     taxId?: SortOrderInput | SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    chapter?: SortOrderInput | SortOrder
     status?: SortOrder
     activeProposals?: SortOrder
     contactCount?: SortOrder
@@ -10537,13 +10608,15 @@ export namespace Prisma {
     NOT?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Company"> | string
     name?: StringWithAggregatesFilter<"Company"> | string
-    category?: StringWithAggregatesFilter<"Company"> | string
-    location?: StringWithAggregatesFilter<"Company"> | string
-    phone?: StringWithAggregatesFilter<"Company"> | string
-    email?: StringWithAggregatesFilter<"Company"> | string
+    category?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    location?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    email?: StringNullableWithAggregatesFilter<"Company"> | string | null
     website?: StringNullableWithAggregatesFilter<"Company"> | string | null
     domain?: StringNullableWithAggregatesFilter<"Company"> | string | null
     taxId?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    logoUrl?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    chapter?: StringNullableWithAggregatesFilter<"Company"> | string | null
     status?: StringWithAggregatesFilter<"Company"> | string
     activeProposals?: IntWithAggregatesFilter<"Company"> | number
     contactCount?: IntWithAggregatesFilter<"Company"> | number
@@ -10636,7 +10709,6 @@ export namespace Prisma {
     companyId?: StringFilter<"Activity"> | string
     contactId?: StringNullableFilter<"Activity"> | string | null
     userId?: StringFilter<"Activity"> | string
-    userName?: StringFilter<"Activity"> | string
     type?: StringFilter<"Activity"> | string
     status?: StringFilter<"Activity"> | string
     notes?: StringNullableFilter<"Activity"> | string | null
@@ -10654,7 +10726,6 @@ export namespace Prisma {
     companyId?: SortOrder
     contactId?: SortOrderInput | SortOrder
     userId?: SortOrder
-    userName?: SortOrder
     type?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
@@ -10675,7 +10746,6 @@ export namespace Prisma {
     companyId?: StringFilter<"Activity"> | string
     contactId?: StringNullableFilter<"Activity"> | string | null
     userId?: StringFilter<"Activity"> | string
-    userName?: StringFilter<"Activity"> | string
     type?: StringFilter<"Activity"> | string
     status?: StringFilter<"Activity"> | string
     notes?: StringNullableFilter<"Activity"> | string | null
@@ -10693,7 +10763,6 @@ export namespace Prisma {
     companyId?: SortOrder
     contactId?: SortOrderInput | SortOrder
     userId?: SortOrder
-    userName?: SortOrder
     type?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
@@ -10713,7 +10782,6 @@ export namespace Prisma {
     companyId?: StringWithAggregatesFilter<"Activity"> | string
     contactId?: StringNullableWithAggregatesFilter<"Activity"> | string | null
     userId?: StringWithAggregatesFilter<"Activity"> | string
-    userName?: StringWithAggregatesFilter<"Activity"> | string
     type?: StringWithAggregatesFilter<"Activity"> | string
     status?: StringWithAggregatesFilter<"Activity"> | string
     notes?: StringNullableWithAggregatesFilter<"Activity"> | string | null
@@ -11067,9 +11135,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     managedCompanies?: CompanyCreateNestedManyWithoutManagersInput
@@ -11080,9 +11151,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     managedCompanies?: CompanyUncheckedCreateNestedManyWithoutManagersInput
@@ -11093,9 +11167,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     managedCompanies?: CompanyUpdateManyWithoutManagersNestedInput
@@ -11106,9 +11183,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     managedCompanies?: CompanyUncheckedUpdateManyWithoutManagersNestedInput
@@ -11119,9 +11199,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
   }
@@ -11130,9 +11213,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11141,9 +11227,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11151,14 +11240,16 @@ export namespace Prisma {
   export type CompanyCreateInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -11173,14 +11264,16 @@ export namespace Prisma {
   export type CompanyUncheckedCreateInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -11195,13 +11288,15 @@ export namespace Prisma {
   export type CompanyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -11217,13 +11312,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -11239,14 +11336,16 @@ export namespace Prisma {
   export type CompanyCreateManyInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -11257,13 +11356,15 @@ export namespace Prisma {
   export type CompanyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -11275,13 +11376,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -11376,9 +11479,8 @@ export namespace Prisma {
 
   export type ActivityCreateInput = {
     id?: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -11394,9 +11496,8 @@ export namespace Prisma {
     companyId: string
     contactId?: string | null
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -11406,7 +11507,6 @@ export namespace Prisma {
 
   export type ActivityUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11424,7 +11524,6 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11439,9 +11538,8 @@ export namespace Prisma {
     companyId: string
     contactId?: string | null
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -11450,7 +11548,6 @@ export namespace Prisma {
 
   export type ActivityUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11464,7 +11561,6 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11916,9 +12012,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    password?: SortOrder
     role?: SortOrder
     avatar?: SortOrder
     branchId?: SortOrder
+    chapter?: SortOrder
+    status?: SortOrder
     teamId?: SortOrder
     createdAt?: SortOrder
   }
@@ -11927,9 +12026,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    password?: SortOrder
     role?: SortOrder
     avatar?: SortOrder
     branchId?: SortOrder
+    chapter?: SortOrder
+    status?: SortOrder
     teamId?: SortOrder
     createdAt?: SortOrder
   }
@@ -11938,9 +12040,12 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    password?: SortOrder
     role?: SortOrder
     avatar?: SortOrder
     branchId?: SortOrder
+    chapter?: SortOrder
+    status?: SortOrder
     teamId?: SortOrder
     createdAt?: SortOrder
   }
@@ -12044,6 +12149,8 @@ export namespace Prisma {
     website?: SortOrder
     domain?: SortOrder
     taxId?: SortOrder
+    logoUrl?: SortOrder
+    chapter?: SortOrder
     status?: SortOrder
     activeProposals?: SortOrder
     contactCount?: SortOrder
@@ -12067,6 +12174,8 @@ export namespace Prisma {
     website?: SortOrder
     domain?: SortOrder
     taxId?: SortOrder
+    logoUrl?: SortOrder
+    chapter?: SortOrder
     status?: SortOrder
     activeProposals?: SortOrder
     contactCount?: SortOrder
@@ -12085,6 +12194,8 @@ export namespace Prisma {
     website?: SortOrder
     domain?: SortOrder
     taxId?: SortOrder
+    logoUrl?: SortOrder
+    chapter?: SortOrder
     status?: SortOrder
     activeProposals?: SortOrder
     contactCount?: SortOrder
@@ -12201,7 +12312,6 @@ export namespace Prisma {
     companyId?: SortOrder
     contactId?: SortOrder
     userId?: SortOrder
-    userName?: SortOrder
     type?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -12215,7 +12325,6 @@ export namespace Prisma {
     companyId?: SortOrder
     contactId?: SortOrder
     userId?: SortOrder
-    userName?: SortOrder
     type?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -12229,7 +12338,6 @@ export namespace Prisma {
     companyId?: SortOrder
     contactId?: SortOrder
     userId?: SortOrder
-    userName?: SortOrder
     type?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -13157,14 +13265,16 @@ export namespace Prisma {
   export type CompanyCreateWithoutManagersInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13178,14 +13288,16 @@ export namespace Prisma {
   export type CompanyUncheckedCreateWithoutManagersInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13203,9 +13315,8 @@ export namespace Prisma {
 
   export type ActivityCreateWithoutUserInput = {
     id?: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13219,9 +13330,8 @@ export namespace Prisma {
     id?: string
     companyId: string
     contactId?: string | null
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13260,13 +13370,15 @@ export namespace Prisma {
     NOT?: CompanyScalarWhereInput | CompanyScalarWhereInput[]
     id?: StringFilter<"Company"> | string
     name?: StringFilter<"Company"> | string
-    category?: StringFilter<"Company"> | string
-    location?: StringFilter<"Company"> | string
-    phone?: StringFilter<"Company"> | string
-    email?: StringFilter<"Company"> | string
+    category?: StringNullableFilter<"Company"> | string | null
+    location?: StringNullableFilter<"Company"> | string | null
+    phone?: StringNullableFilter<"Company"> | string | null
+    email?: StringNullableFilter<"Company"> | string | null
     website?: StringNullableFilter<"Company"> | string | null
     domain?: StringNullableFilter<"Company"> | string | null
     taxId?: StringNullableFilter<"Company"> | string | null
+    logoUrl?: StringNullableFilter<"Company"> | string | null
+    chapter?: StringNullableFilter<"Company"> | string | null
     status?: StringFilter<"Company"> | string
     activeProposals?: IntFilter<"Company"> | number
     contactCount?: IntFilter<"Company"> | number
@@ -13299,7 +13411,6 @@ export namespace Prisma {
     companyId?: StringFilter<"Activity"> | string
     contactId?: StringNullableFilter<"Activity"> | string | null
     userId?: StringFilter<"Activity"> | string
-    userName?: StringFilter<"Activity"> | string
     type?: StringFilter<"Activity"> | string
     status?: StringFilter<"Activity"> | string
     notes?: StringNullableFilter<"Activity"> | string | null
@@ -13312,9 +13423,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     activities?: ActivityCreateNestedManyWithoutUserInput
@@ -13324,9 +13438,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -13372,9 +13489,8 @@ export namespace Prisma {
 
   export type ActivityCreateWithoutCompanyInput = {
     id?: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13388,9 +13504,8 @@ export namespace Prisma {
     id?: string
     contactId?: string | null
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13471,9 +13586,12 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     branchId?: StringNullableFilter<"User"> | string | null
+    chapter?: StringNullableFilter<"User"> | string | null
+    status?: StringFilter<"User"> | string
     teamId?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
   }
@@ -13563,14 +13681,16 @@ export namespace Prisma {
   export type CompanyCreateWithoutContactsInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13584,14 +13704,16 @@ export namespace Prisma {
   export type CompanyUncheckedCreateWithoutContactsInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13609,9 +13731,8 @@ export namespace Prisma {
 
   export type ActivityCreateWithoutContactInput = {
     id?: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13625,9 +13746,8 @@ export namespace Prisma {
     id?: string
     companyId: string
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -13699,13 +13819,15 @@ export namespace Prisma {
   export type CompanyUpdateWithoutContactsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -13720,13 +13842,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateWithoutContactsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -13796,14 +13920,16 @@ export namespace Prisma {
   export type CompanyCreateWithoutActivitiesInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13817,14 +13943,16 @@ export namespace Prisma {
   export type CompanyUncheckedCreateWithoutActivitiesInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -13873,9 +14001,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     managedCompanies?: CompanyCreateNestedManyWithoutManagersInput
@@ -13885,9 +14016,12 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
+    password?: string | null
     role: string
     avatar?: string | null
     branchId?: string | null
+    chapter?: string | null
+    status?: string
     teamId?: string | null
     createdAt?: Date | string
     managedCompanies?: CompanyUncheckedCreateNestedManyWithoutManagersInput
@@ -13939,13 +14073,15 @@ export namespace Prisma {
   export type CompanyUpdateWithoutActivitiesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -13960,13 +14096,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateWithoutActivitiesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14028,9 +14166,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     managedCompanies?: CompanyUpdateManyWithoutManagersNestedInput
@@ -14040,9 +14181,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     managedCompanies?: CompanyUncheckedUpdateManyWithoutManagersNestedInput
@@ -14050,9 +14194,8 @@ export namespace Prisma {
 
   export type ActivityCreateWithoutCommentsInput = {
     id?: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -14067,9 +14210,8 @@ export namespace Prisma {
     companyId: string
     contactId?: string | null
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -14094,7 +14236,6 @@ export namespace Prisma {
 
   export type ActivityUpdateWithoutCommentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14111,7 +14252,6 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14123,14 +14263,16 @@ export namespace Prisma {
   export type CompanyCreateWithoutProposalsInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -14144,14 +14286,16 @@ export namespace Prisma {
   export type CompanyUncheckedCreateWithoutProposalsInput = {
     id?: string
     name: string
-    category: string
-    location: string
-    phone: string
-    email: string
+    category?: string | null
+    location?: string | null
+    phone?: string | null
+    email?: string | null
     website?: string | null
     domain?: string | null
     taxId?: string | null
-    status: string
+    logoUrl?: string | null
+    chapter?: string | null
+    status?: string
     activeProposals?: number
     contactCount?: number
     notes?: string | null
@@ -14210,13 +14354,15 @@ export namespace Prisma {
   export type CompanyUpdateWithoutProposalsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14231,13 +14377,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateWithoutProposalsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14288,9 +14436,8 @@ export namespace Prisma {
     id?: string
     companyId: string
     contactId?: string | null
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -14300,13 +14447,15 @@ export namespace Prisma {
   export type CompanyUpdateWithoutManagersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14321,13 +14470,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateWithoutManagersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14342,13 +14493,15 @@ export namespace Prisma {
   export type CompanyUncheckedUpdateManyWithoutManagersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    location?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     taxId?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     activeProposals?: IntFieldUpdateOperationsInput | number
     contactCount?: IntFieldUpdateOperationsInput | number
@@ -14359,7 +14512,6 @@ export namespace Prisma {
 
   export type ActivityUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14375,7 +14527,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14389,7 +14540,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14412,9 +14562,8 @@ export namespace Prisma {
     id?: string
     contactId?: string | null
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -14441,9 +14590,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ActivityUpdateManyWithoutUserNestedInput
@@ -14453,9 +14605,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -14465,9 +14620,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     branchId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapter?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14508,7 +14666,6 @@ export namespace Prisma {
 
   export type ActivityUpdateWithoutCompanyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14524,7 +14681,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14538,7 +14694,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     contactId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14599,9 +14754,8 @@ export namespace Prisma {
     id?: string
     companyId: string
     userId: string
-    userName: string
     type: string
-    status: string
+    status?: string
     notes?: string | null
     scheduledAt?: Date | string | null
     completedAt?: Date | string | null
@@ -14626,7 +14780,6 @@ export namespace Prisma {
 
   export type ActivityUpdateWithoutContactInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14642,7 +14795,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14656,7 +14808,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    userName?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null

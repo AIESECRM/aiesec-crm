@@ -5,25 +5,27 @@ export async function verifyCompanyAccess(userId: string, companyId: string): Pr
         const dbUser = await prisma.user.findUnique({ where: { id: userId } });
         if (!dbUser) return false;
 
-        // MCP and MCVP can access all companies
-        if (dbUser.role === 'MCP' || dbUser.role === 'MCVP') return true;
+        // MCP, MCVP and ADMIN can access all companies
+        if (['MCP', 'MCVP', 'ADMIN'].includes(dbUser.role)) return true;
 
-        let whereClause: any = { id: companyId };
-
-        if (dbUser.role === 'TeamMember') {
-            whereClause.managers = { some: { id: dbUser.id } };
-        } else if (dbUser.role === 'LCP' || dbUser.role === 'LCVP') {
-            whereClause.managers = { some: { branchId: dbUser.branchId } };
-        } else if (dbUser.role === 'TeamLeader') {
-            whereClause.managers = { some: { teamId: dbUser.teamId } };
-        }
-
-        const company = await prisma.company.findFirst({
-            where: whereClause,
-            select: { id: true }
+        const company = await prisma.company.findUnique({
+            where: { id: companyId },
+            include: { managers: { select: { id: true } } }
         });
 
-        return !!company;
+        if (!company) return false;
+
+        // Chapter check for regional roles
+        if (['LCP', 'LCVP', 'TL'].includes(dbUser.role)) {
+            return company.chapter === dbUser.chapter;
+        }
+
+        // TM check (must be an assigned manager)
+        if (dbUser.role === 'TM') {
+            return company.managers.some(m => m.id === dbUser.id);
+        }
+
+        return false;
     } catch (error) {
         console.error('Authorization Error (verifyCompanyAccess):', error);
         return false;
@@ -32,8 +34,12 @@ export async function verifyCompanyAccess(userId: string, companyId: string): Pr
 
 export async function verifyActivityAccess(userId: string, activityId: string): Promise<boolean> {
     try {
-        const activity = await prisma.activity.findUnique({ where: { id: activityId }, select: { companyId: true } });
+        const activity = await prisma.activity.findUnique({ where: { id: activityId }, select: { companyId: true, userId: true } });
         if (!activity) return false;
+
+        // Activity owner always has access
+        if (activity.userId === userId) return true;
+
         return verifyCompanyAccess(userId, activity.companyId);
     } catch (error) {
         console.error('Authorization Error (verifyActivityAccess):', error);
@@ -43,8 +49,12 @@ export async function verifyActivityAccess(userId: string, activityId: string): 
 
 export async function verifyProposalAccess(userId: string, proposalId: string): Promise<boolean> {
     try {
-        const proposal = await prisma.proposal.findUnique({ where: { id: proposalId }, select: { companyId: true } });
+        const proposal = await prisma.proposal.findUnique({ where: { id: proposalId }, select: { companyId: true, ownerId: true } });
         if (!proposal) return false;
+
+        // Proposal owner always has access
+        if (proposal.ownerId === userId) return true;
+
         return verifyCompanyAccess(userId, proposal.companyId);
     } catch (error) {
         console.error('Authorization Error (verifyProposalAccess):', error);

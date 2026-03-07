@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../prisma/generated/client'
+import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as {
   prismaGlobal: PrismaClient | undefined;
@@ -10,7 +10,7 @@ const prismaClientSingleton = () => {
   })
 }
 
-const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton()
+export const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton()
 
 export default prisma
 

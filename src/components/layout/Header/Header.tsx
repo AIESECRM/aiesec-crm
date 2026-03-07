@@ -1,41 +1,25 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Search, 
-  Bell, 
-  User, 
-  ChevronDown, 
-  Building2, 
-  DollarSign, 
-  X, 
-<<<<<<< HEAD
-  Check, 
-=======
->>>>>>> ortak-repo/main
+import {
+  Search,
+  Bell,
+  User,
+  ChevronDown,
+  Building2,
+  DollarSign,
+  X,
   Clock,
   MessageSquare,
   UserPlus,
   FileText,
-<<<<<<< HEAD
-  AlertCircle,
-=======
->>>>>>> ortak-repo/main
   CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
-<<<<<<< HEAD
-import { UserRole } from '@/types';
 import ProfileModal from '@/components/common/ProfileModal/ProfileModal';
 import './Header.css';
 
-// Mock notifications data
-=======
-import ProfileModal from '@/components/common/ProfileModal/ProfileModal';
-import './Header.css';
-
->>>>>>> ortak-repo/main
 interface Notification {
   id: string;
   type: 'deal' | 'activity' | 'mention' | 'assignment' | 'system';
@@ -43,10 +27,6 @@ interface Notification {
   message: string;
   time: string;
   read: boolean;
-<<<<<<< HEAD
-  actionUrl?: string;
-=======
->>>>>>> ortak-repo/main
 }
 
 const mockNotifications: Notification[] = [
@@ -100,22 +80,14 @@ const notificationIcons: Record<string, React.ReactNode> = {
   system: <FileText />,
 };
 
-<<<<<<< HEAD
-const roleLabels: Record<UserRole, string> = {
-=======
 const roleLabels: Record<string, string> = {
->>>>>>> ortak-repo/main
   MCP: 'MCP',
   MCVP: 'MCVP',
   LCP: 'LCP',
   LCVP: 'LCVP',
-<<<<<<< HEAD
-  TeamLeader: 'Team Leader',
-  TeamMember: 'Takım Üyesi',
-=======
   TL: 'Team Leader',
   TM: 'Takım Üyesi',
->>>>>>> ortak-repo/main
+  ADMIN: 'Admin',
 };
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -133,11 +105,7 @@ const typeLabels: Record<string, string> = {
 };
 
 export default function Header() {
-<<<<<<< HEAD
-  const { user } = useAuth();
-=======
   const { user, status } = useAuth();
->>>>>>> ortak-repo/main
   const { query, setQuery, results, placeholder, clearSearch, navigateToResult } = useSearch();
   const [showResults, setShowResults] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -146,16 +114,9 @@ export default function Header() {
   const searchRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-<<<<<<< HEAD
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  // Close dropdowns when clicking outside
-=======
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
->>>>>>> ortak-repo/main
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -165,29 +126,14 @@ export default function Header() {
         setShowNotifications(false);
       }
     };
-<<<<<<< HEAD
-
-=======
->>>>>>> ortak-repo/main
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-<<<<<<< HEAD
-  // Show results when query changes
-  useEffect(() => {
-    if (query.length >= 2) {
-      setShowResults(true);
-    }
-  }, [query]);
-
-  // Handle keyboard navigation
-=======
   useEffect(() => {
     if (query.length >= 2) setShowResults(true);
   }, [query]);
 
->>>>>>> ortak-repo/main
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setShowResults(false);
@@ -205,24 +151,15 @@ export default function Header() {
   };
 
   const markAsRead = (id: string) => {
-<<<<<<< HEAD
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-=======
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
->>>>>>> ortak-repo/main
   };
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-<<<<<<< HEAD
-=======
-  if (status === 'loading' || !user) return null;
+  if (status === 'loading') return null;
 
->>>>>>> ortak-repo/main
   return (
     <header className="header">
       <div className="header__search" ref={searchRef}>
@@ -239,26 +176,12 @@ export default function Header() {
             onKeyDown={handleKeyDown}
           />
           {query && (
-<<<<<<< HEAD
-            <button 
-              className="header__search-clear"
-              onClick={() => {
-                clearSearch();
-                setShowResults(false);
-              }}
-            >
-=======
             <button className="header__search-clear" onClick={() => { clearSearch(); setShowResults(false); }}>
->>>>>>> ortak-repo/main
               <X />
             </button>
           )}
         </div>
 
-<<<<<<< HEAD
-        {/* Search Results Dropdown */}
-=======
->>>>>>> ortak-repo/main
         {showResults && query.length >= 2 && (
           <div className="header__search-results">
             {results.length > 0 ? (
@@ -296,14 +219,7 @@ export default function Header() {
 
       <div className="header__actions">
         <div className="header__notification-wrapper" ref={notificationRef}>
-<<<<<<< HEAD
-          <button 
-            className="header__notification"
-            onClick={() => setShowNotifications(!showNotifications)}
-          >
-=======
           <button className="header__notification" onClick={() => setShowNotifications(!showNotifications)}>
->>>>>>> ortak-repo/main
             <Bell className="header__notification-icon" />
             {unreadCount > 0 && (
               <span className="header__notification-badge">{unreadCount}</span>
@@ -311,10 +227,6 @@ export default function Header() {
             <span className="header__notification-text">{unreadCount} Yeni Bildirim</span>
           </button>
 
-<<<<<<< HEAD
-          {/* Notifications Dropdown */}
-=======
->>>>>>> ortak-repo/main
           {showNotifications && (
             <div className="header__notifications-dropdown">
               <div className="header__notifications-header">
@@ -326,14 +238,7 @@ export default function Header() {
                   )}
                 </div>
                 {unreadCount > 0 && (
-<<<<<<< HEAD
-                  <button 
-                    className="header__notifications-mark-all"
-                    onClick={markAllAsRead}
-                  >
-=======
                   <button className="header__notifications-mark-all" onClick={markAllAsRead}>
->>>>>>> ortak-repo/main
                     <CheckCircle2 />
                     Tümünü Okundu İşaretle
                   </button>
@@ -341,43 +246,6 @@ export default function Header() {
               </div>
 
               <div className="header__notifications-list">
-<<<<<<< HEAD
-                {notifications.length > 0 ? (
-                  notifications.map((notification) => (
-                    <div 
-                      key={notification.id}
-                      className={`header__notification-item ${!notification.read ? 'header__notification-item--unread' : ''}`}
-                      onClick={() => markAsRead(notification.id)}
-                    >
-                      <div className={`header__notification-item-icon header__notification-item-icon--${notification.type}`}>
-                        {notificationIcons[notification.type]}
-                      </div>
-                      <div className="header__notification-item-content">
-                        <div className="header__notification-item-header">
-                          <span className="header__notification-item-title">{notification.title}</span>
-                          {!notification.read && (
-                            <span className="header__notification-item-dot" />
-                          )}
-                        </div>
-                        <p className="header__notification-item-message">{notification.message}</p>
-                        <span className="header__notification-item-time">{notification.time}</span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="header__notifications-empty">
-                    <Bell className="header__notifications-empty-icon" />
-                    <span>Bildirim yok</span>
-                    <span className="header__notifications-empty-hint">Yeni bildirimler burada görünecek</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="header__notifications-footer">
-                <button className="header__notifications-view-all">
-                  Tüm Bildirimleri Gör
-                </button>
-=======
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
@@ -401,7 +269,6 @@ export default function Header() {
 
               <div className="header__notifications-footer">
                 <button className="header__notifications-view-all">Tüm Bildirimleri Gör</button>
->>>>>>> ortak-repo/main
               </div>
             </div>
           )}
@@ -409,33 +276,22 @@ export default function Header() {
 
         <div className="header__divider" />
 
-        <div className="header__user" onClick={() => setShowProfileModal(true)}>
-          <div className="header__user-info">
-            <span className="header__user-greeting">
-              Merhaba, <span className="header__user-name">{user.name}</span>
-            </span>
-<<<<<<< HEAD
-            <span className="header__user-role">{roleLabels[user.role]}</span>
-=======
-            <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
->>>>>>> ortak-repo/main
+        {user && (
+          <div className="header__user" onClick={() => setShowProfileModal(true)}>
+            <div className="header__user-info">
+              <span className="header__user-greeting">
+                Merhaba, <span className="header__user-name">{user.name}</span>
+              </span>
+              <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
+            </div>
+            <div className="header__user-avatar">
+              <User className="header__user-avatar-icon" />
+            </div>
+            <ChevronDown className="header__dropdown-icon" />
           </div>
-          <div className="header__user-avatar">
-            <User className="header__user-avatar-icon" />
-          </div>
-          <ChevronDown className="header__dropdown-icon" />
-        </div>
+        )}
       </div>
 
-<<<<<<< HEAD
-      <ProfileModal 
-        isOpen={showProfileModal} 
-        onClose={() => setShowProfileModal(false)} 
-      />
-    </header>
-  );
-}
-=======
       <ProfileModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
@@ -443,4 +299,3 @@ export default function Header() {
     </header>
   );
 }
->>>>>>> ortak-repo/main
