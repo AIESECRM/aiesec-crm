@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationCode } from "@/lib/mail";
 import bcrypt from "bcryptjs";
-import type { UserStatus } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -71,10 +70,6 @@ export async function POST(req: NextRequest) {
       const { name, email: userEmail, password, role, chapter, phone } = stored.data;
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // ADMIN rolleri direkt PENDING, onay admin panelinden gelecek
-      // TM/TL de PENDING, onay LCVP/LCP'den gelecek
-      const status = "PENDING";
-
       const user = await prisma.user.create({
         data: {
           name,
@@ -82,9 +77,7 @@ export async function POST(req: NextRequest) {
           password: hashedPassword,
           role: role || "TM",
           chapter: chapter || null,
-          status: "PENDING" as UserStatus,
-          createdAt: Math.floor(Date.now() / 1000),
-          updatedAt: Math.floor(Date.now() / 1000),
+          status: "PENDING",
         },
       });
 

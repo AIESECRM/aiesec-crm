@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const NATIONAL_ROLES = ["MCP", "MCVP", "ADMIN"];
-const DAY = 86400;
 
 const CHAPTERS = [
     "ADANA", "ANKARA", "ANTALYA", "BURSA", "DENIZLI", "DOGU_AKDENIZ",
@@ -34,9 +33,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const chapterFilter = searchParams.get("chapter") || "";
 
-    const now = Math.floor(Date.now() / 1000);
-    const oneWeekAgo = now - 7 * DAY;
-    const twoWeeksAgo = now - 14 * DAY;
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
     // Fetch all data
     const [allCompaniesRaw, allActivitiesRaw, allOffersRaw, allUsersRaw] = await Promise.all([
@@ -74,8 +73,11 @@ export async function GET(req: NextRequest) {
     const newOpenOffers = allOffers.filter((o: any) => o.openStatus === "NEW_OPEN").length;
     const reOpenOffers = allOffers.filter((o: any) => o.openStatus === "RE_OPEN").length;
 
-    const thisWeekActivities = allActivities.filter((a: any) => a.date >= oneWeekAgo).length;
-    const lastWeekActivities = allActivities.filter((a: any) => a.date >= twoWeeksAgo && a.date < oneWeekAgo).length;
+    const thisWeekActivities = allActivities.filter((a: any) => new Date(a.createdAt) >= oneWeekAgo).length;
+    const lastWeekActivities = allActivities.filter((a: any) => {
+        const d = new Date(a.createdAt);
+        return d >= twoWeeksAgo && d < oneWeekAgo;
+    }).length;
     const activityTrend = lastWeekActivities > 0 ? Math.round(((thisWeekActivities - lastWeekActivities) / lastWeekActivities) * 100) : 0;
 
     const totalColdCalls = allActivities.filter((a: any) => a.type === "COLD_CALL").length;
@@ -145,14 +147,16 @@ export async function GET(req: NextRequest) {
         { product: "GTE", label: "Global Teacher", count: allOffers.filter((o: any) => o.product === "GTE").length, value: allOffers.filter((o: any) => o.product === "GTE").reduce((s: number, o: any) => s + (o.value || 0), 0), color: "#8B5CF6" },
     ];
 
-    // --- Weekly Trend (8 weeks, bar chart data) ---
+    // --- Weekly Trend (8 weeks) ---
     const weeklyTrend = [];
     for (let w = 7; w >= 0; w--) {
-        const weekStart = now - (w + 1) * 7 * DAY;
-        const weekEnd = now - w * 7 * DAY;
-        const weekActs = allActivities.filter((a: any) => a.date >= weekStart && a.date < weekEnd);
-        const d = new Date(weekStart * 1000);
-        const label = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+        const weekStart = new Date(now.getTime() - (w + 1) * 7 * 24 * 60 * 60 * 1000);
+        const weekEnd = new Date(now.getTime() - w * 7 * 24 * 60 * 60 * 1000);
+        const weekActs = allActivities.filter((a: any) => {
+            const d = new Date(a.createdAt);
+            return d >= weekStart && d < weekEnd;
+        });
+        const label = `${weekStart.getDate().toString().padStart(2, '0')}/${(weekStart.getMonth() + 1).toString().padStart(2, '0')}`;
 
         weeklyTrend.push({
             week: label,

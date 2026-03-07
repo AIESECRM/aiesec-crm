@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  ListTodo, 
-  Filter, 
-  Phone, 
-  Clock, 
-  MessageSquare, 
+import {
+  ListTodo,
+  Filter,
+  Phone,
+  Clock,
+  MessageSquare,
   Mail,
   Building2,
   User,
@@ -34,6 +34,9 @@ const activityTypeLabels: Record<ActivityType, string> = {
   FOLLOW_UP: 'Takip',
   MEETING: 'Görüşme',
   EMAIL: 'Email',
+  TASK: 'Görev',
+  PROPOSAL: 'Teklif',
+  POSTPONED: 'Ertelendi'
 };
 
 const CHAPTER_LABELS: Record<string, string> = {
@@ -110,7 +113,7 @@ export default function ActivitiesPage() {
       body: JSON.stringify({
         type: selectedType,
         note: notes,
-        companyId: Number(selectedCompanyId),
+        companyId: selectedCompanyId,
         date: new Date().toISOString(),
       }),
     });
@@ -273,9 +276,9 @@ export default function ActivitiesPage() {
                       </span>
                     </td>
                     <td className="activity-log__date">
-                      {new Date(activity.date * 1000).toLocaleDateString('tr-TR')}
+                      {activity.createdAt ? new Date(activity.createdAt).toLocaleDateString('tr-TR') : '—'}
                     </td>
-                    <td className="activity-log__note">{activity.note || '—'}</td>
+                    <td className="activity-log__note">{activity.notes || '—'}</td>
                     <td className="activity-log__actions">
                       <div className="activity-log__menu-wrapper" ref={openMenuId === String(activity.id) ? menuRef : null}>
                         <button className="activity-log__action-btn" onClick={() => setOpenMenuId(openMenuId === String(activity.id) ? null : String(activity.id))}>
@@ -350,11 +353,11 @@ export default function ActivitiesPage() {
               </div>
               <div className="activity-modal__row">
                 <span className="activity-modal__label">Tarih</span>
-                <span className="activity-modal__value">{new Date(detailModal.activity.date * 1000).toLocaleDateString('tr-TR')}</span>
+                <span className="activity-modal__value">{detailModal.activity.createdAt ? new Date(detailModal.activity.createdAt).toLocaleDateString('tr-TR') : '—'}</span>
               </div>
               <div className="activity-modal__row">
                 <span className="activity-modal__label">Not</span>
-                <span className="activity-modal__value">{detailModal.activity.note || '—'}</span>
+                <span className="activity-modal__value">{detailModal.activity.notes || '—'}</span>
               </div>
             </div>
             <div className="activity-modal__actions">
