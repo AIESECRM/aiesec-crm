@@ -10,9 +10,6 @@
   flex-direction: column;
   z-index: 100;
   transition: width var(--transition-normal);
-  border-bottom-right-radius: 10px;
-  border-top-right-radius: 10px;
-  margin-block: 1em;
 }
 
 .sidebar__logo {
@@ -278,7 +275,7 @@
     display: flex;
   }
 
-  .sidebar--open + .sidebar__overlay {
+  .sidebar--open+.sidebar__overlay {
     display: block;
   }
 
