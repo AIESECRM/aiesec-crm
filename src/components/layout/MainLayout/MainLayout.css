@@ -4,7 +4,6 @@
 }
 
 .main-layout__content {
-    border-top-left-radius: 15px !important;
   margin-left: var(--sidebar-width);
   padding-top: var(--header-height);
   min-height: 100vh;
