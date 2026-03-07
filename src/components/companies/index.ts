@@ -1,2 +1,2 @@
-export { default as CompanyCard } from './CompanyCard';
-export { default as CompanySidebar } from './CompanySidebar';
+export { default as CompanyCard } from './CompanyCard/CompanyCard';
+export { default as CompanySidebar } from './CompanySidebar/CompanySidebar';

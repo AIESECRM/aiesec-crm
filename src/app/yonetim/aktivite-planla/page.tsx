@@ -1,0 +1,206 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { CalendarPlus, Save } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { ActivityType, Company, User } from '@/types';
+
+export default function AktivitePlanlaPage() {
+    const { user } = useAuth();
+
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
+    const [selectedManagerId, setSelectedManagerId] = useState<string>('');
+    const [date, setDate] = useState<string>('');
+    const [time, setTime] = useState<string>('');
+    const [type, setType] = useState<ActivityType>('COLD_CALL');
+    const [notes, setNotes] = useState<string>('');
+
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadData() {
+            setIsLoading(true);
+            if (!user) return;
+            try {
+                const [companiesRes, usersRes] = await Promise.all([
+                    fetch('/api/companies'),
+                    fetch('/api/admin/users')
+                ]);
+                const companiesData = await companiesRes.json();
+                const usersData = await usersRes.json();
+
+                setCompanies(companiesData.companies || []);
+                setUsers(usersData.users || []);
+            } catch (err) {
+                console.error(err);
+            }
+            setIsLoading(false);
+        }
+        loadData();
+    }, [user]);
+
+    // When company changes, try to default manager
+    useEffect(() => {
+        if (selectedCompanyId && companies.length > 0) {
+            const comp = companies.find(c => c.id === selectedCompanyId);
+            if (comp && comp.assignedManagerIds?.length > 0) {
+                setSelectedManagerId(comp.assignedManagerIds[0]); // default to first manager
+            } else if (user) {
+                setSelectedManagerId(user.id);
+            }
+        }
+    }, [selectedCompanyId, user, companies]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedCompanyId || !selectedManagerId || !date || !time) {
+            alert('Lütfen gerekli tüm alanları doldurun.');
+            return;
+        }
+
+        const res = await fetch('/api/activities', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                companyId: selectedCompanyId,
+                userId: selectedManagerId,
+                type: type,
+                notes: notes,
+                scheduledAt: `${date}T${time}:00`
+            })
+        });
+
+        if (res.ok) {
+            alert('Aktivite başarıyla planlandı!');
+            // Reset form
+            setSelectedCompanyId('');
+            setSelectedManagerId('');
+            setDate('');
+            setTime('');
+            setType('COLD_CALL');
+            setNotes('');
+        } else {
+            alert('Bir hata oluştu.');
+        }
+    };
+
+    return (
+        <div style={{ maxWidth: '600px', padding: '24px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+                <CalendarPlus size={24} />
+                Ek Aktivite Planla
+            </h2>
+
+            {isLoading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Yükleniyor...</div>
+            ) : (
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Şirket Seçimi</label>
+                        <select
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            value={selectedCompanyId}
+                            onChange={(e) => setSelectedCompanyId(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>Şirket Seç...</option>
+                            {companies.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Menajer / Yetkili</label>
+                        <select
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            value={selectedManagerId}
+                            onChange={(e) => setSelectedManagerId(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>Menajer Seç...</option>
+                            {users.map(u => (
+                                <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Tarih</label>
+                            <input
+                                type="date"
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Saat</label>
+                            <input
+                                type="time"
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Aktivite Tipi</label>
+                        <select
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            value={type}
+                            onChange={(e) => setType(e.target.value as ActivityType)}
+                        >
+                            <option value="COLD_CALL">Cold Call</option>
+                            <option value="MEETING">Toplantı</option>
+                            <option value="EMAIL">E-posta</option>
+                            <option value="TASK">Görev</option>
+                            <option value="PROPOSAL">Teklif İletimi</option>
+                            <option value="POSTPONED">Ertelenmiş İşlem</option>
+                            <option value="FOLLOW_UP">Takip</option>
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Notlar</label>
+                        <textarea
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', minHeight: '100px' }}
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Aktivite detayları..."
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        style={{
+                            padding: '12px',
+                            backgroundColor: '#2563eb',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: '600',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        <Save size={18} /> Planla ve Bildir
+                    </button>
+
+                </form>
+            )}
+        </div>
+    );
+}
