@@ -4,15 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
-import {
-  Home,
-  Building2,
-  Users,
+import { 
+  Home, 
+  Building2, 
+  Users, 
   DollarSign,
   ListTodo,
   Menu,
   X,
-  Settings,
   LogOut
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,7 +19,7 @@ import './Sidebar.css';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { user, permissions, isAdmin, status } = useAuth();
+  const { user, permissions, status } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export default function Sidebar() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
-  if (status === 'loading') return null;
+  if (status === 'loading' || !user) return null;
 
   const navItems = [
     {
@@ -68,12 +67,6 @@ export default function Sidebar() {
       icon: <ListTodo className="sidebar__nav-icon" />,
       show: true,
     },
-    {
-      href: '/yonetim',
-      label: 'Yönetim Paneli',
-      icon: <Settings className="sidebar__nav-icon" />,
-      show: isAdmin,
-    },
   ];
 
   const isActive = (href: string) => {
@@ -88,7 +81,6 @@ export default function Sidebar() {
     LCP: 'LCP',
     MCVP: 'MCVP',
     MCP: 'MCP',
-    ADMIN: 'Admin',
   };
 
   return (
@@ -131,21 +123,19 @@ export default function Sidebar() {
           </ul>
         </nav>
 
-        {user && (
-          <div className="sidebar__footer">
-            <div className="sidebar__user-info">
-              <div className="sidebar__user-name">{user.name}</div>
-              <div className="sidebar__user-role">{ROLE_LABELS[user.role] || user.role}</div>
-            </div>
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="sidebar__logout-btn"
-            >
-              <LogOut size={16} />
-              <span>Çıkış Yap</span>
-            </button>
+        <div className="sidebar__footer">
+          <div className="sidebar__user-info">
+            <div className="sidebar__user-name">{user.name}</div>
+            <div className="sidebar__user-role">{ROLE_LABELS[user.role] || user.role}</div>
           </div>
-        )}
+          <button
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            className="sidebar__logout-btn"
+          >
+            <LogOut size={16} />
+            <span>Çıkış Yap</span>
+          </button>
+        </div>
       </aside>
 
       {isMobileOpen && (

@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Search,
-  Bell,
-  User,
-  ChevronDown,
-  Building2,
-  DollarSign,
-  X,
+import { 
+  Search, 
+  Bell, 
+  User, 
+  ChevronDown, 
+  Building2, 
+  DollarSign, 
+  X, 
   Clock,
   MessageSquare,
   UserPlus,
@@ -87,7 +87,6 @@ const roleLabels: Record<string, string> = {
   LCVP: 'LCVP',
   TL: 'Team Leader',
   TM: 'Takım Üyesi',
-  ADMIN: 'Admin',
 };
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -158,7 +157,7 @@ export default function Header() {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  if (status === 'loading') return null;
+  if (status === 'loading' || !user) return null;
 
   return (
     <header className="header">
@@ -276,20 +275,18 @@ export default function Header() {
 
         <div className="header__divider" />
 
-        {user && (
-          <div className="header__user" onClick={() => setShowProfileModal(true)}>
-            <div className="header__user-info">
-              <span className="header__user-greeting">
-                Merhaba, <span className="header__user-name">{user.name}</span>
-              </span>
-              <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
-            </div>
-            <div className="header__user-avatar">
-              <User className="header__user-avatar-icon" />
-            </div>
-            <ChevronDown className="header__dropdown-icon" />
+        <div className="header__user" onClick={() => setShowProfileModal(true)}>
+          <div className="header__user-info">
+            <span className="header__user-greeting">
+              Merhaba, <span className="header__user-name">{user.name}</span>
+            </span>
+            <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
           </div>
-        )}
+          <div className="header__user-avatar">
+            <User className="header__user-avatar-icon" />
+          </div>
+          <ChevronDown className="header__dropdown-icon" />
+        </div>
       </div>
 
       <ProfileModal

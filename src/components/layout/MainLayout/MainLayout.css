@@ -4,9 +4,9 @@
 }
 
 .main-layout__content {
-  border-top-left-radius: 15px !important;
+    border-top-left-radius: 15px !important;
   margin-left: var(--sidebar-width);
-  padding-top: calc(var(--header-height) + 2em);
+  padding-top: var(--header-height);
   min-height: 100vh;
 }
 
