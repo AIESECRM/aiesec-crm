@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MCP
+  MCVP
+  LCP
+  LCVP
+  TL
+  TM
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum CompanyStatus {
+  POSITIVE
+  NEGATIVE
+  NO_ANSWER
+  CALL_AGAIN
+  MEETING_PLANNED
+}
+
+enum ActivityType {
+  COLD_CALL
+  MEETING
+  EMAIL
+  FOLLOW_UP
+}
+
+enum OfferProduct {
+  GTA
+  GV
+  GTE
+}
+
+enum OfferDuration {
+  SHORT
+  MEDIUM
+  LONG
+}
+
+enum OfferOpenStatus {
+  NEW_OPEN
+  RE_OPEN
+}
+
+enum Chapter {
+  ADANA
+  ANKARA
+  ANTALYA
+  BURSA
+  DENIZLI
+  DOGU_AKDENIZ
+  ESKISEHIR
+  GAZIANTEP
+  ISTANBUL
+  ISTANBUL_ASYA
+  BATI_ISTANBUL
+  IZMIR
+  KOCAELI
+  KONYA
+  KUTAHYA
+  SAKARYA
+  TRABZON
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  role      UserRole   @default(TM)
+  chapter   Chapter?
+  status    UserStatus @default(PENDING)
+  createdAt Int        @default(0)
+
+  activities Activity[]
+  
+  
+  companies  Company[]  @relation("CompanyCreator")
+  managedCompanies Company[] @relation("CompanyManagers")
+  offers     Offer[]
+}
+
+model Company {
+  id          Int           @id @default(autoincrement())
+  name        String
+  category    String?
+  location    String?
+  domain      String?
+  taxId       String?
+  phone       String?
+  email       String?
+  website     String?
+  notes       String?       @db.Text
+  chapter     Chapter?
+  status      CompanyStatus @default(NO_ANSWER)
+  createdAt   Int           @default(0)
+  updatedAt   Int           @default(0)
+  createdById Int?
+
+  createdBy  User?      @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managers User[] @relation("CompanyManagers")
+  contacts   Contact[]
+  activities Activity[]
+  offers     Offer[]
+}
+
+model Contact {
+  id        Int     @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  position  String?
+  companyId Int
+  createdAt Int     @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id        Int          @id @default(autoincrement())
+  type      ActivityType
+  note      String?      @db.Text
+  date      Int          @default(0)
+  companyId Int
+  userId    Int
+  createdAt Int          @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Offer {
+  id          Int             @id @default(autoincrement())
+  title       String
+  product     OfferProduct
+  duration    OfferDuration
+  openStatus  OfferOpenStatus @default(NEW_OPEN)
+  value       Float?
+  companyId   Int
+  createdById Int
+  createdAt   Int             @default(0)
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model HandoverHistory {
+  id         Int    @id @default(autoincrement())
+  fromUserId Int
+  toUserId   Int
+  reason     String? @db.Text
+  timestamp  Int    @default(0)
+}
+
+model AuditLog {
+  id         Int    @id @default(autoincrement())
+  timestamp  Int    @default(0)
+  userId     Int
+  actionType String
+  entityId   String
+  oldVal     String? @db.Text
+  newVal     String? @db.Text
+  ipAddress  String?
+}
