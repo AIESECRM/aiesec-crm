@@ -33,11 +33,10 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const chapterFilter = searchParams.get("chapter") || "";
 
-    const now = new Date();
-    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const now = Math.floor(Date.now() / 1000);
+    const oneWeekAgoTs = now - 7 * 24 * 60 * 60;
+    const twoWeeksAgoTs = now - 14 * 24 * 60 * 60;
 
-    // Fetch all data
     const [allCompaniesRaw, allActivitiesRaw, allOffersRaw, allUsersRaw] = await Promise.all([
         prisma.company.findMany({}),
         prisma.activity.findMany({}),
@@ -45,7 +44,6 @@ export async function GET(req: NextRequest) {
         prisma.user.findMany({}),
     ]);
 
-    // Apply chapter filter
     const allCompanies = chapterFilter
         ? allCompaniesRaw.filter((c: any) => c.chapter === chapterFilter)
         : allCompaniesRaw;
@@ -60,11 +58,6 @@ export async function GET(req: NextRequest) {
         ? allOffersRaw.filter((o: any) => companyIds.has(o.companyId))
         : allOffersRaw;
 
-    const allUsers = chapterFilter
-        ? allUsersRaw.filter((u: any) => u.chapter === chapterFilter || !u.chapter)
-        : allUsersRaw;
-
-    // --- KPIs (sonuç odaklı) ---
     const totalCompanies = allCompanies.length;
     const positiveCompanies = allCompanies.filter((c: any) => c.status === "POSITIVE").length;
     const conversionRate = totalCompanies > 0 ? Math.round((positiveCompanies / totalCompanies) * 100) : 0;
@@ -73,11 +66,10 @@ export async function GET(req: NextRequest) {
     const newOpenOffers = allOffers.filter((o: any) => o.openStatus === "NEW_OPEN").length;
     const reOpenOffers = allOffers.filter((o: any) => o.openStatus === "RE_OPEN").length;
 
-    const thisWeekActivities = allActivities.filter((a: any) => new Date(a.createdAt) >= oneWeekAgo).length;
-    const lastWeekActivities = allActivities.filter((a: any) => {
-        const d = new Date(a.createdAt);
-        return d >= twoWeeksAgo && d < oneWeekAgo;
-    }).length;
+    const thisWeekActivities = allActivities.filter((a: any) => a.createdAt >= oneWeekAgoTs).length;
+    const lastWeekActivities = allActivities.filter((a: any) =>
+        a.createdAt >= twoWeeksAgoTs && a.createdAt < oneWeekAgoTs
+    ).length;
     const activityTrend = lastWeekActivities > 0 ? Math.round(((thisWeekActivities - lastWeekActivities) / lastWeekActivities) * 100) : 0;
 
     const totalColdCalls = allActivities.filter((a: any) => a.type === "COLD_CALL").length;
@@ -95,7 +87,6 @@ export async function GET(req: NextRequest) {
         ? allUsersRaw.filter((u: any) => u.chapter === chapterFilter && u.status === "ACTIVE").length
         : allUsersRaw.filter((u: any) => u.status === "ACTIVE").length;
 
-    // --- Conversion Funnel ---
     const funnel = [
         { stage: "cold_calls", label: "Arama", value: totalColdCalls, color: "#037EF3" },
         { stage: "meetings", label: "Toplantı", value: totalMeetings, color: "#22C55E" },
@@ -103,7 +94,6 @@ export async function GET(req: NextRequest) {
         { stage: "closed", label: "Pozitif Sonuç", value: positiveCompanies, color: "#F59E0B" },
     ];
 
-    // --- Chapter Performance ---
     const chaptersToShow = chapterFilter ? [chapterFilter] : CHAPTERS;
     const chapterPerformance = chaptersToShow.map(ch => {
         const chCompanies = allCompaniesRaw.filter((c: any) => c.chapter === ch);
@@ -112,8 +102,6 @@ export async function GET(req: NextRequest) {
         const chOffers = allOffersRaw.filter((o: any) => chCompanyIds.has(o.companyId));
         const chUsers = allUsersRaw.filter((u: any) => u.chapter === ch && u.status === "ACTIVE");
         const chPositive = chCompanies.filter((c: any) => c.status === "POSITIVE").length;
-        const chColdCalls = chActivities.filter((a: any) => a.type === "COLD_CALL").length;
-        const chMeetings = chActivities.filter((a: any) => a.type === "MEETING").length;
         const chOfferValue = chOffers.reduce((sum: number, o: any) => sum + (o.value || 0), 0);
 
         return {
@@ -122,8 +110,8 @@ export async function GET(req: NextRequest) {
             companies: chCompanies.length,
             positive: chPositive,
             conversionRate: chCompanies.length > 0 ? Math.round((chPositive / chCompanies.length) * 100) : 0,
-            coldCalls: chColdCalls,
-            meetings: chMeetings,
+            coldCalls: chActivities.filter((a: any) => a.type === "COLD_CALL").length,
+            meetings: chActivities.filter((a: any) => a.type === "MEETING").length,
             totalActivities: chActivities.length,
             offers: chOffers.length,
             offerValue: chOfferValue,
@@ -131,7 +119,6 @@ export async function GET(req: NextRequest) {
         };
     }).sort((a, b) => b.totalActivities - a.totalActivities);
 
-    // --- Pipeline ---
     const pipeline = [
         { status: "POSITIVE", label: "Pozitif", count: positiveCompanies, color: "#22C55E" },
         { status: "MEETING_PLANNED", label: "Toplantı Planlandı", count: meetingPlanned, color: "#3B82F6" },
@@ -140,23 +127,21 @@ export async function GET(req: NextRequest) {
         { status: "NEGATIVE", label: "Negatif", count: allCompanies.filter((c: any) => c.status === "NEGATIVE").length, color: "#EF4444" },
     ];
 
-    // --- Product Mix ---
     const productMix = [
         { product: "GTA", label: "Global Talent", count: allOffers.filter((o: any) => o.product === "GTA").length, value: allOffers.filter((o: any) => o.product === "GTA").reduce((s: number, o: any) => s + (o.value || 0), 0), color: "#037EF3" },
         { product: "GV", label: "Global Volunteer", count: allOffers.filter((o: any) => o.product === "GV").length, value: allOffers.filter((o: any) => o.product === "GV").reduce((s: number, o: any) => s + (o.value || 0), 0), color: "#22C55E" },
         { product: "GTE", label: "Global Teacher", count: allOffers.filter((o: any) => o.product === "GTE").length, value: allOffers.filter((o: any) => o.product === "GTE").reduce((s: number, o: any) => s + (o.value || 0), 0), color: "#8B5CF6" },
     ];
 
-    // --- Weekly Trend (8 weeks) ---
     const weeklyTrend = [];
     for (let w = 7; w >= 0; w--) {
-        const weekStart = new Date(now.getTime() - (w + 1) * 7 * 24 * 60 * 60 * 1000);
-        const weekEnd = new Date(now.getTime() - w * 7 * 24 * 60 * 60 * 1000);
-        const weekActs = allActivities.filter((a: any) => {
-            const d = new Date(a.createdAt);
-            return d >= weekStart && d < weekEnd;
-        });
-        const label = `${weekStart.getDate().toString().padStart(2, '0')}/${(weekStart.getMonth() + 1).toString().padStart(2, '0')}`;
+        const weekStartTs = now - (w + 1) * 7 * 24 * 60 * 60;
+        const weekEndTs = now - w * 7 * 24 * 60 * 60;
+        const weekActs = allActivities.filter((a: any) =>
+            a.createdAt >= weekStartTs && a.createdAt < weekEndTs
+        );
+        const weekStartDate = new Date(weekStartTs * 1000);
+        const label = `${weekStartDate.getDate().toString().padStart(2, '0')}/${(weekStartDate.getMonth() + 1).toString().padStart(2, '0')}`;
 
         weeklyTrend.push({
             week: label,
@@ -168,7 +153,6 @@ export async function GET(req: NextRequest) {
         });
     }
 
-    // --- Process quality ---
     const avgCallsPerConversion = positiveCompanies > 0 ? (totalColdCalls / positiveCompanies).toFixed(1) : "—";
     const meetingToOfferRatio = totalMeetings > 0 ? ((totalOffers / totalMeetings) * 100).toFixed(0) : "0";
     const avgActivitiesPerCompany = totalCompanies > 0 ? (allActivities.length / totalCompanies).toFixed(1) : "0";
@@ -176,34 +160,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
         selectedChapter: chapterFilter,
         kpis: {
-            totalOffers,
-            totalOfferValue,
-            newOpenOffers,
-            reOpenOffers,
-            conversionRate,
-            positiveCompanies,
-            totalCompanies,
-            activePipeline,
-            thisWeekActivities,
-            activityTrend,
-            totalColdCalls,
-            totalMeetings,
-            totalEmails,
-            totalFollowUps,
-            totalActivities: allActivities.length,
-            responseRate,
-            activeUsers,
+            totalOffers, totalOfferValue, newOpenOffers, reOpenOffers,
+            conversionRate, positiveCompanies, totalCompanies, activePipeline,
+            thisWeekActivities, activityTrend, totalColdCalls, totalMeetings,
+            totalEmails, totalFollowUps, totalActivities: allActivities.length,
+            responseRate, activeUsers,
         },
-        funnel,
-        chapterPerformance,
-        pipeline,
-        productMix,
-        weeklyTrend,
+        funnel, chapterPerformance, pipeline, productMix, weeklyTrend,
         processQuality: {
-            avgCallsPerConversion,
-            meetingToOfferRatio,
-            responseRate,
-            avgActivitiesPerCompany,
+            avgCallsPerConversion, meetingToOfferRatio, responseRate, avgActivitiesPerCompany,
         },
     });
 }
