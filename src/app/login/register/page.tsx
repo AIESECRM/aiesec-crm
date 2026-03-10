@@ -33,6 +33,8 @@ const ROLES = [
   { value: "MCP", label: "MCP" },
 ];
 
+const NATIONAL_ROLES = ["MCP", "MCVP"];
+
 export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState<"form" | "verify">("form");
@@ -50,10 +52,21 @@ export default function RegisterPage() {
   });
   const [code, setCode] = useState("");
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const isNational = NATIONAL_ROLES.includes(form.role);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    if (name === "role") {
+      if (NATIONAL_ROLES.includes(value)) {
+        // MCP/MCVP için chapter'ı otomatik GENEL_MERKEZ yap
+        setForm({ ...form, role: value, chapter: "GENEL_MERKEZ" });
+      } else {
+        setForm({ ...form, role: value, chapter: "" });
+      }
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async () => {
@@ -101,18 +114,14 @@ export default function RegisterPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "verify-code",
-          email: form.email,
-          code,
-        }),
+        body: JSON.stringify({ action: "verify-code", email: form.email, code }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error);
       } else {
         setSuccess("Hesabınız oluşturuldu! Yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/login"), 2000);
+        setTimeout(() => router.push("/onay-bekleniyor"), 2000);
       }
     } catch {
       setError("Sunucu hatası!");
@@ -123,7 +132,7 @@ export default function RegisterPage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f9fafb" }}>
       <div style={{ backgroundColor: "white", padding: "32px", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "480px" }}>
-        
+
         <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "#1d4ed8", marginBottom: "8px" }}>
           AIESEC CRM
         </h1>
@@ -145,7 +154,7 @@ export default function RegisterPage() {
 
         {step === "form" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            
+
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Ad Soyad *</label>
               <input type="text" name="name" value={form.name} onChange={handleChange}
@@ -168,17 +177,6 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Şube *</label>
-              <select name="chapter" value={form.chapter} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", boxSizing: "border-box" }}>
-                <option value="">Şube seçin...</option>
-                {CHAPTERS.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Rol</label>
               <select name="role" value={form.role} onChange={handleChange}
                 style={{ width: "100%", border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", boxSizing: "border-box" }}>
@@ -187,6 +185,23 @@ export default function RegisterPage() {
                 ))}
               </select>
             </div>
+
+            {isNational ? (
+              <div style={{ backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "12px", fontSize: "14px", color: "#1d4ed8" }}>
+                🏢 <strong>Genel Merkez</strong> — MCP/MCVP tüm şubeleri görüntüleyebilir
+              </div>
+            ) : (
+              <div>
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Şube *</label>
+                <select name="chapter" value={form.chapter} onChange={handleChange}
+                  style={{ width: "100%", border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", boxSizing: "border-box" }}>
+                  <option value="">Şube seçin...</option>
+                  {CHAPTERS.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Şifre *</label>
