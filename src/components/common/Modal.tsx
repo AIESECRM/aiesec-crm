@@ -14,7 +14,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '50
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)' }} onClick={onClose}></div>
-            <div style={{ position: 'relative', backgroundColor: 'var(--surface)', borderRadius: 'var(--border-radius)', width: '100%', maxWidth, maxHeight: '90vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)' }}>
+            <div style={{ position: 'relative', backgroundColor: 'var(--background)', borderRadius: 'var(--border-radius)', width: '100%', maxWidth, maxHeight: '90vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)' }}>
                 {title && (
                     <div style={{ padding: 'var(--spacing-lg)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-main)' }}>{title}</h3>

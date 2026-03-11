@@ -421,6 +421,39 @@
   color: var(--text-light);
 }
 
+/* Activity type color variants - Email (Indigo) */
+.activity-form__type--email.activity-form__type--selected {
+  border-color: #6366f1;
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.activity-form__type--email.activity-form__type--selected .activity-form__type-icon,
+.activity-form__type--email.activity-form__type--selected .activity-form__type-label {
+  color: #6366f1;
+}
+
+/* Activity type color variants - Follow Up (Cyan) */
+.activity-form__type--follow_up.activity-form__type--selected {
+  border-color: #06b6d4;
+  background-color: rgba(6, 182, 212, 0.1);
+}
+
+.activity-form__type--follow_up.activity-form__type--selected .activity-form__type-icon,
+.activity-form__type--follow_up.activity-form__type--selected .activity-form__type-label {
+  color: #06b6d4;
+}
+
+/* Activity type color variants - Task (Purple) */
+.activity-form__type--task.activity-form__type--selected {
+  border-color: #a855f7;
+  background-color: rgba(168, 85, 247, 0.1);
+}
+
+.activity-form__type--task.activity-form__type--selected .activity-form__type-icon,
+.activity-form__type--task.activity-form__type--selected .activity-form__type-label {
+  color: #a855f7;
+}
+
 .activity-form__textarea {
   width: 100%;
   min-height: 120px;
@@ -671,9 +704,10 @@
   color: var(--text-regular);
   font-weight: 500;
   max-width: 220px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-height: 80px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  display: block;
 }
 
 .activity-log__actions {
