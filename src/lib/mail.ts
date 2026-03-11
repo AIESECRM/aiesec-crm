@@ -41,3 +41,31 @@ export async function sendVerificationCode(
     `,
   });
 }
+
+export async function sendPasswordResetCode(
+  email: string,
+  code: string,
+  name: string
+) {
+  await transporter.sendMail({
+    from: process.env.MAIL_FROM,
+    to: email,
+    subject: "AIESEC CRM — Şifre Sıfırlama Kodu",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+        <div style="background-color: #037ef3; padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0;">AIESEC CRM</h1>
+        </div>
+        <div style="padding: 30px; background-color: #f9f9f9;">
+          <h2>Merhaba, ${name}!</h2>
+          <p>Şifrenizi sıfırlamak için aşağıdaki kodu kullanın:</p>
+          <div style="background-color: #ef4444; color: white; font-size: 32px; font-weight: bold; text-align: center; padding: 20px; border-radius: 8px; letter-spacing: 8px;">
+            ${code}
+          </div>
+          <p style="color: #666; margin-top: 20px;">Bu kod 10 dakika geçerlidir.</p>
+          <p style="color: #666;">Eğer bu işlemi siz yapmadıysanız bu emaili görmezden gelebilirsiniz.</p>
+        </div>
+      </div>
+    `,
+  });
+}

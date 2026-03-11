@@ -55,6 +55,14 @@ enum OfferOpenStatus {
   RE_OPEN
 }
 
+enum NotificationType {
+  NEW_OFFER
+  COMPANY_UPDATED
+  NEW_USER
+  USER_APPROVED
+  USER_REJECTED
+}
+
 enum Chapter {
   ADANA
   ANKARA
@@ -73,6 +81,7 @@ enum Chapter {
   KUTAHYA
   SAKARYA
   TRABZON
+  GENEL_MERKEZ
 }
 
 model User {
@@ -85,12 +94,10 @@ model User {
   status    UserStatus @default(PENDING)
   createdAt Int        @default(0)
 
-  activities Activity[]
-  
-  
-  companies  Company[]  @relation("CompanyCreator")
-  managedCompanies Company[] @relation("CompanyManagers")
-  offers     Offer[]
+  activities       Activity[]
+  companies        Company[]  @relation("CompanyCreator")
+  managedCompanies Company[]  @relation("CompanyManagers")
+  offers           Offer[]
 }
 
 model Company {
@@ -111,7 +118,7 @@ model Company {
   createdById Int?
 
   createdBy  User?      @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  managers User[] @relation("CompanyManagers")
+  managers   User[]     @relation("CompanyManagers")
   contacts   Contact[]
   activities Activity[]
   offers     Offer[]
@@ -157,17 +164,27 @@ model Offer {
   createdBy User    @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  title     String
+  message   String           @db.Text
+  read      Boolean          @default(false)
+  createdAt Int              @default(0)
+}
+
 model HandoverHistory {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   fromUserId Int
   toUserId   Int
   reason     String? @db.Text
-  timestamp  Int    @default(0)
+  timestamp  Int     @default(0)
 }
 
 model AuditLog {
-  id         Int    @id @default(autoincrement())
-  timestamp  Int    @default(0)
+  id         Int     @id @default(autoincrement())
+  timestamp  Int     @default(0)
   userId     Int
   actionType String
   entityId   String

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { notifyUser } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -20,7 +21,6 @@ export async function GET(req: NextRequest) {
 
   const where: any = {};
 
-  // LCP/LCVP sadece kendi şubesini görebilir
   if (sessionUser.role === "LCP" || sessionUser.role === "LCVP") {
     where.chapter = sessionUser.chapter;
   } else if (chapter) {
@@ -31,15 +31,7 @@ export async function GET(req: NextRequest) {
 
   const users = await prisma.user.findMany({
     where,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      chapter: true,
-      status: true,
-      createdAt: true,
-    },
+    select: { id: true, name: true, email: true, role: true, chapter: true, status: true, createdAt: true },
     orderBy: { createdAt: "desc" },
   });
 
@@ -56,10 +48,19 @@ export async function PATCH(req: NextRequest) {
   const { userId, action, role } = await req.json();
 
   if (action === "approve") {
-    await prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: parseInt(userId) },
       data: { status: "ACTIVE" },
     });
+
+    // Kullanıcıya bildirim gönder
+    await notifyUser(
+      parseInt(userId),
+      'USER_APPROVED',
+      'Hesabınız Onaylandı! 🎉',
+      'Hesabınız onaylandı, sisteme giriş yapabilirsiniz.'
+    );
+
     return NextResponse.json({ success: true, message: "Kullanıcı onaylandı!" });
   }
 
@@ -68,6 +69,14 @@ export async function PATCH(req: NextRequest) {
       where: { id: parseInt(userId) },
       data: { status: "REJECTED" },
     });
+
+    await notifyUser(
+      parseInt(userId),
+      'USER_REJECTED',
+      'Hesap Başvurusu Reddedildi',
+      'Hesap başvurunuz reddedildi. Daha fazla bilgi için yöneticinizle iletişime geçin.'
+    );
+
     return NextResponse.json({ success: true, message: "Kullanıcı reddedildi!" });
   }
 
