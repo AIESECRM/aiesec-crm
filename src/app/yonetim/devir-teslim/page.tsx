@@ -1,16 +1,120 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { executeHandover } from '@/actions/handover';
 import { User } from '@/types';
-import { RefreshCw, Save } from 'lucide-react';
+import { RefreshCw, Save, ChevronDown, Search } from 'lucide-react';
+
+const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
+
+const CHAPTER_OPTIONS = [
+    { value: '', label: 'Tüm Şubeler' },
+    { value: 'ADANA', label: 'Adana' },
+    { value: 'ANKARA', label: 'Ankara' },
+    { value: 'ANTALYA', label: 'Antalya' },
+    { value: 'BURSA', label: 'Bursa' },
+    { value: 'DENIZLI', label: 'Denizli' },
+    { value: 'DOGU_AKDENIZ', label: 'Doğu Akdeniz' },
+    { value: 'ESKISEHIR', label: 'Eskişehir' },
+    { value: 'GAZIANTEP', label: 'Gaziantep' },
+    { value: 'ISTANBUL', label: 'İstanbul' },
+    { value: 'ISTANBUL_ASYA', label: 'İstanbul Asya' },
+    { value: 'BATI_ISTANBUL', label: 'Batı İstanbul' },
+    { value: 'IZMIR', label: 'İzmir' },
+    { value: 'KOCAELI', label: 'Kocaeli' },
+    { value: 'KONYA', label: 'Konya' },
+    { value: 'KUTAHYA', label: 'Kütahya' },
+    { value: 'SAKARYA', label: 'Sakarya' },
+    { value: 'TRABZON', label: 'Trabzon' },
+];
+
+function SearchableUserSelect({ value, onChange, options, placeholder }: { value: string, onChange: (v: string) => void, options: any[], placeholder: string }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const filteredOptions = options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()));
+    const selected = options.find(o => o.value === value);
+
+    return (
+        <div ref={wrapperRef} style={{ position: 'relative', width: '100%' }}>
+            <div
+                onClick={() => { setIsOpen(!isOpen); setSearch(''); }}
+                style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db',
+                    fontSize: '15px', backgroundColor: '#fff', cursor: 'pointer',
+                    minHeight: '44px'
+                }}
+            >
+                <span style={{ color: selected ? '#111827' : '#6b7280' }}>
+                    {selected ? selected.label : placeholder}
+                </span>
+                <ChevronDown size={18} color="#6b7280" />
+            </div>
+
+            {isOpen && (
+                <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
+                    backgroundColor: '#fff', border: '1px solid #d1d5db', borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 50, overflow: 'hidden'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid #e5e7eb' }}>
+                        <Search size={16} color="#9ca3af" />
+                        <input
+                            type="text"
+                            placeholder="Ara..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ width: '100%', border: 'none', outline: 'none', paddingLeft: '8px', fontSize: '14px' }}
+                            autoFocus
+                        />
+                    </div>
+                    <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {filteredOptions.length > 0 ? filteredOptions.map(o => (
+                            <div
+                                key={o.value}
+                                onClick={() => { onChange(o.value); setIsOpen(false); }}
+                                style={{
+                                    padding: '10px 12px', cursor: 'pointer', fontSize: '14px',
+                                    backgroundColor: value === o.value ? '#eff6ff' : 'transparent',
+                                    borderBottom: '1px solid #f3f4f6'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = value === o.value ? '#eff6ff' : 'transparent'}
+                            >
+                                {o.label}
+                            </div>
+                        )) : (
+                            <div style={{ padding: '10px 12px', color: '#6b7280', fontSize: '14px', textAlign: 'center' }}>
+                                Bulunamadı
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function HandoverPage() {
     const { user } = useAuth();
-    const [users, setUsers] = useState<User[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [filterChapter, setFilterChapter] = useState('');
     const [fromUserId, setFromUserId] = useState('');
     const [toUserId, setToUserId] = useState('');
     const [reason, setReason] = useState('');
@@ -23,9 +127,7 @@ export default function HandoverPage() {
             try {
                 const res = await fetch('/api/admin/users');
                 const data = await res.json();
-                const fetchedUsers = data.users || [];
-                // Filter by same chapter
-                setUsers(fetchedUsers.filter((u: User) => u.chapter === user.chapter));
+                setAllUsers(data.users || []);
             } catch (err) {
                 console.error(err);
             }
@@ -33,6 +135,21 @@ export default function HandoverPage() {
         }
         fetchUsers();
     }, [user]);
+
+    const isNational = user && NATIONAL_ROLES.includes(user.role);
+
+    const filteredUsers = allUsers.filter(u => {
+        if (!isNational) {
+            return u.chapter === user?.chapter;
+        } else {
+            return filterChapter ? u.chapter === filterChapter : true;
+        }
+    });
+
+    const userOptions = filteredUsers.map(u => ({
+        value: u.id,
+        label: `${u.name} (${u.role}) - ${u.chapter || '?'}`
+    }));
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,34 +200,43 @@ export default function HandoverPage() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {isNational && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Şube Filtresi (Ulusal Yetki)</label>
+                        <select
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', backgroundColor: '#fff' }}
+                            value={filterChapter}
+                            onChange={(e) => {
+                                setFilterChapter(e.target.value);
+                                setFromUserId('');
+                                setToUserId('');
+                            }}
+                        >
+                            {CHAPTER_OPTIONS.map(c => (
+                                <option key={c.value} value={c.value}>{c.label}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Kaynak Üye (Devreden)</label>
-                    <select
-                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                    <SearchableUserSelect
                         value={fromUserId}
-                        onChange={(e) => setFromUserId(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>Üye Seçin...</option>
-                        {users.map(u => (
-                            <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                        ))}
-                    </select>
+                        onChange={setFromUserId}
+                        options={userOptions}
+                        placeholder="Üye seçin veya arayın..."
+                    />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Hedef Üye (Devralan)</label>
-                    <select
-                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                    <SearchableUserSelect
                         value={toUserId}
-                        onChange={(e) => setToUserId(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>Üye Seçin...</option>
-                        {users.map(u => (
-                            <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
-                        ))}
-                    </select>
+                        onChange={setToUserId}
+                        options={userOptions}
+                        placeholder="Üye seçin veya arayın..."
+                    />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
