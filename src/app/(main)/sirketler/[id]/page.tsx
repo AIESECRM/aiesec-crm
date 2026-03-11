@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { 
+import {
   ArrowLeft, Building2, Phone, Mail, Edit3, Settings, ExternalLink,
   User, MessageSquare, Clock, Search, Filter, MoreVertical, Users,
   RefreshCw, X, Bell, Trash2, Shield, Eye, Copy
@@ -306,7 +306,11 @@ export default function CompanyDetailPage() {
                   </td>
                   <td>{new Date(activity.date * 1000).toLocaleDateString('tr-TR')}</td>
                   <td>{activity.user?.name || '—'}</td>
-                  <td>{activity.note || '—'}</td>
+                  <td>
+                    <div className="company-detail__table-note">
+                      {activity.note || '—'}
+                    </div>
+                  </td>
                   <td>
                     <div className="company-detail__menu-wrapper" ref={openMenuId === String(activity.id) ? menuRef : null}>
                       <button className="company-detail__table-action" onClick={() => setOpenMenuId(openMenuId === String(activity.id) ? null : String(activity.id))}>

@@ -10,14 +10,14 @@
 }
 
 .main-layout__page {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .page-header__left {

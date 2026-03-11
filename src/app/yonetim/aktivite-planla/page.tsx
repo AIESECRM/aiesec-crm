@@ -67,8 +67,8 @@ export default function AktivitePlanlaPage() {
                 companyId: selectedCompanyId,
                 userId: selectedManagerId,
                 type: type,
-                notes: notes,
-                scheduledAt: `${date}T${time}:00`
+                note: notes,
+                date: `${date}T${time}:00`
             })
         });
 

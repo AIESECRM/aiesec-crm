@@ -3,8 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { AuthProvider } from "@/contexts/AuthContext";
-import MainLayout from "@/components/layout/MainLayout";
 
 export default function DashboardLayout({
   children,
@@ -24,10 +22,8 @@ export default function DashboardLayout({
   }, [status, session, router]);
 
   return (
-    <AuthProvider>
-      <MainLayout>
-        {children}
-      </MainLayout>
-    </AuthProvider>
+    <>
+      {children}
+    </>
   );
 }
