@@ -12,6 +12,7 @@ interface FileUploadProps {
   label?: string;
   autoUpload?: boolean;
   subDir?: string;
+  variant?: "default" | "avatar";
 }
 
 export function FileUpload({ 
@@ -21,7 +22,8 @@ export function FileUpload({
   maxSizeMB = 5,
   label = "PDF Dosyası Seçin",
   autoUpload = false,
-  subDir
+  subDir,
+  variant = "default"
 }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -78,6 +80,14 @@ export function FileUpload({
       if (!response.ok) throw new Error(data.error || "Yükleme başarısız.");
       setUploadedUrl(data.url);
       onUploadSuccess(data.url, fileToUpload.name);
+      
+      // Auto-upload durumunda kısa bir süre sonra state'i sıfırlayalım ki tekrar yüklenebilsin
+      if (autoUpload) {
+        setTimeout(() => {
+          setFile(null);
+          setUploadedUrl(null);
+        }, 1500);
+      }
     } catch (err: any) {
       setError(err.message || "Bilinmeyen bir hata oluştu.");
     } finally {
@@ -122,6 +132,45 @@ export function FileUpload({
       setIsUploading(false);
     }
   };
+
+  if (variant === "avatar") {
+    return (
+      <div className={cn("relative flex items-center", className)}>
+        <input
+          type="file"
+          accept={accept}
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          disabled={isUploading}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm",
+            isUploading 
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200" 
+              : "bg-white text-gray-700 hover:bg-gray-50 hover:text-blue-600 border-gray-200 active:scale-95"
+          )}
+          disabled={isUploading}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Yükleniyor...
+            </>
+          ) : (
+            <>
+              <Upload className="w-3 h-3" />
+              {label}
+            </>
+          )}
+        </button>
+        {error && <div className="absolute top-full left-0 mt-1 whitespace-nowrap text-[10px] text-red-500 font-medium">{error}</div>}
+      </div>
+    );
+  }
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
