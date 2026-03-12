@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, User, Eye, EyeOff, Check, AlertCircle, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import Avatar from '@/components/common/Avatar';
 import './ProfileModal.css';
 
 interface ProfileModalProps {
@@ -29,6 +30,7 @@ const CHAPTER_LABELS: Record<string, string> = {
 
 export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { user } = useAuth() as any;
+  const { update } = useSession();
   const modalRef = useRef<HTMLDivElement>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -117,7 +119,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         body: JSON.stringify({ image: url }),
       });
       if (res.ok) {
-        window.location.reload(); // Refresh to show new image
+        await update({ image: url });
       } else {
         setMessage('Resim güncellenirken hata oluştu.');
       }
@@ -144,13 +146,12 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <h3 className="profile-modal__section-title">Profil Bilgileri</h3>
             <div className="profile-modal__avatar-wrapper">
               <div className="profile-modal__avatar-container">
-                <div className="profile-modal__avatar">
-                  {user.image ? (
-                    <img src={user.image} alt={user.name} className="profile-modal__avatar-img" />
-                  ) : (
-                    <User className="profile-modal__avatar-icon" />
-                  )}
-                </div>
+                <Avatar 
+                  src={user.image} 
+                  alt={user.name} 
+                  size={100} 
+                  className="profile-modal__avatar" 
+                />
                 <div className="profile-modal__avatar-upload">
                   <FileUpload 
                     onUploadSuccess={(url) => handleProfileImageUpdate(url)}
