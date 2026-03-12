@@ -51,3 +51,35 @@ export async function uploadFileToFTP(buffer: Buffer, fileName: string): Promise
     client.close();
   }
 }
+
+/**
+ * FTP sunucusundan bir dökümanı indirir.
+ */
+export async function downloadFileFromFTP(fileName: string): Promise<Buffer> {
+  const client = new ftp.Client();
+  const host = process.env.FTP_HOST || '';
+  const user = process.env.FTP_USER || '';
+  const password = process.env.FTP_PASS || '';
+  const port = parseInt(process.env.FTP_PORT || '21', 10);
+  const uploadDir = process.env.FTP_UPLOAD_DIR || 'httpdocs/uploads';
+
+  try {
+    await client.access({ host, user, password, port, secure: false });
+    await client.cd(uploadDir);
+
+    const stream = require('stream');
+    const writeStream = new stream.PassThrough();
+    const chunks: any[] = [];
+    
+    writeStream.on('data', (chunk: any) => chunks.push(chunk));
+    
+    await client.downloadTo(writeStream, fileName);
+    
+    return Buffer.concat(chunks);
+  } catch (err) {
+    console.error('FTP Download Hatası:', err);
+    throw err;
+  } finally {
+    client.close();
+  }
+}
