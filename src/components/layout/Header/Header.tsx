@@ -3,10 +3,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Search, Bell, User, ChevronDown, Building2, DollarSign,
-  X, UserPlus, CheckCircle2, RefreshCw
+  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
+import { useTheme } from 'next-themes';
 import ProfileModal from '@/components/common/ProfileModal/ProfileModal';
 import './Header.css';
 
@@ -50,9 +51,15 @@ export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -172,6 +179,16 @@ export default function Header() {
       </div>
 
       <div className="header__actions">
+        {mounted && (
+          <button 
+            className="header__theme-toggle"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            title="Temayı Değiştir"
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        )}
+
         <div className="header__notification-wrapper" ref={notificationRef}>
           <button className="header__notification" onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) fetchNotifications(); }}>
             <Bell className="header__notification-icon" />

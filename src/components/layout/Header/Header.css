@@ -241,6 +241,25 @@
   gap: var(--spacing-lg);
 }
 
+.header__theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--dashboard-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: all var(--transition-fast);
+}
+
+.header__theme-toggle:hover {
+  background: var(--border-color);
+  color: var(--text-regular);
+}
+
 .header__notification {
   position: relative;
   display: flex;
