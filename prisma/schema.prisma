@@ -117,11 +117,12 @@ model Company {
   updatedAt   Int           @default(0)
   createdById Int?
 
-  createdBy  User?      @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  managers   User[]     @relation("CompanyManagers")
+  createdBy  User?             @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managers   User[]            @relation("CompanyManagers")
   contacts   Contact[]
   activities Activity[]
   offers     Offer[]
+  documents  CompanyDocument[]
 }
 
 model Contact {
@@ -156,6 +157,7 @@ model Offer {
   duration    OfferDuration
   openStatus  OfferOpenStatus @default(NEW_OPEN)
   value       Float?
+  documentUrl String?
   companyId   Int
   createdById Int
   createdAt   Int             @default(0)
@@ -191,4 +193,14 @@ model AuditLog {
   oldVal     String? @db.Text
   newVal     String? @db.Text
   ipAddress  String?
+}
+
+model CompanyDocument {
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  companyId Int
+  createdAt Int     @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }

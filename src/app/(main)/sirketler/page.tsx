@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Building2, Filter, Plus, X, Save } from 'lucide-react';
 import { CompanyCard, CompanySidebar } from '@/components/companies';
 import Modal from '@/components/common/Modal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import './page.css';
 
 const STATUS_OPTIONS = [
@@ -53,7 +54,7 @@ export default function CompaniesPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const [newCompany, setNewCompany] = useState({
-    name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '',
+    name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: ''
   });
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export default function CompaniesPage() {
     });
     if (res.ok) {
       setShowAddModal(false);
-      setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '' });
+      setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '' });
       fetchData();
     }
     setSubmitting(false);
@@ -270,6 +271,15 @@ export default function CompaniesPage() {
                 value={newCompany.notes}
                 onChange={(e) => setNewCompany(prev => ({ ...prev, notes: e.target.value }))}
                 rows={3}
+              />
+            </div>
+          </div>
+
+          <div className="modal__section">
+            <h4 className="modal__section-title">Doküman (Opsiyonel)</h4>
+            <div className="modal__field">
+              <FileUpload
+                onUploadSuccess={(url, name) => setNewCompany(prev => ({ ...prev, documentUrl: url, documentName: name }))}
               />
             </div>
           </div>

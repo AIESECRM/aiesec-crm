@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
 
   const user = session.user as any;
-  const { name, phone, email, status, notes, chapter } = await req.json();
+  const { name, phone, email, status, notes, chapter, documentUrl, documentName } = await req.json();
 
   if (!name) return NextResponse.json({ error: "Şirket adı zorunludur!" }, { status: 400 });
 
@@ -58,6 +58,13 @@ export async function POST(req: NextRequest) {
       notes: notes || null,
       chapter: companyChapter || null,
       createdById: user.id,
+      documents: documentUrl ? {
+        create: {
+          name: documentName || 'Belge',
+          url: documentUrl,
+          createdAt: Math.floor(Date.now() / 1000)
+        }
+      } : undefined
     },
   });
 
