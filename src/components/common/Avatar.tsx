@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -14,14 +14,24 @@ interface AvatarProps {
 }
 
 export default function Avatar({ src, alt, size = 40, className, style, fallbackIcon }: AvatarProps) {
-  const [error, setError] = React.useState(false);
-  const [retryCount, setRetryCount] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Resmin durumunu anında kontrol etmek için bir referans oluşturuyoruz
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setError(false);
     setRetryCount(0);
     setIsLoading(true);
+  }, [src]);
+
+  // Eğer resim tarayıcı önbelleğinden (cache) anında geldiyse, yükleme durumunu kapat
+  useEffect(() => {
+    if (imgRef.current?.complete && src) {
+      setIsLoading(false);
+    }
   }, [src]);
 
   const handleImageError = () => {
@@ -30,7 +40,7 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
         setIsLoading(true);
-      }, 2000); // 2 saniye sonra tekrar dene
+      }, 2000);
     } else {
       console.error(`[Avatar] Resim yükleme başarısız oldu:`, src);
       setError(true);
@@ -73,11 +83,12 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          {fallbackIcon || <UserIcon size={typeof size === 'number' ? size * 0.6 : 24} className="text-muted-foreground opacity-50" />}
+          {fallbackIcon || <UserIcon size={typeof size === 'number' ? size * 0.6 : 24} className="text-muted-foreground opacity-50 animate-pulse" />}
         </div>
       )}
       <img
-        src={imageSrc || ''}
+        ref={imgRef}
+        src={imageSrc}
         alt={alt || "Avatar"}
         className={cn(
           "w-full h-full object-cover transition-opacity duration-300",
