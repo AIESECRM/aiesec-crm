@@ -108,9 +108,11 @@ export async function deleteFileFromFTP(fileName: string, subDir?: string): Prom
 
     await client.cd(finalUploadDir);
     await client.remove(fileName);
-  } catch (err) {
-    console.error('FTP Delete Hatası:', err);
-    // Dosya bulunamazsa hata vermemesi için catch içinde bırakıyoruz
+  } catch (err: any) {
+    // 550 hatası dosyanın zaten mevcut olmadığını belirtir, bu durumda sessizce devam edebiliriz.
+    if (err.code !== 550) {
+      console.error('FTP Delete Hatası:', err);
+    }
   } finally {
     client.close();
   }
