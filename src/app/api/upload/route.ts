@@ -35,8 +35,11 @@ export async function POST(req: NextRequest) {
     // 4. Benzersiz dosya ismi oluştur
     const extension = file.name.split('.').pop()?.toLowerCase() || 'bin';
     const cleanName = file.name
-      .split('.')[0]
-      .replace(/[^a-zA-Z0-9]/g, "_");
+      .substring(0, file.name.lastIndexOf('.')) 
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
+      .replace(/[^a-zA-Z0-9]/g, "-") 
+      .replace(/-+/g, "-") 
+      .toLowerCase();
     const uniqueFileName = `${Date.now()}-${cleanName}.${extension}`;
 
     // 5. FTP ile Sunucuya Yükle
