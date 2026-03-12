@@ -18,6 +18,7 @@ interface FileUploadProps {
 
 export function FileUpload({ 
   onUploadSuccess, 
+  onFileSelect,
   className, 
   accept = "application/pdf", 
   maxSizeMB = 5,
