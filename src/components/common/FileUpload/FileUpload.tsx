@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
   onUploadSuccess: (url: string, name: string) => void;
+  onFileSelect?: (localUrl: string, file: File) => void;
   className?: string;
   accept?: string;
   maxSizeMB?: number;
@@ -51,14 +52,20 @@ export function FileUpload({
     return selectedFile;
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       const valid = validateFile(selectedFile);
       if (valid) {
         setFile(valid);
+        
+        // <-- YENİ EKLENEN KISIM: Seçildiği an geçici bir URL üret ve üst bileşene haber ver
+        if (onFileSelect) {
+          const localPreviewUrl = URL.createObjectURL(valid);
+          onFileSelect(localPreviewUrl, valid);
+        }
+
         if (autoUpload) {
-          // Wrap in a timeout to ensure state has updated
           setTimeout(() => triggerAutoUpload(valid), 10);
         }
       }
