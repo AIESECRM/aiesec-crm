@@ -10,6 +10,8 @@ interface FileUploadProps {
   accept?: string;
   maxSizeMB?: number;
   label?: string;
+  autoUpload?: boolean;
+  subDir?: string;
 }
 
 export function FileUpload({ 
@@ -17,7 +19,9 @@ export function FileUpload({
   className, 
   accept = "application/pdf", 
   maxSizeMB = 5,
-  label = "PDF Dosyası Seçin"
+  label = "PDF Dosyası Seçin",
+  autoUpload = false,
+  subDir
 }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -49,7 +53,35 @@ export function FileUpload({
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       const valid = validateFile(selectedFile);
-      if (valid) setFile(valid);
+      if (valid) {
+        setFile(valid);
+        if (autoUpload) {
+          // Wrap in a timeout to ensure state has updated
+          setTimeout(() => triggerAutoUpload(valid), 10);
+        }
+      }
+    }
+  };
+
+  const triggerAutoUpload = async (fileToUpload: File) => {
+    setIsUploading(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append("file", fileToUpload);
+    if (subDir) formData.append("subDir", subDir);
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Yükleme başarısız.");
+      setUploadedUrl(data.url);
+      onUploadSuccess(data.url, fileToUpload.name);
+    } catch (err: any) {
+      setError(err.message || "Bilinmeyen bir hata oluştu.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -68,6 +100,7 @@ export function FileUpload({
 
     const formData = new FormData();
     formData.append("file", file);
+    if (subDir) formData.append("subDir", subDir);
 
     try {
       const response = await fetch("/api/upload", {
