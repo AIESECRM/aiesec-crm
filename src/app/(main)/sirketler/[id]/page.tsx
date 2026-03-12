@@ -74,23 +74,30 @@ export default function CompanyDetailPage() {
   }, [searchQuery]);
 
   const fetchData = async () => {
-    setLoading(true);
-    const [companyRes, contactsRes, activitiesRes, offersRes] = await Promise.all([
-      fetch(`/api/companies/${params.id}`),
-      fetch(`/api/contacts?companyId=${params.id}`),
-      fetch(`/api/activities?companyId=${params.id}`),
-      fetch(`/api/offers?companyId=${params.id}`),
-    ]);
-    const companyData = await companyRes.json();
-    const contactsData = await contactsRes.json();
-    const activitiesData = await activitiesRes.json();
-    const offersData = await offersRes.json();
-    setCompany(companyData.company || null);
-    setContacts(contactsData.contacts || []);
-    setActivities(activitiesData.activities || []);
-    setOffers(offersData.offers || []);
-    setDocuments(companyData.company?.documents || []);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const [companyRes, contactsRes, activitiesRes, offersRes] = await Promise.all([
+        fetch(`/api/companies/${params.id}`),
+        fetch(`/api/contacts?companyId=${params.id}`),
+        fetch(`/api/activities?companyId=${params.id}`),
+        fetch(`/api/offers?companyId=${params.id}`),
+      ]);
+
+      const companyData = companyRes.ok ? await companyRes.json() : { company: null };
+      const contactsData = contactsRes.ok ? await contactsRes.json() : { contacts: [] };
+      const activitiesData = activitiesRes.ok ? await activitiesRes.json() : { activities: [] };
+      const offersData = offersRes.ok ? await offersRes.json() : { offers: [] };
+
+      setCompany(companyData.company || null);
+      setContacts(contactsData.contacts || []);
+      setActivities(activitiesData.activities || []);
+      setOffers(offersData.offers || []);
+      setDocuments(companyData.company?.documents || []);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteActivity = async () => {

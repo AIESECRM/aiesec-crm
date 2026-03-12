@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Sidebar from '../Sidebar';
 import Header from '../Header';
+import ChatWidget from '@/components/chat/ChatWidget';
 import './MainLayout.css';
 
 interface MainLayoutProps {
@@ -30,6 +31,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           {children}
         </div>
       </main>
+      <ChatWidget />
     </div>
   );
 }
