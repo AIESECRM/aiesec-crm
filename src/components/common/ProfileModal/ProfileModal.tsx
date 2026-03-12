@@ -145,27 +145,24 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           <div className="profile-modal__section">
             <h3 className="profile-modal__section-title">Profil Bilgileri</h3>
             <div className="profile-modal__avatar-wrapper">
-              <div className="profile-modal__avatar-container">
-                <Avatar 
-                  src={user.image} 
-                  alt={user.name} 
-                  size={100} 
-                  className="profile-modal__avatar" 
-                />
-                <div className="profile-modal__avatar-upload">
-                  <FileUpload 
-                    onUploadSuccess={(url) => handleProfileImageUpdate(url)}
-                    accept="image/*"
-                    label="Fotoğraf Değiştir"
-                    autoUpload={true}
-                    subDir="pp"
-                    className="profile-modal__avatar-uploader"
-                  />
-                </div>
-              </div>
-              <div className="profile-modal__user-info">
+              <Avatar 
+                src={user.image} 
+                alt={user.name} 
+                size={80} 
+                className="profile-modal__avatar" 
+              />
+              <div className="profile-modal__avatar-actions">
                 <div style={{ fontWeight: '600', fontSize: '18px', color: 'var(--foreground)' }}>{user.name}</div>
-                <div style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>{user.email}</div>
+                <div style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginBottom: '8px' }}>{user.email}</div>
+                <FileUpload 
+                  onUploadSuccess={(url) => handleProfileImageUpdate(url)}
+                  accept="image/*"
+                  label="Fotoğrafı Değiştir"
+                  autoUpload={true}
+                  subDir="pp"
+                  variant="avatar"
+                  className="profile-modal__avatar-uploader"
+                />
               </div>
             </div>
 

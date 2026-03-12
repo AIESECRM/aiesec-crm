@@ -14,7 +14,11 @@ interface AvatarProps {
 }
 
 export default function Avatar({ src, alt, size = 40, className, style, fallbackIcon }: AvatarProps) {
-  const [error, setError] = useState(false);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    setError(false);
+  }, [src]);
 
   const containerStyle = {
     width: size,

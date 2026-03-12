@@ -84,3 +84,34 @@ export async function downloadFileFromFTP(fileName: string): Promise<Buffer> {
     client.close();
   }
 }
+
+/**
+ * FTP sunucusundan bir dosyayı siler.
+ * @param fileName Silinecek dosyanın adı
+ * @param subDir Alt klasör (opsiyonel)
+ */
+export async function deleteFileFromFTP(fileName: string, subDir?: string): Promise<void> {
+  const client = new ftp.Client();
+  const host = process.env.FTP_HOST || '';
+  const user = process.env.FTP_USER || '';
+  const password = process.env.FTP_PASS || '';
+  const port = parseInt(process.env.FTP_PORT || '21', 10);
+  const baseUploadDir = process.env.FTP_UPLOAD_DIR || 'httpdocs/uploads';
+
+  try {
+    await client.access({ host, user, password, port, secure: false });
+    
+    let finalUploadDir = baseUploadDir;
+    if (subDir) {
+      finalUploadDir = `${baseUploadDir.replace(/\/$/, '')}/${subDir}`;
+    }
+
+    await client.cd(finalUploadDir);
+    await client.remove(fileName);
+  } catch (err) {
+    console.error('FTP Delete Hatası:', err);
+    // Dosya bulunamazsa hata vermemesi için catch içinde bırakıyoruz
+  } finally {
+    client.close();
+  }
+}

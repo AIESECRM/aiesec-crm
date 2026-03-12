@@ -140,54 +140,31 @@
   color: var(--text-muted);
 }
 
-.profile-modal__avatar-upload {
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 100%;
+.profile-modal__avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px;
+  background: var(--dashboard-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.profile-modal__avatar {
+  border: 4px solid var(--background) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  flex-shrink: 0;
+}
+
+.profile-modal__avatar-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
 }
 
 .profile-modal__avatar-uploader {
-  transform: scale(0.85);
-  transform-origin: bottom right;
-}
-
-.profile-modal__avatar-uploader .flex-col {
-  gap: 0 !important;
-}
-
-.profile-modal__avatar-uploader .border-dashed {
-  padding: 8px !important;
-  border-radius: 50% !important;
-  width: 40px !important;
-  height: 40px !important;
-  background: var(--primary-400) !important;
-  border: 2px solid white !important;
-  color: white !important;
-  box-shadow: 0 4px 10px rgba(3, 126, 243, 0.3) !important;
-}
-
-.profile-modal__avatar-uploader .border-dashed:hover {
-  background: var(--primary-500) !important;
-  transform: scale(1.1);
-}
-
-.profile-modal__avatar-uploader .text-sm,
-.profile-modal__avatar-uploader .text-xs,
-.profile-modal__avatar-uploader .bg-primary\/10 {
-  display: none !important;
-}
-
-.profile-modal__avatar-uploader .w-full {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-}
-
-.profile-modal__user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  margin-top: 4px;
 }
 
 .profile-modal__avatar-btn {
