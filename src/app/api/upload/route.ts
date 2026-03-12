@@ -5,6 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
+    const subDir = formData.get("subDir") as string | undefined;
 
     if (!file) {
       return NextResponse.json({ error: "Dosya bulunamadı" }, { status: 400 });
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     const uniqueFileName = `${Date.now()}-${cleanFileName}`;
 
     // 5. FTP ile Sunucuya Yükle
-    const publicUrl = await uploadFileToFTP(fileBuffer, uniqueFileName);
+    const publicUrl = await uploadFileToFTP(fileBuffer, uniqueFileName, subDir);
 
     // Başarı Durumu: Dosyanın public erişilebilir yolunu döndür
     return NextResponse.json(

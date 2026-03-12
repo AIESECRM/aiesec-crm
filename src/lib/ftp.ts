@@ -4,17 +4,18 @@ import * as ftp from 'basic-ftp';
  * Dosya buffer'ını FTP ile sunucuya yükler.
  * @param buffer Yüklenecek dosyanın verisi
  * @param fileName Kaydedilecek dosyanın adı (örn: document-123.pdf)
+ * @param subDir Opsiyonel alt klasör (örn: 'pp' -> uploads/pp)
  * @returns Başarılı olursa dosyanın public URL'sini döner.
  */
-export async function uploadFileToFTP(buffer: Buffer, fileName: string): Promise<string> {
+export async function uploadFileToFTP(buffer: Buffer, fileName: string, subDir?: string): Promise<string> {
   const client = new ftp.Client();
-  client.ftp.verbose = false; // Dev ortamında hata ayıklamak isterseniz true yapabilirsiniz.
+  client.ftp.verbose = false;
 
   const host = process.env.FTP_HOST || '';
   const user = process.env.FTP_USER || '';
   const password = process.env.FTP_PASS || '';
   const port = parseInt(process.env.FTP_PORT || '21', 10);
-  const uploadDir = process.env.FTP_UPLOAD_DIR || 'public_html/uploads';
+  const baseUploadDir = process.env.FTP_UPLOAD_DIR || 'httpdocs/uploads';
   const publicUrl = process.env.FTP_PUBLIC_URL || '';
 
   if (!host || !user || !password) {
@@ -22,32 +23,32 @@ export async function uploadFileToFTP(buffer: Buffer, fileName: string): Promise
   }
 
   try {
-    // 1. FTP'ye bağlan
-    await client.access({
-      host,
-      user,
-      password,
-      port,
-      secure: false, // TLS gerekiyorsa true yapılmalı
-    });
+    await client.access({ host, user, password, port, secure: false });
 
-    // 2. Hedef klasöre git (yoksa FTP hatası verir, klasörün var olduğundan emin olunmalı)
-    await client.cd(uploadDir);
+    // Hedef klasörü oluştur/git
+    let finalUploadDir = baseUploadDir;
+    if (subDir) {
+        finalUploadDir = `${baseUploadDir.replace(/\/$/, '')}/${subDir}`;
+    }
+    
+    await client.ensureDir(finalUploadDir);
 
-    // 3. Dosyayı Ram'den Stream olarak yükle
     const stream = require('stream');
     const readStream = new stream.PassThrough();
     readStream.end(buffer);
 
     await client.uploadFrom(readStream, fileName);
 
-    // 4. Public URL'yi döndür
-    return `${publicUrl.replace(/\/$/, '')}/${fileName}`;
+    // Public URL'yi döndür
+    const finalPublicUrl = subDir 
+        ? `${publicUrl.replace(/\/$/, '')}/${subDir}/${fileName}`
+        : `${publicUrl.replace(/\/$/, '')}/${fileName}`;
+
+    return finalPublicUrl;
   } catch (err) {
     console.error('FTP Upload Hatası:', err);
     throw err;
   } finally {
-    // Bağlantıyı güvenle kapat
     client.close();
   }
 }

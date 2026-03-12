@@ -11,6 +11,7 @@ interface FileUploadProps {
   maxSizeMB?: number;
   label?: string;
   autoUpload?: boolean;
+  subDir?: string;
 }
 
 export function FileUpload({ 
@@ -19,7 +20,8 @@ export function FileUpload({
   accept = "application/pdf", 
   maxSizeMB = 5,
   label = "PDF Dosyası Seçin",
-  autoUpload = false
+  autoUpload = false,
+  subDir
 }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -66,6 +68,7 @@ export function FileUpload({
     setError(null);
     const formData = new FormData();
     formData.append("file", fileToUpload);
+    if (subDir) formData.append("subDir", subDir);
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -97,6 +100,7 @@ export function FileUpload({
 
     const formData = new FormData();
     formData.append("file", file);
+    if (subDir) formData.append("subDir", subDir);
 
     try {
       const response = await fetch("/api/upload", {
