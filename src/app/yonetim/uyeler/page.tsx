@@ -105,8 +105,8 @@ export default function RoleManagementPage() {
         cursor: 'pointer',
         fontWeight: '600',
         fontSize: '14px',
-        backgroundColor: activeTab === tab ? '#2563eb' : '#f3f4f6',
-        color: activeTab === tab ? 'white' : '#374151',
+        backgroundColor: activeTab === tab ? 'var(--primary-400)' : 'var(--dashboard-bg)',
+        color: activeTab === tab ? 'white' : 'var(--text-regular)',
     });
 
     return (
@@ -131,14 +131,14 @@ export default function RoleManagementPage() {
             {activeTab === 'pending' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {pendingUsers.length === 0 ? (
-                        <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280', backgroundColor: 'white', borderRadius: '12px' }}>
+                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-light)', backgroundColor: 'var(--neutral-light)', borderRadius: '12px' }}>
                             Onay bekleyen üye yok.
                         </div>
                     ) : pendingUsers.map((member: any) => (
-                        <div key={member.id} style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '4px solid #f59e0b' }}>
+                        <div key={member.id} style={{ backgroundColor: 'var(--neutral-light)', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '4px solid #f59e0b' }}>
                             <div>
                                 <div style={{ fontSize: '16px', fontWeight: '600' }}>{member.name}</div>
-                                <div style={{ fontSize: '13px', color: '#6b7280' }}>{member.email}</div>
+                                <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{member.email}</div>
                                 <div style={{ fontSize: '12px', color: '#2563eb', marginTop: '2px' }}>{member.role} • {member.chapter || 'Şube Yok'}</div>
                             </div>
                             <div style={{ display: 'flex', gap: '8px' }}>
@@ -160,16 +160,16 @@ export default function RoleManagementPage() {
             {activeTab === 'active' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {activeUsers.map((member: any) => (
-                        <div key={member.id} style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={member.id} style={{ backgroundColor: 'var(--neutral-light)', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div style={{ fontSize: '16px', fontWeight: '600' }}>{member.name}</div>
-                                <div style={{ fontSize: '13px', color: '#6b7280' }}>{member.email}</div>
+                                <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{member.email}</div>
                                 <div style={{ fontSize: '12px', color: '#2563eb', marginTop: '2px' }}>{member.role} • {member.chapter || 'Genel Merkez'}</div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <label style={{ fontSize: '12px', color: '#6b7280' }}>Rol:</label>
+                                <label style={{ fontSize: '12px', color: 'var(--text-light)' }}>Rol:</label>
                                 <select
-                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px' }}
+                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px' }}
                                     value={member.role}
                                     onChange={(e) => handleRoleChange(member.id, e.target.value as UserRole)}
                                     disabled={member.role === 'ADMIN'}

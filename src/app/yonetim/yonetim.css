@@ -7,7 +7,7 @@
 .yonetim-layout__header {
   margin-bottom: var(--spacing-2xl);
   padding: var(--spacing-xl);
-  background: var(--bg-card);
+  background: var(--neutral-light);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
@@ -69,7 +69,7 @@
 }
 
 .yonetim-content {
-  background: var(--bg-card);
+  background: var(--neutral-light);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
   padding: var(--spacing-xl);
@@ -85,7 +85,7 @@
 }
 
 .yonetim-stat-card {
-  background: var(--bg-card);
+  background: var(--neutral-light);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: var(--spacing-xl);
@@ -109,7 +109,7 @@
 }
 
 .yonetim-stat-card__title {
-  color: var(--text-secondary);
+  color: var(--text-light);
   font-size: 0.875rem;
   font-weight: 500;
   margin: 0;
@@ -118,14 +118,14 @@
 .yonetim-stat-card__icon {
   padding: 0.5rem;
   border-radius: 8px;
-  background: var(--bg-hover);
-  color: var(--primary-color);
+  background: var(--dashboard-bg);
+  color: var(--primary-400);
 }
 
 .yonetim-stat-card__value {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-regular);
   margin: 0;
 }
 
@@ -140,7 +140,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg);
-  background: var(--bg-card);
+  background: var(--neutral-light);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
@@ -160,12 +160,12 @@
 
 .yonetim-member-name {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-regular);
 }
 
 .yonetim-member-role {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-light);
 }
 
 .yonetim-member-stats {
@@ -228,7 +228,7 @@
   padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
-  background-color: var(--bg-card);
+  background-color: var(--neutral-light);
   color: var(--text-regular);
   font-size: 14px;
   outline: none;

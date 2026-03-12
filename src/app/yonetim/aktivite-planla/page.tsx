@@ -99,9 +99,9 @@ export default function AktivitePlanlaPage() {
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Şirket Seçimi</label>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Şirket Seçimi</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
                             value={selectedCompanyId}
                             onChange={(e) => setSelectedCompanyId(e.target.value)}
                             required
@@ -114,9 +114,9 @@ export default function AktivitePlanlaPage() {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Menajer / Yetkili</label>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Menajer / Yetkili</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
                             value={selectedManagerId}
                             onChange={(e) => setSelectedManagerId(e.target.value)}
                             required
@@ -130,20 +130,20 @@ export default function AktivitePlanlaPage() {
 
                     <div style={{ display: 'flex', gap: '16px' }}>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Tarih</label>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Tarih</label>
                             <input
                                 type="date"
-                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
                                 required
                             />
                         </div>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Saat</label>
+                            <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Saat</label>
                             <input
                                 type="time"
-                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
                                 value={time}
                                 onChange={(e) => setTime(e.target.value)}
                                 required
@@ -152,9 +152,9 @@ export default function AktivitePlanlaPage() {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Aktivite Tipi</label>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Aktivite Tipi</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px' }}
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
                             value={type}
                             onChange={(e) => setType(e.target.value as ActivityType)}
                         >
@@ -169,9 +169,9 @@ export default function AktivitePlanlaPage() {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Notlar</label>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Notlar</label>
                         <textarea
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', minHeight: '100px' }}
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', minHeight: '100px' }}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             placeholder="Aktivite detayları..."
