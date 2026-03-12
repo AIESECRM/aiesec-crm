@@ -9,14 +9,15 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const { name, image } = await req.json();
-    const userId = parseInt((session.user as any).id);
+    const userSession = session.user as any;
+    const userId = parseInt(userSession.id);
 
     // Eğer yeni bir resim gelmişse eskisini sunucudan silelim
     if (image) {
       const currentUser = await prisma.user.findUnique({
         where: { id: userId },
-        select: { image: true }
-      });
+        select: { image: true } as any
+      }) as any;
 
       if (currentUser?.image) {
         try {
@@ -53,7 +54,7 @@ export async function PATCH(req: NextRequest) {
           image: true,
           role: true,
           chapter: true
-      }
+      } as any
     });
 
     return NextResponse.json({ success: true, user: updatedUser });
