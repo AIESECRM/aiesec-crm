@@ -77,10 +77,10 @@ export default function CompanyDetailPage() {
     try {
       setLoading(true);
       const [companyRes, contactsRes, activitiesRes, offersRes] = await Promise.all([
-        fetch(`/api/companies/${params.id}`),
-        fetch(`/api/contacts?companyId=${params.id}`),
-        fetch(`/api/activities?companyId=${params.id}`),
-        fetch(`/api/offers?companyId=${params.id}`),
+        fetch(`/api/companies/${params.id}`, { cache: 'no-store' }),
+        fetch(`/api/contacts?companyId=${params.id}`, { cache: 'no-store' }),
+        fetch(`/api/activities?companyId=${params.id}`, { cache: 'no-store' }),
+        fetch(`/api/offers?companyId=${params.id}`, { cache: 'no-store' }),
       ]);
 
       const companyData = companyRes.ok ? await companyRes.json() : { company: null };
@@ -533,18 +533,31 @@ export default function CompanyDetailPage() {
               <FileUpload
                 onUploadSuccess={async (url, name) => {
                   setUploadingDoc(true);
-                  // Dosya veritabanına kaydedilir
-                  const res = await fetch(`/api/companies/${params.id}/documents`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, url })
-                  });
-                  if (res.ok) {
-                    setShowUploadModal(false);
-                    fetchData();
+                  try {
+                    const res = await fetch(`/api/companies/${params.id}/documents`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ name, url })
+                    });
+                    
+                    if (res.ok) {
+                      // Kısa bir bekleme (DB yansıması için)
+                      await new Promise(r => setTimeout(r, 500));
+                      await fetchData();
+                      setShowUploadModal(false);
+                      setUploadingDoc(false);
+                    } else {
+                      const data = await res.json();
+                      alert(data.error || 'Doküman kaydedilirken hata oluştu.');
+                      setUploadingDoc(false);
+                    }
+                  } catch (err) {
+                    alert('Sistem hatası!');
+                    setUploadingDoc(false);
                   }
-                  setUploadingDoc(false);
                 }}
+                accept="application/pdf,image/*,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                label="Doküman Seç (PDF, Resim, Word)"
               />
               {uploadingDoc && (
                 <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '13px', color: '#6b7280' }}>
