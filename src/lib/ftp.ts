@@ -25,35 +25,45 @@ export async function uploadFileToFTP(buffer: Buffer, fileName: string, subDir?:
   try {
     await client.access({ host, user, password, port, secure: false });
 
-    // Hedef klasörleri adım adım oluştur ve git
+    // Hedef klasör yolunu parçalara ayır
     const parts = baseUploadDir.split('/').filter(Boolean);
     if (subDir) {
         const subParts = subDir.split('/').filter(Boolean);
         parts.push(...subParts);
     }
     
-    // En baştan başla (bazı sunucular / ile başlar)
+    // FTP kök dizinine dön
     await client.cd('/');
-    let currentPath = '';
+    
+    // Klasörlere adım adım (Göreceli olarak) gir, klasör yoksa oluştur
     for (const part of parts) {
-        currentPath += '/' + part;
+      try {
+        // Önce doğrudan girmeyi dene (Zaten varsa hızlıca girer)
+        await client.cd(part);
+      } catch (err) {
+        // Hata verirse klasör yoktur, oluştur (MKD) ve içine gir
         try {
-            await client.ensureDir(currentPath);
-        } catch (e) {
-            // Hata olsa da devam et (klasör zaten olabilir)
+          await client.send(`MKD ${part}`);
+          await client.cd(part);
+        } catch (mkdErr) {
+          console.error(`[FTP] ${part} klasörü oluşturulamadı:`, mkdErr);
+          throw new Error(`FTP Klasör oluşturma hatası: ${part}`);
         }
+      }
     }
 
+    // Dosyayı bulunduğumuz klasöre (doğru yere) yükle
     const stream = require('stream');
     const readStream = new stream.PassThrough();
     readStream.end(buffer);
 
     await client.uploadFrom(readStream, fileName);
 
-    // Public URL'yi döndür
+    // Frontend'in okuyacağı URL'yi oluştur
+    const cleanPublicUrl = publicUrl.replace(/\/$/, '');
     const finalPublicUrl = subDir 
-        ? `${publicUrl.replace(/\/$/, '')}/${subDir}/${fileName}`
-        : `${publicUrl.replace(/\/$/, '')}/${fileName}`;
+        ? `${cleanPublicUrl}/${subDir}/${fileName}`
+        : `${cleanPublicUrl}/${fileName}`;
 
     return finalPublicUrl;
   } catch (err) {
@@ -77,7 +87,8 @@ export async function downloadFileFromFTP(fileName: string): Promise<Buffer> {
 
   try {
     await client.access({ host, user, password, port, secure: false });
-    await client.cd(uploadDir);
+    await client.cd('/'); // Kök dizine dön
+    await client.cd(uploadDir); // Hedef dizine git
 
     const stream = require('stream');
     const writeStream = new stream.PassThrough();
@@ -112,16 +123,17 @@ export async function deleteFileFromFTP(fileName: string, subDir?: string): Prom
   try {
     await client.access({ host, user, password, port, secure: false });
     
+    await client.cd('/'); // Önce kök dizine git
+    
     let finalUploadDir = baseUploadDir;
     if (subDir) {
       finalUploadDir = `${baseUploadDir.replace(/\/$/, '')}/${subDir}`;
     }
 
-    await client.cd(finalUploadDir);
+    await client.cd(finalUploadDir); // Silinecek dosyanın olduğu yere git
     await client.remove(fileName);
   } catch (err: any) {
-    // 550 hatası dosyanın zaten mevcut olmadığını belirtir, bu durumda sessizce devam edebiliriz.
-    if (err.code !== 550) {
+    if (err.code !== 550) { // 550: Dosya zaten yok demek
       console.error('FTP Delete Hatası:', err);
     }
   } finally {
