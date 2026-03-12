@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteFileFromFTP } from "@/lib/ftp";
 
 export async function PATCH(req: NextRequest) {
   const session = await auth();
@@ -8,10 +9,39 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const { name, image } = await req.json();
-    const userId = (session.user as any).id;
+    const userId = parseInt((session.user as any).id);
+
+    // Eğer yeni bir resim gelmişse eskisini sunucudan silelim
+    if (image) {
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { image: true }
+      });
+
+      if (currentUser?.image) {
+        try {
+          // URL'den dosya adını ve klasörü ayıkla
+          // Örn: https://www.aiesecrm.com/uploads/pp/123-img.jpg
+          const publicUrl = process.env.FTP_PUBLIC_URL || '';
+          const relativePath = currentUser.image.replace(publicUrl, '').replace(/^\//, '');
+          const parts = relativePath.split('/');
+          
+          if (parts.length >= 2) {
+            const subDir = parts[0];
+            const fileName = parts[1];
+            await deleteFileFromFTP(fileName, subDir);
+          } else if (parts.length === 1) {
+            const fileName = parts[0];
+            await deleteFileFromFTP(fileName);
+          }
+        } catch (e) {
+          console.error("Eski profil resmi silinirken hata:", e);
+        }
+      }
+    }
 
     const updatedUser = await prisma.user.update({
-      where: { id: parseInt(userId) },
+      where: { id: userId },
       data: {
         ...(name && { name }),
         ...(image && { image }),
