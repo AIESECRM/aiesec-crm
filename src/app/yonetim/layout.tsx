@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Users, BarChart3, Settings, CalendarPlus, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import ChatWidget from "@/components/chat/ChatWidget";
 import './yonetim.css';
 
 export default function YonetimLayout({ children }: { children: React.ReactNode }) {
@@ -49,6 +50,7 @@ export default function YonetimLayout({ children }: { children: React.ReactNode 
 
             <div className="yonetim-layout__content">
                 {children}
+                <ChatWidget />
             </div>
         </div>
     );
