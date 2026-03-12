@@ -15,10 +15,22 @@ interface AvatarProps {
 
 export default function Avatar({ src, alt, size = 40, className, style, fallbackIcon }: AvatarProps) {
   const [error, setError] = React.useState(false);
+  const [retryCount, setRetryCount] = React.useState(0);
 
   React.useEffect(() => {
     setError(false);
+    setRetryCount(0);
   }, [src]);
+
+  const handleImageError = () => {
+    if (retryCount < 2) {
+      setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+      }, 1000); // 1 saniye sonra tekrar dene
+    } else {
+      setError(true);
+    }
+  };
 
   const containerStyle = {
     width: size,
@@ -28,9 +40,12 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
     ...style
   };
 
+  const imageSrc = src && retryCount > 0 ? `${src}${src.includes('?') ? '&' : '?'}retry=${retryCount}` : src;
+
   if (!src || error) {
     return (
       <div 
+        key={String(src || 'no-src')}
         className={cn("flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full border border-border overflow-hidden", className)}
         style={containerStyle}
       >
@@ -41,14 +56,15 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
 
   return (
     <div 
+      key={String(src)}
       className={cn("rounded-full border border-border overflow-hidden", className)}
       style={containerStyle}
     >
       <img
-        src={src}
+        src={imageSrc || ''}
         alt={alt || "Avatar"}
         className="w-full h-full object-cover"
-        onError={() => setError(true)}
+        onError={handleImageError}
       />
     </div>
   );
