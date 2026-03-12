@@ -229,28 +229,30 @@ export default function ChatWidget() {
             )}
 
             {view === 'chat' && (
-              <div className="flex flex-col p-4 gap-3">
-                <div className="text-center mb-2">
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                        Sohbetin Başı
-                    </span>
+              <div className="flex flex-col p-4 gap-4">
+                <div className="text-center mb-4 flex flex-col items-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xl mb-2">
+                      {activePartner?.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="font-semibold text-foreground">{activePartner?.name}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Sohbet Başlatıldı</div>
                 </div>
                 {messages.map((m, idx) => {
                   const isMe = m.senderId === parseInt(currentUser.id, 10);
                   return (
-                    <div key={idx} className={`flex flex-col max-w-[85%] ${isMe ? 'self-end' : 'self-start'}`}>
+                    <div key={idx} className={`flex flex-col max-w-[80%] ${isMe ? 'self-end' : 'self-start'}`}>
                       <div 
-                        className={`p-3 rounded-2xl shadow-sm ${
+                        className={`px-4 py-2.5 rounded-2xl shadow-sm ${
                           isMe 
-                            ? 'bg-primary text-primary-foreground rounded-br-sm' 
-                            : 'bg-card border border-border text-card-foreground rounded-bl-sm'
+                            ? 'bg-[#037EF3] text-white rounded-br-none' 
+                            : 'bg-card border border-border text-card-foreground rounded-bl-none'
                         }`}
                       >
-                        <p className="text-sm break-words whitespace-pre-wrap">{m.content}</p>
+                        <p className="text-[13.5px] leading-relaxed break-words whitespace-pre-wrap font-medium">{m.content}</p>
                       </div>
-                      <div className={`flex items-center gap-1.5 text-[10px] text-muted-foreground mt-1 ${isMe ? 'self-end' : 'self-start'}`}>
+                      <div className={`flex items-center gap-1.5 text-[9px] text-muted-foreground mt-1 px-1 ${isMe ? 'self-end' : 'self-start'}`}>
                         <span>{formatTime(m.createdAt)}</span>
-                        {isMe && (m.isRead ? <CheckCheck size={14} className="text-sky-500" /> : <Check size={14} />)}
+                        {isMe && (m.isRead ? <CheckCheck size={12} className="text-sky-500" /> : <Check size={12} />)}
                       </div>
                     </div>
                   );
@@ -261,21 +263,21 @@ export default function ChatWidget() {
           </div>
 
           {view === 'chat' && (
-            <div className="p-3 border-t border-border bg-card">
-              <form onSubmit={handleSendMessage} className="flex items-center gap-2 bg-muted rounded-full pr-1 pl-3 shadow-inner">
+            <div className="p-4 border-t border-border bg-card">
+              <form onSubmit={handleSendMessage} className="flex items-center gap-2 bg-muted/50 border border-border rounded-xl pr-1.5 pl-3 transition-all focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20">
                 <input
                   type="text"
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Bir mesaj yazın..."
-                  className="flex-1 bg-transparent border-none py-2.5 text-sm focus:outline-none placeholder:text-muted-foreground"
+                  placeholder="Mesajınızı yazın..."
+                  className="flex-1 bg-transparent border-none py-3 text-sm focus:outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
                   disabled={!messageText.trim()}
-                  className="w-8 h-8 m-1 bg-primary text-primary-foreground rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 active:scale-95"
+                  className="w-9 h-9 bg-[#037EF3] text-white rounded-lg flex items-center justify-center disabled:opacity-50 transition-all hover:bg-[#0266c8] active:scale-95 shadow-md"
                 >
-                  <Send size={14} className="" style={{marginLeft: "2px"}} />
+                  <Send size={16} style={{marginLeft: "2px"}} />
                 </button>
               </form>
             </div>
@@ -288,7 +290,7 @@ export default function ChatWidget() {
           setIsOpen(!isOpen);
           if (!isOpen && view === 'new_chat') setView('list');
         }}
-        className="w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl flex items-center justify-center hover:scale-105 transition-all duration-300 relative focus:outline-none focus:ring-4 focus:ring-primary/20"
+        className="w-14 h-14 bg-[#037EF3] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all duration-300 relative focus:outline-none border-2 border-white/10"
       >
         {isOpen ? <X size={26} /> : <MessageCircle size={28} className="mt-[2px]" />}
         {!isOpen && totalUnread > 0 && (

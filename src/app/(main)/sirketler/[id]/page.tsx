@@ -286,9 +286,10 @@ export default function CompanyDetailPage() {
               </div>
               <button 
                 onClick={() => setShowUploadModal(true)}
-                style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                className="company-detail__add-doc-btn"
+                style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
               >
-                <Plus size={14} /> Ekle
+                <Plus size={16} /> Yeni Doküman Ekle
               </button>
             </div>
           </div>

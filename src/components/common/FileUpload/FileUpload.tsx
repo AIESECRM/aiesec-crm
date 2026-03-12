@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { UploadCloud, File, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { UploadCloud, File, X, CheckCircle2, AlertCircle, Loader2, Upload, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
@@ -13,7 +13,7 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successParams, setSuccessParams] = useState<{ url: string; name: string } | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +41,7 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
   const clearFile = () => {
     setFile(null);
     setError(null);
-    setSuccessParams(null);
+    setUploadedUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -66,8 +66,8 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
         throw new Error(data.error || "Yükleme başarısız.");
       }
 
-      setSuccessParams({ url: data.url, name: file.name });
-      onUploadSuccess(data.url, file.name);
+      setUploadedUrl(data.url);
+      // We don't call onUploadSuccess here yet, we wait for the user to click the final confirm button
     } catch (err: any) {
       setError(err.message || "Bilinmeyen bir hata oluştu.");
     } finally {
@@ -75,32 +75,15 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
     }
   };
 
-  if (successParams) {
-    return (
-      <div className={cn("p-4 border border-green-200 bg-green-50 dark:bg-green-900/10 dark:border-green-800 rounded-lg flex items-center gap-3", className)}>
-        <CheckCircle2 className="text-green-500 w-5 h-5 flex-shrink-0" />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-green-800 dark:text-green-300 truncate">
-            {successParams.name}
-          </p>
-          <p className="text-xs text-green-600 dark:text-green-400">Başarıyla yüklendi</p>
-        </div>
-        <button type="button" onClick={clearFile} className="text-green-600 hover:text-green-800 p-1">
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <div className={cn("flex flex-col gap-4", className)}>
       <div
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center transition-colors cursor-pointer",
-          file ? "border-primary/50 bg-primary/5" : "border-gray-200 hover:border-primary/50 dark:border-gray-800",
-          error && "border-red-400 bg-red-50/50 dark:bg-red-900/10"
+          "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer",
+          file ? "border-[#037EF3]/50 bg-[#037EF3]/5" : "border-gray-200 hover:border-[#037EF3]/50 dark:border-gray-800 hover:bg-muted/30",
+          error && "border-red-400 bg-red-50/50"
         )}
-        onClick={() => !file && fileInputRef.current?.click()}
+        onClick={() => !file && !uploadedUrl && fileInputRef.current?.click()}
       >
         <input
           type="file"
@@ -108,71 +91,94 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
-          disabled={isUploading}
+          disabled={isUploading || !!uploadedUrl}
         />
 
         {file ? (
-          <div className="flex items-center gap-3 w-full">
-            <File className="w-8 h-8 text-primary shrink-0" />
+          <div className="flex items-center gap-4 w-full">
+            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm flex items-center justify-center shrink-0 border border-border">
+              <File className="w-6 h-6 text-[#037EF3]" />
+            </div>
             <div className="flex-1 min-w-0 text-left">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-semibold text-foreground truncate">
                 {file.name}
               </p>
-              <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              <p className="text-xs text-muted-foreground uppercase">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
             </div>
-            {!isUploading && (
+            {!isUploading && !uploadedUrl && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   clearFile();
                 }}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-500"
+                className="p-2 hover:bg-white dark:hover:bg-gray-700 rounded-full text-muted-foreground hover:text-red-500 transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>
         ) : (
-          <>
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-3">
-              <UploadCloud className="w-5 h-5 text-primary" />
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-[#037EF3]/10 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+              <UploadCloud className="w-6 h-6 text-[#037EF3]" />
             </div>
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              PDF Dosyası Yüklemek İçin Tıklayın
+            <p className="text-sm font-bold text-foreground">
+              PDF Dosyası Seçin
             </p>
-            <p className="text-xs text-gray-500 mt-1">Maksimum 5MB</p>
-          </>
+            <p className="text-xs text-muted-foreground mt-2">Sürükle bırak veya tıkla (Maks. 5MB)</p>
+          </div>
         )}
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-red-500 text-sm">
+        <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg text-red-600 dark:text-red-400 text-sm animate-in fade-in slide-in-from-top-1">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {file && !successParams && (
-        <button
-          type="button"
-          onClick={handleUpload}
-          disabled={isUploading}
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-        >
-          {isUploading ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Yükleniyor...
-            </>
-          ) : (
-            <>
-              <UploadCloud className="w-4 h-4" />
-              Sunucuya Yükle
-            </>
-          )}
-        </button>
-      )}
+      <div className="flex flex-col items-center">
+        {uploadedUrl ? (
+          <div className="w-full flex flex-col items-center animate-in zoom-in-95 duration-300">
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 border-2 border-green-200 dark:border-green-800">
+              <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+            </div>
+            <p className="text-sm font-bold text-foreground mb-1">Yükleme Başarılı!</p>
+            <p className="text-xs text-muted-foreground mb-6">Dosyanız güvenle sunucuya aktarıldı.</p>
+            <button
+              type="button"
+              onClick={() => onUploadSuccess(uploadedUrl, file?.name || "pdf_dosyasi.pdf")}
+              className="w-full py-4 px-6 bg-[#037EF3] hover:bg-[#0266c8] text-white rounded-xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-wide"
+            >
+              <Upload size={18} /> Veritabanına Kaydet ve Bitir
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={!file || isUploading}
+            onClick={handleUpload}
+            className={cn(
+              "w-full py-4 px-6 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-3 shadow-lg uppercase tracking-wide",
+              !file || isUploading
+                ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                : "bg-[#037EF3] hover:bg-[#0266c8] text-white shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            )}
+          >
+            {isUploading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Döküman Yükleniyor...
+              </>
+            ) : (
+              <>
+                <Upload size={18} /> Bulut Sunucuya Gönder
+              </>
+            )}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
