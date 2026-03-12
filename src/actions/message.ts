@@ -101,11 +101,13 @@ export async function getRecentConversations(userId: number) {
                 usersMap.set(partnerId, {
                     user: partner,
                     lastMessage: msg,
-                    unreadCount: msg.receiverId === userId && !msg.isRead ? 1 : 0
+                    unreadCount: (msg.receiverId === userId && !msg.isRead) ? 1 : 0
                 });
             } else if (msg.receiverId === userId && !msg.isRead) {
                 const existing = usersMap.get(partnerId);
-                existing.unreadCount += 1;
+                if (existing) {
+                    existing.unreadCount += 1;
+                }
             }
         });
 

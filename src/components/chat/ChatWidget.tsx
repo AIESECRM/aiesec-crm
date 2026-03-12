@@ -70,7 +70,7 @@ export default function ChatWidget() {
                 setMessages(fetchedMessages);
               }
 
-              const unreadMsgs = fetchedMessages.filter(m => m.receiverId === parseInt(currentUser.id, 10) && !m.isRead);
+              const unreadMsgs = (fetchedMessages as Message[]).filter((m: Message) => m.receiverId === parseInt(currentUser.id, 10) && !m.isRead);
               if (unreadMsgs.length > 0) {
                 await markAsRead(parseInt(currentUser.id, 10), activePartner.id);
               }
