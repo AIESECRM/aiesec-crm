@@ -58,28 +58,28 @@ export default function YonetimPage() {
             </h2>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ backgroundColor: 'var(--neutral-light)', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>Toplam Cold Call</h3>
+                        <h3 style={{ fontSize: '14px', color: 'var(--text-light)', fontWeight: '500' }}>Toplam Cold Call</h3>
                         <Phone size={20} color="#2563eb" />
                     </div>
-                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{coldCalls}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-regular)' }}>{coldCalls}</p>
                 </div>
 
-                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ backgroundColor: 'var(--neutral-light)', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>Toplantı</h3>
+                        <h3 style={{ fontSize: '14px', color: 'var(--text-light)', fontWeight: '500' }}>Toplantı</h3>
                         <Calendar size={20} color="#059669" />
                     </div>
-                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{meetings}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-regular)' }}>{meetings}</p>
                 </div>
 
-                <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ backgroundColor: 'var(--neutral-light)', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>İlgilenilen Şirket</h3>
+                        <h3 style={{ fontSize: '14px', color: 'var(--text-light)', fontWeight: '500' }}>İlgilenilen Şirket</h3>
                         <Building2 size={20} color="#7c3aed" />
                     </div>
-                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827' }}>{companiesHandled}</p>
+                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-regular)' }}>{companiesHandled}</p>
                 </div>
             </div>
 
@@ -91,18 +91,18 @@ export default function YonetimPage() {
                     const mMeetings = memberActivities.filter(a => a.type === 'MEETING').length;
 
                     return (
-                        <div key={member.id} style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={member.id} style={{ backgroundColor: 'var(--neutral-light)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <span style={{ fontWeight: '600', fontSize: '16px' }}>{member.name}</span>
-                                <span style={{ fontSize: '12px', color: '#6b7280' }}>{member.role}</span>
+                                <span style={{ fontSize: '12px', color: 'var(--text-light)' }}>{member.role}</span>
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 <div style={{ textAlign: 'center' }}>
-                                    <span style={{ display: 'block', fontSize: '10px', color: '#9ca3af', fontWeight: 'bold' }}>CALLS</span>
+                                    <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', fontWeight: 'bold' }}>CALLS</span>
                                     <span style={{ fontWeight: 'bold', color: '#2563eb' }}>{mCalls}</span>
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
-                                    <span style={{ display: 'block', fontSize: '10px', color: '#9ca3af', fontWeight: 'bold' }}>MEETS</span>
+                                    <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', fontWeight: 'bold' }}>MEETS</span>
                                     <span style={{ fontWeight: 'bold', color: '#059669' }}>{mMeetings}</span>
                                 </div>
                             </div>

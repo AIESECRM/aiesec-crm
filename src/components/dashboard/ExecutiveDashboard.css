@@ -64,7 +64,7 @@
 .exec__header-title {
     font-size: 22px;
     font-weight: 700;
-    color: #1A1A2E;
+    color: var(--text-regular);
     letter-spacing: -0.3px;
 }
 
@@ -83,7 +83,7 @@
     padding: 8px 32px 8px 12px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    background: white;
+    background: var(--neutral-light);
     font-size: 13px;
     color: var(--text-regular);
     cursor: pointer;
@@ -122,11 +122,11 @@
 }
 
 .exec__kpi {
-    background: white;
+    background: var(--neutral-light);
     border-radius: 10px;
     padding: 16px 18px;
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color-light);
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -225,7 +225,7 @@
 .exec__kpi-value {
     font-size: 24px;
     font-weight: 700;
-    color: #1A1A2E;
+    color: var(--text-regular);
     letter-spacing: -0.5px;
     line-height: 1;
 }
@@ -245,10 +245,10 @@
 
 /* Card */
 .exec__card {
-    background: white;
+    background: var(--neutral-light);
     border-radius: 10px;
     padding: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color-light);
 }
 
 .exec__card-title {
@@ -257,7 +257,7 @@
     gap: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
     margin-bottom: 14px;
 }
 
@@ -325,7 +325,7 @@
 .exec__funnel-count {
     font-size: 18px;
     font-weight: 700;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 .exec__funnel-bar-bg {
@@ -434,7 +434,7 @@
 .exec__pipeline-count {
     font-size: 13px;
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 /* Products */
@@ -457,7 +457,7 @@
     gap: 6px;
     font-size: 13px;
     font-weight: 500;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 .exec__product-dot {
@@ -469,7 +469,7 @@
 .exec__product-val {
     font-size: 13px;
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 .exec__product-bar-bg {
@@ -538,7 +538,7 @@
 .exec__q-label {
     font-size: 12px;
     font-weight: 500;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 .exec__q-value {
@@ -593,7 +593,7 @@
     padding: 8px 10px;
     font-size: 13px;
     color: var(--text-regular);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--border-color-light);
 }
 
 .exec__table-rank {
@@ -633,7 +633,7 @@
 
 .exec__table-ch {
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
     font-size: 13px;
     display: block;
 }
@@ -645,7 +645,7 @@
 
 .exec__table-val {
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 .exec__conv {
@@ -682,16 +682,16 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: white;
+    background: var(--neutral-light);
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color-light);
     flex-wrap: wrap;
 }
 
 .exec__top-bar-title {
     font-size: 12px;
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
     margin-right: 4px;
 }
 
@@ -717,7 +717,7 @@
 
 /* Tooltip */
 .exec-tooltip {
-    background: white;
+    background: var(--neutral-light);
     border: 1px solid #E5E7EB;
     border-radius: 8px;
     padding: 10px 14px;
@@ -727,7 +727,7 @@
 
 .exec-tooltip__label {
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
     margin-bottom: 4px;
 }
 
@@ -752,7 +752,7 @@
 
 .exec-tooltip__value {
     font-weight: 600;
-    color: #1A1A2E;
+    color: var(--text-regular);
 }
 
 /* Responsive */

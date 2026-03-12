@@ -53,25 +53,25 @@ function SearchableUserSelect({ value, onChange, options, placeholder }: { value
                 onClick={() => { setIsOpen(!isOpen); setSearch(''); }}
                 style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db',
-                    fontSize: '15px', backgroundColor: '#fff', cursor: 'pointer',
+                    padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)',
+                    fontSize: '15px', backgroundColor: 'var(--neutral-light)', cursor: 'pointer',
                     minHeight: '44px'
                 }}
             >
                 <span style={{ color: selected ? '#111827' : '#6b7280' }}>
                     {selected ? selected.label : placeholder}
                 </span>
-                <ChevronDown size={18} color="#6b7280" />
+                <ChevronDown size={18} color="var(--text-light)" />
             </div>
 
             {isOpen && (
                 <div style={{
                     position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
-                    backgroundColor: '#fff', border: '1px solid #d1d5db', borderRadius: '8px',
+                    backgroundColor: 'var(--neutral-light)', border: '1px solid var(--border-color)', borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 50, overflow: 'hidden'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid #e5e7eb' }}>
-                        <Search size={16} color="#9ca3af" />
+                    <div style={{ display: 'flex', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid var(--border-color)' }}>
+                        <Search size={16} color="var(--text-light)" />
                         <input
                             type="text"
                             placeholder="Ara..."
@@ -89,16 +89,16 @@ function SearchableUserSelect({ value, onChange, options, placeholder }: { value
                                 onClick={() => { onChange(o.value); setIsOpen(false); }}
                                 style={{
                                     padding: '10px 12px', cursor: 'pointer', fontSize: '14px',
-                                    backgroundColor: value === o.value ? '#eff6ff' : 'transparent',
-                                    borderBottom: '1px solid #f3f4f6'
+                                    backgroundColor: value === o.value ? 'var(--dashboard-bg)' : 'transparent',
+                                    borderBottom: '1px solid var(--border-color-light)'
                                 }}
                                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = value === o.value ? '#eff6ff' : 'transparent'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = value === o.value ? 'var(--dashboard-bg)' : 'transparent'}
                             >
                                 {o.label}
                             </div>
                         )) : (
-                            <div style={{ padding: '10px 12px', color: '#6b7280', fontSize: '14px', textAlign: 'center' }}>
+                            <div style={{ padding: '10px 12px', color: 'var(--text-light)', fontSize: '14px', textAlign: 'center' }}>
                                 Bulunamadı
                             </div>
                         )}
@@ -191,8 +191,8 @@ export default function HandoverPage() {
                 Devir Teslim (Handover) İşlemi
             </h2>
 
-            <div style={{ padding: '16px', backgroundColor: '#f3f4f6', borderRadius: '12px', marginBottom: '24px' }}>
-                <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
+            <div style={{ padding: '16px', backgroundColor: 'var(--dashboard-bg)', borderRadius: '12px', marginBottom: '24px' }}>
+                <p style={{ fontSize: '14px', color: 'var(--text-regular)', lineHeight: '1.5' }}>
                     Bu modül ile görevi bırakan bir üyenin tüm portföyünü (şirketler, teklifler, aktiviteler) tek bir işlemle başka bir üyeye aktarabilirsiniz.
                     <br /><br />
                     <strong>Dikkat:</strong> Bu işlem geri alınamaz.
@@ -202,9 +202,9 @@ export default function HandoverPage() {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {isNational && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Şube Filtresi (Ulusal Yetki)</label>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Şube Filtresi (Ulusal Yetki)</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', backgroundColor: '#fff' }}
+                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', backgroundColor: 'var(--neutral-light)' }}
                             value={filterChapter}
                             onChange={(e) => {
                                 setFilterChapter(e.target.value);
@@ -220,7 +220,7 @@ export default function HandoverPage() {
                 )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Kaynak Üye (Devreden)</label>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Kaynak Üye (Devreden)</label>
                     <SearchableUserSelect
                         value={fromUserId}
                         onChange={setFromUserId}
@@ -230,7 +230,7 @@ export default function HandoverPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Hedef Üye (Devralan)</label>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Hedef Üye (Devralan)</label>
                     <SearchableUserSelect
                         value={toUserId}
                         onChange={setToUserId}
@@ -240,9 +240,9 @@ export default function HandoverPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Devir Sebebi (Opsiyonel)</label>
+                    <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Devir Sebebi (Opsiyonel)</label>
                     <textarea
-                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '15px', minHeight: '80px' }}
+                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', minHeight: '80px' }}
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
                         placeholder="Örn: Görev değişikliği..."
