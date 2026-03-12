@@ -25,12 +25,14 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
   }, [src]);
 
   const handleImageError = () => {
+    console.warn(`[Avatar] Resim yüklenemedi, tekrar deneniyor (${retryCount + 1}/2):`, src);
     if (retryCount < 2) {
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
         setIsLoading(true);
-      }, 1000); // 1 saniye sonra tekrar dene
+      }, 2000); // 2 saniye sonra tekrar dene
     } else {
+      console.error(`[Avatar] Resim yükleme başarısız oldu:`, src);
       setError(true);
       setIsLoading(false);
     }
@@ -49,7 +51,12 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
     ...style
   };
 
-  const imageSrc = src && retryCount > 0 ? `${src}${src.includes('?') ? '&' : '?'}retry=${retryCount}` : src;
+  // İlk yüklemede ve retry'larda cache'i aşmak için timestamp ekleyelim
+  const imageSrc = React.useMemo(() => {
+    if (!src) return '';
+    const connector = src.includes('?') ? '&' : '?';
+    return `${src}${connector}v=${Date.now()}${retryCount > 0 ? `&r=${retryCount}` : ''}`;
+  }, [src, retryCount]);
 
   if (!src || error) {
     return (
@@ -77,6 +84,7 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
       <img
         src={imageSrc || ''}
         alt={alt || "Avatar"}
+        referrerPolicy="no-referrer"
         className={cn(
           "w-full h-full object-cover transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100"
