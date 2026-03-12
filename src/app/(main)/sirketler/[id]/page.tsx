@@ -5,9 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft, Building2, Phone, Mail, Edit3, Settings, ExternalLink,
   User, MessageSquare, Clock, Search, Filter, MoreVertical, Users,
-  RefreshCw, X, Bell, Trash2, Shield, Eye, Copy
+  RefreshCw, X, Bell, Trash2, Shield, Eye, Copy, FileText, Upload, Plus
 } from 'lucide-react';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import './page.css';
 
 const ACTIVITY_LABELS: Record<string, string> = {
@@ -38,6 +39,7 @@ export default function CompanyDetailPage() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [offers, setOffers] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -45,6 +47,8 @@ export default function CompanyDetailPage() {
   const [editModal, setEditModal] = useState<{ isOpen: boolean; activity: any }>({ isOpen: false, activity: null });
   const [deleteActivityModal, setDeleteActivityModal] = useState<{ isOpen: boolean; activity: any }>({ isOpen: false, activity: null });
   const [deleteCompanyModal, setDeleteCompanyModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
   const [editNote, setEditNote] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,6 +89,7 @@ export default function CompanyDetailPage() {
     setContacts(contactsData.contacts || []);
     setActivities(activitiesData.activities || []);
     setOffers(offersData.offers || []);
+    setDocuments(companyData.company?.documents || []);
     setLoading(false);
   };
 
@@ -262,6 +267,53 @@ export default function CompanyDetailPage() {
             )}
           </div>
         </div>
+
+        {/* Documents */}
+        <div className="company-detail__card">
+          <div className="company-detail__card-header">
+            <h3 className="company-detail__card-title">Dokümanlar</h3>
+            <div className="company-detail__card-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="company-detail__card-count">
+                <FileText className="company-detail__card-count-icon" />
+                {documents.length}
+              </div>
+              <button 
+                onClick={() => setShowUploadModal(true)}
+                style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                <Plus size={14} /> Ekle
+              </button>
+            </div>
+          </div>
+          <div className="company-detail__proposal-list">
+            {documents.length > 0 ? documents.map((doc: any) => (
+              <div key={doc.id} className="company-detail__proposal-item" style={{ alignItems: 'center' }}>
+                <div className="company-detail__proposal-left">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FileText size={16} className="text-gray-400" />
+                    <div>
+                      <div style={{ fontWeight: '500', fontSize: '14px' }}>{doc.name}</div>
+                      <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                        {new Date(doc.createdAt * 1000).toLocaleDateString('tr-TR')}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a 
+                  href={doc.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ fontWeight: '500', fontSize: '12px', color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <ExternalLink size={14} /> Aç
+                </a>
+              </div>
+            )) : (
+              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Doküman bulunmamaktadır.</p>
+            )}
+          </div>
+        </div>
+
       </div>
 
       {/* Activities Table */}
@@ -459,6 +511,42 @@ export default function CompanyDetailPage() {
         cancelText="İptal"
         type="danger"
       />
+
+      {/* Upload Document Modal */}
+      {showUploadModal && (
+        <>
+          <div className="company-detail__modal-overlay" onClick={() => setShowUploadModal(false)} />
+          <div className="company-detail__activity-modal">
+            <div className="company-detail__activity-modal-header">
+              <h2 className="company-detail__activity-modal-title">Doküman Yükle</h2>
+              <button className="company-detail__activity-modal-close" onClick={() => setShowUploadModal(false)}><X /></button>
+            </div>
+            <div className="company-detail__activity-modal-content" style={{ padding: '24px' }}>
+              <FileUpload
+                onUploadSuccess={async (url, name) => {
+                  setUploadingDoc(true);
+                  // Dosya veritabanına kaydedilir
+                  const res = await fetch(`/api/companies/${params.id}/documents`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, url })
+                  });
+                  if (res.ok) {
+                    setShowUploadModal(false);
+                    fetchData();
+                  }
+                  setUploadingDoc(false);
+                }}
+              />
+              {uploadingDoc && (
+                <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '13px', color: '#6b7280' }}>
+                  Veritabanına kaydediliyor...
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

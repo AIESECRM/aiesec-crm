@@ -98,6 +98,8 @@ model User {
   companies        Company[]  @relation("CompanyCreator")
   managedCompanies Company[]  @relation("CompanyManagers")
   offers           Offer[]
+  sentMessages     Message[]  @relation("SentMessages")
+  receivedMessages Message[]  @relation("ReceivedMessages")
 }
 
 model Company {
@@ -117,11 +119,12 @@ model Company {
   updatedAt   Int           @default(0)
   createdById Int?
 
-  createdBy  User?      @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  managers   User[]     @relation("CompanyManagers")
+  createdBy  User?             @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managers   User[]            @relation("CompanyManagers")
   contacts   Contact[]
   activities Activity[]
   offers     Offer[]
+  documents  CompanyDocument[]
 }
 
 model Contact {
@@ -156,6 +159,7 @@ model Offer {
   duration    OfferDuration
   openStatus  OfferOpenStatus @default(NEW_OPEN)
   value       Float?
+  documentUrl String?
   companyId   Int
   createdById Int
   createdAt   Int             @default(0)
@@ -191,4 +195,26 @@ model AuditLog {
   oldVal     String? @db.Text
   newVal     String? @db.Text
   ipAddress  String?
+}
+
+model CompanyDocument {
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  companyId Int
+  createdAt Int     @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id         Int     @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  content    String  @db.Text
+  isRead     Boolean @default(false)
+  createdAt  Int     @default(0)
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }

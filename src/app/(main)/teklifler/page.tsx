@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DollarSign, Filter, Plus, User, Building2, X, Save } from 'lucide-react';
 import Modal from '@/components/common/Modal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import './page.css';
 
 type OfferProduct = 'GTA' | 'GV' | 'GTE';
@@ -38,6 +39,8 @@ export default function DealsPage() {
     duration: 'SHORT' as OfferDuration,
     openStatus: 'NEW_OPEN' as OfferOpenStatus,
     value: '',
+    documentUrl: '',
+    documentName: ''
   });
 
   useEffect(() => {
@@ -111,11 +114,12 @@ export default function DealsPage() {
         openStatus: newOffer.openStatus,
         value: newOffer.value ? Number(newOffer.value) : null,
         companyId: Number(newOffer.companyId),
+        documentUrl: newOffer.documentUrl,
       }),
     });
     if (res.ok) {
       setShowAddModal(false);
-      setNewOffer({ companyId: '', title: '', product: 'GTA', duration: 'SHORT', openStatus: 'NEW_OPEN', value: '' });
+      setNewOffer({ companyId: '', title: '', product: 'GTA', duration: 'SHORT', openStatus: 'NEW_OPEN', value: '', documentUrl: '', documentName: '' });
       fetchData(filterProduct, filterOpenStatus);
     }
     setSubmitting(false);
@@ -256,6 +260,13 @@ export default function DealsPage() {
                           <Building2 className="deal-card__meta-icon" />
                           <span>{DURATION_LABELS[offer.duration as OfferDuration]}</span>
                         </div>
+                        {offer.documentUrl && (
+                          <div className="deal-card__meta-row mt-1">
+                            <a href={offer.documentUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--primary)', textDecoration: 'none', fontWeight: '500' }}>
+                              <span>Belge</span>
+                            </a>
+                          </div>
+                        )}
                       </div>
                       <div className="deal-card__footer">
                         <div className="deal-card__owner">
@@ -327,6 +338,13 @@ export default function DealsPage() {
             <div className="modal__field">
               <label className="modal__label">Değer (TL)</label>
               <input type="number" className="modal__input" placeholder="0" value={newOffer.value} onChange={(e) => setNewOffer(prev => ({ ...prev, value: e.target.value }))} min="0" />
+            </div>
+            
+            <div className="modal__field" style={{ marginTop: '16px' }}>
+              <label className="modal__label">Doküman (Opsiyonel)</label>
+              <FileUpload
+                onUploadSuccess={(url, name) => setNewOffer(prev => ({ ...prev, documentUrl: url, documentName: name }))}
+              />
             </div>
           </div>
           <div className="modal__actions">

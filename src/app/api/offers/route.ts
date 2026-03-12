@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Teklif ekleme yetkiniz yok!" }, { status: 403 });
   }
 
-  const { title, product, duration, openStatus, value, companyId } = await req.json();
+  const { title, product, duration, openStatus, value, companyId, documentUrl } = await req.json();
 
   if (!title || !product || !duration || !companyId) {
     return NextResponse.json({ error: "Başlık, ürün, dönem ve şirket zorunludur!" }, { status: 400 });
@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
       duration,
       openStatus: openStatus || "NEW_OPEN",
       value: value ? Number(value) : null,
+      documentUrl: documentUrl || null,
       companyId: parseInt(companyId),
       createdById: parseInt(user.id),
       createdAt: Math.floor(Date.now() / 1000),
