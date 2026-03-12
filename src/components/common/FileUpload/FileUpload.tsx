@@ -7,9 +7,18 @@ import { cn } from "@/lib/utils";
 interface FileUploadProps {
   onUploadSuccess: (url: string, name: string) => void;
   className?: string;
+  accept?: string;
+  maxSizeMB?: number;
+  label?: string;
 }
 
-export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
+export function FileUpload({ 
+  onUploadSuccess, 
+  className, 
+  accept = "application/pdf", 
+  maxSizeMB = 5,
+  label = "PDF Dosyası Seçin"
+}: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,12 +28,18 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
 
   const validateFile = (selectedFile: File) => {
     setError(null);
-    if (selectedFile.type !== "application/pdf") {
-      setError("Sadece PDF formatı desteklenmektedir.");
+    const allowedTypes = accept.split(",").map(t => t.trim());
+    const isAllowed = allowedTypes.some(t => {
+      if (t.endsWith("/*")) return selectedFile.type.startsWith(t.replace("/*", ""));
+      return selectedFile.type === t;
+    });
+
+    if (!isAllowed) {
+      setError(`Seçilen dosya türü desteklenmiyor. Beklenen: ${accept}`);
       return null;
     }
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      setError("Dosya boyutu maksimum 5MB olabilir.");
+    if (selectedFile.size > maxSizeMB * 1024 * 1024) {
+      setError(`Dosya boyutu maksimum ${maxSizeMB}MB olabilir.`);
       return null;
     }
     return selectedFile;
@@ -87,7 +102,7 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
       >
         <input
           type="file"
-          accept="application/pdf"
+          accept={accept}
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
@@ -124,9 +139,9 @@ export function FileUpload({ onUploadSuccess, className }: FileUploadProps) {
               <UploadCloud className="w-6 h-6 text-[#037EF3]" />
             </div>
             <p className="text-sm font-bold text-foreground">
-              PDF Dosyası Seçin
+              {label}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">Sürükle bırak veya tıkla (Maks. 5MB)</p>
+            <p className="text-xs text-muted-foreground mt-2">Sürükle bırak veya tıkla (Maks. {maxSizeMB}MB)</p>
           </div>
         )}
       </div>

@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyCompanyAccess } from "@/lib/authz";
 import { logAudit } from "@/lib/audit";
+import { notifyManagers } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     where: { id: parseInt(id) },
     include: {
       createdBy: { select: { id: true, name: true } },
-      managers: { select: { id: true, name: true } },
+      managers: { select: { id: true, name: true, image: true } },
       _count: { select: { contacts: true, activities: true, offers: true } },
       documents: { orderBy: { createdAt: "desc" } },
     },
@@ -63,6 +64,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   });
 
   await logAudit(user.id, "UPDATE_COMPANY", id, undefined, JSON.stringify(company));
+
+  // Menajerleri bilgilendir
+  await notifyManagers(
+    parseInt(id),
+    'COMPANY_UPDATED',
+    'Şirket Bilgileri Güncellendi',
+    `${user.name} tarafından şirket bilgileri güncellendi.`,
+    parseInt(user.id)
+  );
 
   return NextResponse.json({ success: true, company });
 }

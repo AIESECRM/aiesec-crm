@@ -11,6 +11,7 @@ export interface User {
   chapter?: string;
   status?: string;
   teamId?: string;   // For TLs and Members
+  image?: string | null;
   createdAt: Date;
 }
 
@@ -77,7 +78,7 @@ export interface Activity {
   scheduledAt?: Date;
   completedAt?: Date;
   createdAt: Date;
-  user?: { id: string; name: string; role: string };
+  user?: { id: string; name: string; role: string; image?: string | null };
   company?: { id: string; name: string; chapter?: string };
 }
 

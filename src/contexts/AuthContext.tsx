@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
@@ -11,6 +11,7 @@ interface AuthContextType {
     email: string;
     role: UserRole;
     chapter: string | null;
+    image: string | null;
   } | null;
   permissions: RolePermissions;
   isAdmin: boolean;
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: session.user.email || '',
     role: (session.user as any).role as UserRole,
     chapter: (session.user as any).chapter || null,
+    image: (session.user as any).image || null,
   } : null;
 
   const permissions = user ? getPermissions(user.role) : getPermissions('TM');

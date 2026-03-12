@@ -10,10 +10,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Dosya bulunamadı" }, { status: 400 });
     }
 
-    // 1. Dosya Türü Kontrolü (.pdf)
-    if (file.type !== "application/pdf") {
+    // 1. Dosya Türü Kontrolü (.pdf ve resimler)
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: "Sadece PDF dosyaları yüklenebilir!" },
+        { error: "Sadece PDF ve resim (JPG, PNG, WEBP) dosyaları yüklenebilir!" },
         { status: 400 }
       );
     }

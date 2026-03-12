@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyCompanyAccess } from "@/lib/authz";
 import { logAudit } from "@/lib/audit";
-import { notifyLeaders } from "@/lib/notifications";
+import { notifyLeaders, notifyManagers } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     where,
     include: {
       company: { select: { id: true, name: true, chapter: true } },
-      createdBy: { select: { id: true, name: true, role: true } },
+      createdBy: { select: { id: true, name: true, role: true, image: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -100,6 +100,15 @@ export async function POST(req: NextRequest) {
     'NEW_OFFER',
     'Yeni Teklif Oluşturuldu',
     `${company?.name || 'Bir şirket'} için "${title}" (${product}) teklifi oluşturuldu.`,
+    parseInt(user.id)
+  );
+
+  // Şirket menajerlerini bilgilendir
+  await notifyManagers(
+    parseInt(companyId),
+    'NEW_OFFER',
+    'Yeni Teklif Oluşturuldu',
+    `${user.name} tarafından "${title}" (${product}) teklifi oluşturuldu.`,
     parseInt(user.id)
   );
 

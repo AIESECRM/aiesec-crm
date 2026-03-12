@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyCompanyAccess } from "@/lib/authz";
 import { logAudit } from "@/lib/audit";
+import { notifyManagers } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -31,6 +32,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   });
 
   await logAudit(user.id, "ADD_DOCUMENT", id, undefined, JSON.stringify(document));
+
+  // Menajerleri bilgilendir
+  await notifyManagers(
+    parseInt(id),
+    'COMPANY_UPDATED',
+    'Yeni Doküman Yüklendi',
+    `${user.name} tarafından "${document.name}" yüklendi.`,
+    parseInt(user.id)
+  );
 
   return NextResponse.json({ success: true, document });
 }

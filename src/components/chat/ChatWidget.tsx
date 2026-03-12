@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { 
-  MessageCircle, X, Send, User as UserIcon, Check, CheckCheck, ArrowLeft 
+  MessageCircle, X, Send, User as UserIcon, Check, CheckCheck, ArrowLeft, Search 
 } from "lucide-react";
 import { 
   getRecentConversations, 
@@ -19,6 +19,7 @@ type User = {
   name: string;
   email: string;
   role: string;
+  image?: string | null;
 };
 
 type Message = {
@@ -45,6 +46,7 @@ export default function ChatWidget() {
   const [messageText, setMessageText] = useState("");
   
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [userSearch, setUserSearch] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -99,6 +101,7 @@ export default function ChatWidget() {
 
   const handleOpenNewChat = () => {
     loadAllUsers();
+    setUserSearch("");
     setView('new_chat');
   };
 
@@ -182,8 +185,12 @@ export default function ChatWidget() {
                       className="flex items-center justify-between p-4 border-b border-border hover:bg-muted/50 w-full text-left transition-colors"
                     >
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold shrink-0">
-                          {conv.user.name.charAt(0).toUpperCase()}
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold shrink-0 overflow-hidden border border-border">
+                          {conv.user.image ? (
+                            <img src={conv.user.image} alt={conv.user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            conv.user.name.charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div className="overflow-hidden">
                           <p className="font-medium text-sm truncate">{conv.user.name}</p>
@@ -210,29 +217,63 @@ export default function ChatWidget() {
 
             {view === 'new_chat' && (
               <div className="flex flex-col">
-                {allUsers.map((u) => (
-                  <button
-                     key={u.id}
-                     onClick={() => handleSelectPartner(u)}
-                     className="flex items-center gap-3 p-4 border-b border-border hover:bg-muted/50 w-full text-left transition-colors"
-                  >
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0">
-                      <UserIcon size={20} />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{u.name}</p>
-                      <p className="text-xs text-muted-foreground">{u.role}</p>
-                    </div>
-                  </button>
-                ))}
+                <div className="p-3 border-b border-border bg-card/50 sticky top-0 z-10">
+                  <div className="relative">
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="text"
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      placeholder="Kişi veya rol ara..."
+                      className="w-full bg-muted/50 border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                {allUsers
+                  .filter(u => 
+                    u.name.toLowerCase().includes(userSearch.toLowerCase()) || 
+                    u.role.toLowerCase().includes(userSearch.toLowerCase())
+                  )
+                  .map((u) => (
+                    <button
+                      key={u.id}
+                      onClick={() => handleSelectPartner(u)}
+                      className="flex items-center gap-3 p-4 border-b border-border hover:bg-muted/50 w-full text-left transition-colors"
+                    >
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0 overflow-hidden border border-border">
+                        {u.image ? (
+                          <img src={u.image} alt={u.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <UserIcon size={20} />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{u.name}</p>
+                        <p className="text-xs text-muted-foreground">{u.role}</p>
+                      </div>
+                    </button>
+                  ))}
+                {allUsers.filter(u => 
+                    u.name.toLowerCase().includes(userSearch.toLowerCase()) || 
+                    u.role.toLowerCase().includes(userSearch.toLowerCase())
+                  ).length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground text-sm">
+                    Kişi bulunamadı.
+                  </div>
+                )}
               </div>
             )}
 
             {view === 'chat' && (
               <div className="flex flex-col p-4 gap-4">
                 <div className="text-center mb-4 flex flex-col items-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xl mb-2">
-                      {activePartner?.name.charAt(0).toUpperCase()}
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xl mb-2 overflow-hidden border-2 border-primary/20">
+                      {activePartner?.image ? (
+                        <img src={activePartner.image} alt={activePartner.name} className="w-full h-full object-cover" />
+                      ) : (
+                        activePartner?.name.charAt(0).toUpperCase()
+                      )}
                     </div>
                     <div className="font-semibold text-foreground">{activePartner?.name}</div>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Sohbet Başlatıldı</div>

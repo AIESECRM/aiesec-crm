@@ -271,7 +271,11 @@ export default function DealsPage() {
                       <div className="deal-card__footer">
                         <div className="deal-card__owner">
                           <div className="deal-card__owner-avatar">
-                            <User className="deal-card__owner-avatar-icon" />
+                            {offer.createdBy?.image ? (
+                              <img src={offer.createdBy.image} alt={offer.createdBy.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <User className="deal-card__owner-avatar-icon" />
+                            )}
                           </div>
                           <span>{offer.createdBy?.name || '—'}</span>
                         </div>
