@@ -77,3 +77,43 @@ export async function notifyUser(
         console.error('Failed to create notification:', error);
     }
 }
+
+// Bir şirketin tüm menajerlerine bildirim gönder
+export async function notifyManagers(
+    companyId: number,
+    type: 'NEW_OFFER' | 'COMPANY_UPDATED',
+    title: string,
+    message: string,
+    excludeUserId?: number
+) {
+    try {
+        const company = await prisma.company.findUnique({
+            where: { id: companyId },
+            select: {
+                name: true,
+                managers: {
+                    where: {
+                        status: 'ACTIVE',
+                        ...(excludeUserId ? { id: { not: excludeUserId } } : {})
+                    },
+                    select: { id: true }
+                }
+            }
+        });
+
+        if (!company || !company.managers.length) return;
+
+        await prisma.notification.createMany({
+            data: company.managers.map(m => ({
+                userId: m.id,
+                type,
+                title: `${company.name}: ${title}`,
+                message,
+                read: false,
+                createdAt: Math.floor(Date.now() / 1000),
+            }))
+        });
+    } catch (error) {
+        console.error('Failed to notify managers:', error);
+    }
+}

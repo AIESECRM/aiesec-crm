@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { notifyUser, notifyManagers } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -78,16 +79,27 @@ export async function POST(req: NextRequest) {
       FOLLOW_UP: 'Takip'
     }[type as string] || type;
 
-    await prisma.notification.create({
-      data: {
-        userId: targetUserId,
-        type: 'COMPANY_UPDATED',
-        title: 'Yeni Aktivite Atandı',
-        message: `${user.name} size yeni bir aktivite atadı: ${typeLabel}`,
-        createdAt: Math.floor(Date.now() / 1000)
-      }
-    });
+    const dateStr = date ? new Date(date).toLocaleDateString('tr-TR') : 'Şimdi';
+    const isFuture = date && new Date(date).getTime() > Date.now();
+
+    await notifyUser(
+      targetUserId,
+      'COMPANY_UPDATED',
+      isFuture ? 'Yeni Görev Planlandı 📅' : 'Yeni Aktivite Atandı',
+      isFuture 
+        ? `${user.name} size ${dateStr} tarihinde bir ${typeLabel} planladı.`
+        : `${user.name} size yeni bir aktivite atadı: ${typeLabel}`
+    );
   }
+
+  // Şirket menajerlerini bilgilendir
+  await notifyManagers(
+    parseInt(companyId),
+    'COMPANY_UPDATED',
+    'Yeni Aktivite Kaydı',
+    `${user.name} tarafından yeni bir aktivite girildi.`,
+    parseInt(user.id)
+  );
 
   return NextResponse.json({ success: true, activity });
 }

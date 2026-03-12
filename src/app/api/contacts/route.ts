@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { notifyManagers } from "@/lib/notifications";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -49,9 +50,18 @@ export async function POST(req: NextRequest) {
       name,
       email: email || null,
       phone: phone || null,
-      companyId: companyId,
+      companyId: parseInt(companyId),
     },
   });
+
+  // Menajerleri bilgilendir
+  await notifyManagers(
+    parseInt(companyId),
+    'COMPANY_UPDATED',
+    'Yeni Bağlantı Kişisi Eklendi',
+    `${(session.user as any).name} tarafından "${contact.name}" eklendi.`,
+    parseInt((session.user as any).id)
+  );
 
   return NextResponse.json({ success: true, contact });
 }
