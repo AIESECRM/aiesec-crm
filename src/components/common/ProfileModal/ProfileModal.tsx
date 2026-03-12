@@ -158,6 +158,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 <div style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginBottom: '8px' }}>{user.email}</div>
                 <FileUpload 
                   onUploadSuccess={(url) => handleProfileImageUpdate(url)}
+                  onFileSelect={(localUrl) => setPreviewImage(localUrl)}
                   accept="image/*"
                   label="Fotoğrafı Değiştir"
                   autoUpload={true}
