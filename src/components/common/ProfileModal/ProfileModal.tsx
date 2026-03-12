@@ -156,6 +156,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     onUploadSuccess={(url) => handleProfileImageUpdate(url)}
                     accept="image/*"
                     label="Fotoğraf Değiştir"
+                    autoUpload={true}
                     className="profile-modal__avatar-uploader"
                   />
                 </div>

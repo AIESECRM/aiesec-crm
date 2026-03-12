@@ -174,9 +174,14 @@
 
 .profile-modal__avatar-uploader .text-sm,
 .profile-modal__avatar-uploader .text-xs,
-.profile-modal__avatar-uploader .bg-primary\/10,
-.profile-modal__avatar-uploader .w-full {
+.profile-modal__avatar-uploader .bg-primary\/10 {
   display: none !important;
+}
+
+.profile-modal__avatar-uploader .w-full {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 }
 
 .profile-modal__user-info {
