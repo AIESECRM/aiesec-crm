@@ -10,8 +10,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ file
     // FTP'den dosyayı çek
     const fileBuffer = await downloadFileFromFTP(filename);
 
-    // Tarayıcıya PDF olarak döndür
-    return new NextResponse(fileBuffer, {
+    // Tarayıcıya PDF olarak döndür (Buffer tip hatasını gidermek için cast edildi)
+    return new NextResponse(fileBuffer as any, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `inline; filename="${filename}"`,
