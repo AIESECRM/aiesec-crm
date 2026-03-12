@@ -32,9 +32,13 @@ export async function POST(req: NextRequest) {
     // 3. Dosyayı Buffer'a çevir
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-    // 4. Benzersiz dosya ismi oluştur
-    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const uniqueFileName = `${Date.now()}-${cleanFileName}`;
+    // 4. Benzersiz ve temiz dosya ismi oluştur (Sadece ingilizce karakterler ve rakamlar)
+    const extension = file.name.split('.').pop();
+    const cleanFileName = file.name
+      .split('.')[0]
+      .replace(/[^a-zA-Z0-9]/g, "_")
+      .toLowerCase();
+    const uniqueFileName = `${Date.now()}-${cleanFileName}.${extension}`;
 
     // 5. FTP ile Sunucuya Yükle
     const publicUrl = await uploadFileToFTP(fileBuffer, uniqueFileName, subDir);
