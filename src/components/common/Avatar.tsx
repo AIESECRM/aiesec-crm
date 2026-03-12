@@ -51,12 +51,7 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
     ...style
   };
 
-  // İlk yüklemede ve retry'larda cache'i aşmak için timestamp ekleyelim
-  const imageSrc = React.useMemo(() => {
-    if (!src) return '';
-    const connector = src.includes('?') ? '&' : '?';
-    return `${src}${connector}v=${Date.now()}${retryCount > 0 ? `&r=${retryCount}` : ''}`;
-  }, [src, retryCount]);
+  const imageSrc = src || '';
 
   if (!src || error) {
     return (

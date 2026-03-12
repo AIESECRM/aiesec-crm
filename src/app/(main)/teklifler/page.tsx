@@ -348,7 +348,6 @@ export default function DealsPage() {
               <label className="modal__label">Doküman (Opsiyonel)</label>
               <FileUpload
                 onUploadSuccess={(url, name) => setNewOffer(prev => ({ ...prev, documentUrl: url, documentName: name }))}
-                subDir="offers"
               />
             </div>
           </div>

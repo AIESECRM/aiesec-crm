@@ -545,7 +545,6 @@ export default function CompanyDetailPage() {
                   }
                   setUploadingDoc(false);
                 }}
-                subDir="company_docs"
               />
               {uploadingDoc && (
                 <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '13px', color: '#6b7280' }}>
