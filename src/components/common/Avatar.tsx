@@ -84,7 +84,6 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
       <img
         src={imageSrc || ''}
         alt={alt || "Avatar"}
-        referrerPolicy="no-referrer"
         className={cn(
           "w-full h-full object-cover transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100"
