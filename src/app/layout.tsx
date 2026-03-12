@@ -5,6 +5,7 @@ import { SearchProvider } from "@/contexts/SearchContext";
 import SessionProviderWrapper from "@/components/layout/SessionProviderWrapper";
 import { AuthProvider } from "@/contexts/AuthContext";
 import MainLayout from "@/components/layout/MainLayout";
+import ThemeProvider from "@/components/layout/ThemeProvider";
 
 const openSans = Open_Sans({
   variable: "--font-main",
@@ -47,15 +48,17 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${openSans.variable}`}>
-        <SessionProviderWrapper>
-          <AuthProvider>
-            <SearchProvider>
-              <MainLayout>
-                {children}
-              </MainLayout>
-            </SearchProvider>
-          </AuthProvider>
-        </SessionProviderWrapper>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SessionProviderWrapper>
+            <AuthProvider>
+              <SearchProvider>
+                <MainLayout>
+                  {children}
+                </MainLayout>
+              </SearchProvider>
+            </AuthProvider>
+          </SessionProviderWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );
