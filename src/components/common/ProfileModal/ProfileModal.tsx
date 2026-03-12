@@ -161,7 +161,6 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   accept="image/*"
                   label="Fotoğrafı Değiştir"
                   autoUpload={true}
-                  subDir="pp"
                   variant="avatar"
                   className="profile-modal__avatar-uploader"
                 />
