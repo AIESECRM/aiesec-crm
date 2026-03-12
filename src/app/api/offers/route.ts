@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     where,
     include: {
       company: { select: { id: true, name: true, chapter: true } },
-      createdBy: { select: { id: true, name: true, role: true } },
+      createdBy: { select: { id: true, name: true, role: true, image: true } },
     },
     orderBy: { createdAt: "desc" },
   });

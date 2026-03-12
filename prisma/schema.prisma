@@ -92,6 +92,7 @@ model User {
   role      UserRole   @default(TM)
   chapter   Chapter?
   status    UserStatus @default(PENDING)
+  image     String?
   createdAt Int        @default(0)
 
   activities       Activity[]

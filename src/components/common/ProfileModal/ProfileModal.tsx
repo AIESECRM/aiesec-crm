@@ -6,6 +6,7 @@ import { X, User, Eye, EyeOff, Check, AlertCircle, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signOut } from 'next-auth/react';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import './ProfileModal.css';
 
 interface ProfileModalProps {
@@ -108,6 +109,23 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     setIsSaving(false);
   };
 
+  const handleProfileImageUpdate = async (url: string) => {
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: url }),
+      });
+      if (res.ok) {
+        window.location.reload(); // Refresh to show new image
+      } else {
+        setMessage('Resim güncellenirken hata oluştu.');
+      }
+    } catch {
+      setMessage('Sunucu hatası!');
+    }
+  };
+
   if (!isOpen || !user) return null;
 
   return createPortal(
@@ -125,12 +143,26 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           <div className="profile-modal__section">
             <h3 className="profile-modal__section-title">Profil Bilgileri</h3>
             <div className="profile-modal__avatar-wrapper">
-              <div className="profile-modal__avatar">
-                <User className="profile-modal__avatar-icon" />
+              <div className="profile-modal__avatar-container">
+                <div className="profile-modal__avatar">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="profile-modal__avatar-img" />
+                  ) : (
+                    <User className="profile-modal__avatar-icon" />
+                  )}
+                </div>
+                <div className="profile-modal__avatar-upload">
+                  <FileUpload 
+                    onUploadSuccess={(url) => handleProfileImageUpdate(url)}
+                    accept="image/*"
+                    label="Fotoğraf Değiştir"
+                    className="profile-modal__avatar-uploader"
+                  />
+                </div>
               </div>
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '16px' }}>{user.name}</div>
-                <div style={{ color: '#6b7280', fontSize: '14px' }}>{user.email}</div>
+              <div className="profile-modal__user-info">
+                <div style={{ fontWeight: '600', fontSize: '18px', color: 'var(--foreground)' }}>{user.name}</div>
+                <div style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>{user.email}</div>
               </div>
             </div>
 

@@ -86,8 +86,8 @@ export async function getRecentConversations(userId: number) {
                 createdAt: 'desc'
             },
             include: {
-                sender: { select: { id: true, name: true, email: true, role: true } },
-                receiver: { select: { id: true, name: true, email: true, role: true } }
+                sender: { select: { id: true, name: true, email: true, role: true, image: true } },
+                receiver: { select: { id: true, name: true, email: true, role: true, image: true } }
             }
         });
 

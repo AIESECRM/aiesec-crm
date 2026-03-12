@@ -8,6 +8,7 @@ function mapUser(prismaUser: any) {
         name: prismaUser.name,
         email: prismaUser.email,
         role: prismaUser.role,
+        image: prismaUser.image,
         chapter: prismaUser.chapter || undefined,
         status: prismaUser.status || undefined,
         createdAt: prismaUser.createdAt,

@@ -259,7 +259,13 @@ export default function Header() {
               </span>
               <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
             </div>
-            <div className="header__user-avatar"><User className="header__user-avatar-icon" /></div>
+            <div className="header__user-avatar">
+              {user.image ? (
+                <img src={user.image} alt={user.name} className="header__user-avatar-img" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <User className="header__user-avatar-icon" />
+              )}
+            </div>
             <ChevronDown className="header__dropdown-icon" />
           </div>
         )}

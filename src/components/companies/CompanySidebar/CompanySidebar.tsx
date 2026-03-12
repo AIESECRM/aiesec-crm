@@ -157,8 +157,14 @@ export default function CompanySidebar({
               <div className="company-sidebar__info-value" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
                 {company.managers.length > 0 ? (
                   company.managers.map((manager: User) => (
-                    <span key={manager.id} style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary-400)' }}></span>
+                    <span key={manager.id} style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'var(--primary-400)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {manager.image ? (
+                          <img src={manager.image} alt={manager.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{manager.name.charAt(0).toUpperCase()}</span>
+                        )}
+                      </div>
                       {manager.name}
                     </span>
                   ))
@@ -191,7 +197,13 @@ export default function CompanySidebar({
                 </span>
               </div>
               <div className="company-sidebar__activity-user">
-                <UserIcon className="company-sidebar__activity-user-icon" />
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', overflow: 'hidden', marginRight: '6px', display: 'inline-flex', verticalAlign: 'middle', border: '1px solid var(--border-color)' }}>
+                  {activity.user?.image ? (
+                    <img src={activity.user.image} alt={activity.user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <UserIcon className="company-sidebar__activity-user-icon" />
+                  )}
+                </div>
                 <span className="company-sidebar__activity-name" title={activity.userName}>
                   {activity.userName || activity.user?.name || '—'}
                 </span>
