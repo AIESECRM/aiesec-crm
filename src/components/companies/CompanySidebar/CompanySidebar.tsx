@@ -18,6 +18,7 @@ import {
 import { Company, Activity, User } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusBadge from '@/components/common/StatusBadge';
+import Avatar from '@/components/common/Avatar';
 import './CompanySidebar.css';
 import { generateEmailContent, summarizeMeetingNotes } from '@/actions/ai';
 
@@ -158,13 +159,14 @@ export default function CompanySidebar({
                 {company.managers.length > 0 ? (
                   company.managers.map((manager: User) => (
                     <span key={manager.id} style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'var(--primary-400)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {manager.image ? (
-                          <img src={manager.image} alt={manager.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{manager.name.charAt(0).toUpperCase()}</span>
-                        )}
-                      </div>
+                      <Avatar 
+                        src={manager.image} 
+                        alt={manager.name} 
+                        size={22} 
+                        fallbackIcon={<span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{manager.name.charAt(0).toUpperCase()}</span>}
+                        className="company-sidebar__manager-avatar"
+                        style={{ backgroundColor: 'var(--primary-400)' }}
+                      />
                       {manager.name}
                     </span>
                   ))
@@ -197,13 +199,12 @@ export default function CompanySidebar({
                 </span>
               </div>
               <div className="company-sidebar__activity-user">
-                <div style={{ width: '18px', height: '18px', borderRadius: '50%', overflow: 'hidden', marginRight: '6px', display: 'inline-flex', verticalAlign: 'middle', border: '1px solid var(--border-color)' }}>
-                  {activity.user?.image ? (
-                    <img src={activity.user.image} alt={activity.user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <UserIcon className="company-sidebar__activity-user-icon" />
-                  )}
-                </div>
+                <Avatar 
+                  src={activity.user?.image} 
+                  alt={activity.user?.name} 
+                  size={18} 
+                  className="company-sidebar__activity-avatar" 
+                />
                 <span className="company-sidebar__activity-name" title={activity.userName}>
                   {activity.userName || activity.user?.name || '—'}
                 </span>

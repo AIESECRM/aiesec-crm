@@ -33,18 +33,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           role: user.role,
           chapter: user.chapter,
-          status: user.status
+          status: user.status,
+          image: user.image
         } as any;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.chapter = (user as any).chapter;
         token.status = (user as any).status;
+        token.image = (user as any).image;
+      }
+      // Manuel güncelleme desteği (trigger === 'update' durumunda)
+      if (trigger === "update" && session?.image) {
+        token.image = session.image;
       }
       return token;
     },
@@ -54,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         (session.user as any).role = token.role;
         (session.user as any).chapter = token.chapter;
         (session.user as any).status = token.status;
+        (session.user as any).image = token.image;
       }
       return session;
     },
