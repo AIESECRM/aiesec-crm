@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DollarSign, Filter, Plus, User, Building2, X, Save } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import Avatar from '@/components/common/Avatar';
 import './page.css';
 
 type OfferProduct = 'GTA' | 'GV' | 'GTE';
@@ -270,13 +271,12 @@ export default function DealsPage() {
                       </div>
                       <div className="deal-card__footer">
                         <div className="deal-card__owner">
-                          <div className="deal-card__owner-avatar">
-                            {offer.createdBy?.image ? (
-                              <img src={offer.createdBy.image} alt={offer.createdBy.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            ) : (
-                              <User className="deal-card__owner-avatar-icon" />
-                            )}
-                          </div>
+                          <Avatar 
+                            src={offer.createdBy?.image} 
+                            alt={offer.createdBy?.name} 
+                            size={24} 
+                            className="deal-card__owner-avatar" 
+                          />
                           <span>{offer.createdBy?.name || '—'}</span>
                         </div>
                         <span style={{

@@ -25,13 +25,24 @@ export async function uploadFileToFTP(buffer: Buffer, fileName: string, subDir?:
   try {
     await client.access({ host, user, password, port, secure: false });
 
-    // Hedef klasörü oluştur/git
-    let finalUploadDir = baseUploadDir;
+    // Hedef klasörleri adım adım oluştur ve git
+    const parts = baseUploadDir.split('/').filter(Boolean);
     if (subDir) {
-        finalUploadDir = `${baseUploadDir.replace(/\/$/, '')}/${subDir}`;
+        const subParts = subDir.split('/').filter(Boolean);
+        parts.push(...subParts);
     }
     
-    await client.ensureDir(finalUploadDir);
+    // En baştan başla (bazı sunucular / ile başlar)
+    await client.cd('/');
+    let currentPath = '';
+    for (const part of parts) {
+        currentPath += '/' + part;
+        try {
+            await client.ensureDir(currentPath);
+        } catch (e) {
+            // Hata olsa da devam et (klasör zaten olabilir)
+        }
+    }
 
     const stream = require('stream');
     const readStream = new stream.PassThrough();

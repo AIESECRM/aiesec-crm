@@ -13,6 +13,7 @@ import {
   getUnreadMessageCount 
 } from "@/actions/message";
 import { getAllUsers } from "@/actions/users";
+import Avatar from "@/components/common/Avatar";
 
 type User = {
   id: number;
@@ -185,13 +186,13 @@ export default function ChatWidget() {
                       className="flex items-center justify-between p-4 border-b border-border hover:bg-muted/50 w-full text-left transition-colors"
                     >
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold shrink-0 overflow-hidden border border-border">
-                          {conv.user.image ? (
-                            <img src={conv.user.image} alt={conv.user.name} className="w-full h-full object-cover" />
-                          ) : (
-                            conv.user.name.charAt(0).toUpperCase()
-                          )}
-                        </div>
+                        <Avatar 
+                          src={conv.user.image} 
+                          alt={conv.user.name} 
+                          size={40} 
+                          className="shrink-0"
+                          fallbackIcon={<span>{conv.user.name.charAt(0).toUpperCase()}</span>}
+                        />
                         <div className="overflow-hidden">
                           <p className="font-medium text-sm truncate">{conv.user.name}</p>
                           <p className={`text-xs truncate ${conv.unreadCount > 0 ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
@@ -241,13 +242,12 @@ export default function ChatWidget() {
                       onClick={() => handleSelectPartner(u)}
                       className="flex items-center gap-3 p-4 border-b border-border hover:bg-muted/50 w-full text-left transition-colors"
                     >
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0 overflow-hidden border border-border">
-                        {u.image ? (
-                          <img src={u.image} alt={u.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <UserIcon size={20} />
-                        )}
-                      </div>
+                      <Avatar 
+                        src={u.image} 
+                        alt={u.name} 
+                        size={40} 
+                        className="shrink-0"
+                      />
                       <div>
                         <p className="font-medium text-sm">{u.name}</p>
                         <p className="text-xs text-muted-foreground">{u.role}</p>
@@ -268,13 +268,13 @@ export default function ChatWidget() {
             {view === 'chat' && (
               <div className="flex flex-col p-4 gap-4">
                 <div className="text-center mb-4 flex flex-col items-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xl mb-2 overflow-hidden border-2 border-primary/20">
-                      {activePartner?.image ? (
-                        <img src={activePartner.image} alt={activePartner.name} className="w-full h-full object-cover" />
-                      ) : (
-                        activePartner?.name.charAt(0).toUpperCase()
-                      )}
-                    </div>
+                    <Avatar 
+                      src={activePartner?.image} 
+                      alt={activePartner?.name} 
+                      size={64} 
+                      className="mb-2 border-2 border-primary/20"
+                      fallbackIcon={<span>{activePartner?.name.charAt(0).toUpperCase()}</span>}
+                    />
                     <div className="font-semibold text-foreground">{activePartner?.name}</div>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Sohbet Başlatıldı</div>
                 </div>

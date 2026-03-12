@@ -43,6 +43,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [message, setMessage] = useState('');
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -113,6 +114,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   const handleProfileImageUpdate = async (url: string) => {
     try {
+      setPreviewImage(url); // Hemen önizleme
       const res = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -146,7 +148,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <h3 className="profile-modal__section-title">Profil Bilgileri</h3>
             <div className="profile-modal__avatar-wrapper">
               <Avatar 
-                src={user.image} 
+                src={previewImage || user.image} 
                 alt={user.name} 
                 size={80} 
                 className="profile-modal__avatar" 
