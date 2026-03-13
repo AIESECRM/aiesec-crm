@@ -535,17 +535,34 @@ export default function CompanyDetailPage() {
               <FileUpload
                 onUploadSuccess={async (url, name) => {
                   setUploadingDoc(true);
-                  // Dosya veritabanına kaydedilir
-                  const res = await fetch(`/api/companies/${params.id}/documents`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, url })
-                  });
-                  if (res.ok) {
-                    setShowUploadModal(false);
-                    fetchData();
+                  try {
+                    // Dosya veritabanına kaydedilir
+                    const res = await fetch(`/api/companies/${params.id}/documents`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ name, url })
+                    });
+                    
+                    if (res.ok) {
+                      const data = await res.json();
+                      
+                      // 1. Yeni dökümanı anında mevcut listeye ekle (State Güncellemesi)
+                      // API'den dönen data.document objesini listeye dahil ediyoruz
+                      setDocuments(prevDocs => [...prevDocs, data.document]);
+                      
+                      // 2. Modalı kapat
+                      setShowUploadModal(false);
+                      
+                      // Not: fetchData() çağrısını kaldırdık. Böylece sayfa loading ekranına 
+                      // düşmeyecek ve yeni doküman anında listede belirecektir.
+                    } else {
+                      console.error("Doküman veritabanına kaydedilemedi.");
+                    }
+                  } catch (error) {
+                    console.error("Doküman yükleme hatası:", error);
+                  } finally {
+                    setUploadingDoc(false);
                   }
-                  setUploadingDoc(false);
                 }}
               />
               {uploadingDoc && (
