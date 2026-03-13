@@ -141,7 +141,7 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div ={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
 
   if (!company) return (
     <div className="company-detail">
