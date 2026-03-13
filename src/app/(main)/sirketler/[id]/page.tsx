@@ -205,7 +205,7 @@ export default function CompanyDetailPage() {
           </div>
 
           {company.notes && (
-            <div ={{ marginTop: '12px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '14px', color: '#374151' }}>
+            <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '14px', color: '#374151' }}>
               {company.notes}
             </div>
           )}
