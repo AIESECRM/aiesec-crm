@@ -141,7 +141,7 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <div ={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
 
   if (!company) return (
     <div className="company-detail">
@@ -205,7 +205,7 @@ export default function CompanyDetailPage() {
           </div>
 
           {company.notes && (
-            <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '14px', color: '#374151' }}>
+            <div ={{ marginTop: '12px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '14px', color: '#374151' }}>
               {company.notes}
             </div>
           )}
@@ -531,7 +531,7 @@ export default function CompanyDetailPage() {
               <h2 className="company-detail__activity-modal-title">Doküman Yükle</h2>
               <button className="company-detail__activity-modal-close" onClick={() => setShowUploadModal(false)}><X /></button>
             </div>
-            <div className="company-detail__activity-modal-content" style={{ padding: '24px' }}>
+            <div className="company-detail__activity-modal-content" style={{ padding: '24px', maxHeight: '80vh', overflowY: 'auto' }}>
               <FileUpload
                 onUploadSuccess={async (url, name) => {
                   setUploadingDoc(true);
