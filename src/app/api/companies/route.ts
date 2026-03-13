@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       status: status || "NO_ANSWER",
       notes: notes || null,
       chapter: companyChapter || null,
-      createdById: user.id,
+      createdById: parseInt(user.id, 10),
       documents: documentUrl ? {
         create: {
           name: documentName || 'Belge',
