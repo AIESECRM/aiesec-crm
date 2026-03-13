@@ -73,14 +73,17 @@ export default function CompanyDetailPage() {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  const fetchData = async () => {
+ const fetchData = async () => {
     try {
       setLoading(true);
+      // fetch isteklerine { cache: 'no-store' } ekliyoruz
+      const fetchOptions = { cache: 'no-store' as RequestCache };
+
       const [companyRes, contactsRes, activitiesRes, offersRes] = await Promise.all([
-        fetch(`/api/companies/${params.id}`),
-        fetch(`/api/contacts?companyId=${params.id}`),
-        fetch(`/api/activities?companyId=${params.id}`),
-        fetch(`/api/offers?companyId=${params.id}`),
+        fetch(`/api/companies/${params.id}`, fetchOptions),
+        fetch(`/api/contacts?companyId=${params.id}`, fetchOptions),
+        fetch(`/api/activities?companyId=${params.id}`, fetchOptions),
+        fetch(`/api/offers?companyId=${params.id}`, fetchOptions),
       ]);
 
       const companyData = companyRes.ok ? await companyRes.json() : { company: null };
@@ -99,7 +102,6 @@ export default function CompanyDetailPage() {
       setLoading(false);
     }
   };
-
   const handleDeleteActivity = async () => {
     if (!deleteActivityModal.activity) return;
     await fetch(`/api/activities/${deleteActivityModal.activity.id}`, { method: 'DELETE' });
