@@ -1,6 +1,7 @@
 ﻿'use server'
 
 import prisma from '@/lib/prisma'
+import { notifyUser, notifyManagers } from "@/lib/notifications";
 
 export async function getActivitiesByCompany(companyId: string, userId: string) {
     try {
@@ -57,6 +58,22 @@ export async function createActivity(data: any, userId: string) {
                 createdAt: Math.floor(Date.now() / 1000),
             }
         });
+        await notifyManagers(
+            parseInt(data.companyId),
+            'COMPANY_UPDATED',
+            'Yeni Aktivite Kaydı',
+            'Yeni bir aktivite girildi.',
+            parseInt(userId)
+        );
+        if (data.assignedUserId && parseInt(data.assignedUserId) !== parseInt(userId)) {
+            await notifyUser(
+                parseInt(data.assignedUserId),
+                'COMPANY_UPDATED',
+                'Yeni Görev Planlandı 📅',
+                `Size yeni bir aktivite atandı.`
+            );
+        }
+        
         return newActivity;
     } catch (error) {
         console.error('Failed to create activity:', error);
