@@ -1,86 +1,105 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Prisma veritabanı bağlantımız
+import { prisma } from '@/lib/prisma';
 
-// Arama sonuçları için tip tanımlaması (Frontend'deki ile aynı)
+// Arama sonuçları için tip tanımlaması
 type SearchResult = {
-    id: string;
-    type: 'company' | 'contact' | 'deal' | 'activity';
-    title: string;
-    subtitle: string;
-    href: string;
+  id: string;
+  type: 'company' | 'contact' | 'deal' | 'activity';
+  title: string;
+  subtitle: string;
+  href: string;
 };
 
 export async function GET(request: Request) {
-    try {
-        // 1. URL'den arama kelimesini (q) alıyoruz
-        const { searchParams } = new URL(request.url);
-        const query = searchParams.get('q');
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get('q');
 
-        // Eğer arama kelimesi yoksa veya 2 karakterden kısaysa boş dizi dön
-        if (!query || query.length < 2) {
-            return NextResponse.json({ results: [] });
-        }
-
-        // Arama yaparken büyük/küçük harf duyarlılığını kaldırmak için
-        const searchFilter = {
-            contains: query,
-            mode: 'insensitive' as const, // Prisma'da büyük/küçük harf göz ardı et
-        };
-
-        // 2. Veritabanı Sorguları (Aynı anda (paralel) çalıştırarak hızı artırıyoruz)
-        const [companies, contacts] = await Promise.all([
-            // Şirketlerde arama (Şirket adına göre)
-            prisma.company.findMany({
-                where: { name: searchFilter },
-                take: 5, // Sadece en iyi 5 sonucu getir
-            }),
-            // Kişilerde arama (Kişi adı veya e-postasına göre)
-            prisma.contact.findMany({
-                where: {
-                    OR: [
-                        { name: searchFilter },
-                        { email: searchFilter }
-                    ]
-                },
-                include: { company: true }, // Bağlı olduğu şirket bilgisini de getir
-                take: 5,
-            }),
-            // İstersen buraya teklifler (offers/deals) için de sorgu ekleyebilirsin
-        ]);
-
-        // 3. Gelen verileri Frontend'in beklediği SearchResult formatına çeviriyoruz
-        const results: SearchResult[] = [];
-
-        // Şirketleri listeye ekle
-        companies.forEach((company) => {
-            results.push({
-                id: `company-${company.id}`,
-                type: 'company',
-                title: company.name,
-                subtitle: company.category || company.email || 'Şirket',
-                href: `/sirketler/${company.id}`, // Tıklanınca şirketin detay sayfasına gitsin
-            });
-        });
-
-        // Kişileri listeye ekle
-        contacts.forEach((contact) => {
-            results.push({
-                id: `contact-${contact.id}`,
-                type: 'contact',
-                title: contact.name,
-                subtitle: contact.company?.name ? `${contact.company.name} - Kişi` : 'Kişi',
-                href: `/kisiler`, // Veya varsa `/kisiler/${contact.id}` yapılabilir
-            });
-        });
-
-        // 4. Sonuçları JSON olarak frontend'e gönder
-        return NextResponse.json({ results });
-
-    } catch (error) {
-        console.error('Arama sırasında hata oluştu:', error);
-        return NextResponse.json(
-            { error: 'Arama yapılırken bir hata oluştu.' },
-            { status: 500 }
-        );
+    if (!query || query.length < 2) {
+      return NextResponse.json({ results: [] });
     }
+
+    const searchFilter = {
+      contains: query,
+      // Prisma MySQL kullanırken 'mode: insensitive' desteklemez (MySQL varsayılan olarak harf duyarsızdır).
+      // Bu yüzden mode ayarını kaldırıyoruz.
+    };
+
+    // Veritabanı Sorguları (Paralel)
+    const [companies, contacts, offers] = await Promise.all([
+      // 1. Şirketlerde arama (Şirket adı veya e-postası)
+      prisma.company.findMany({
+        where: {
+          OR: [
+            { name: searchFilter },
+            { email: searchFilter }
+          ]
+        },
+        take: 5,
+      }),
+      // 2. Kişilerde arama (Kişi adı veya e-postası)
+      prisma.contact.findMany({
+        where: {
+          OR: [
+            { name: searchFilter },
+            { email: searchFilter }
+          ]
+        },
+        include: { company: true },
+        take: 5,
+      }),
+      // 3. Tekliflerde arama (Teklif başlığı)
+      prisma.offer.findMany({
+        where: {
+          title: searchFilter
+        },
+        include: { company: true },
+        take: 5,
+      })
+    ]);
+
+    const results: SearchResult[] = [];
+
+    // Şirketleri formata uygun ekle
+    companies.forEach((company) => {
+      results.push({
+        id: `company-${company.id}`,
+        type: 'company',
+        title: company.name,
+        subtitle: company.category || company.email || 'Şirket', // 'sector' yerine senin şemandaki 'category' kullanıldı
+        href: `/sirketler/${company.id}`,
+      });
+    });
+
+    // Kişileri formata uygun ekle
+    contacts.forEach((contact) => {
+      results.push({
+        id: `contact-${contact.id}`,
+        type: 'contact',
+        title: contact.name,
+        subtitle: contact.company?.name ? `${contact.company.name} - ${contact.position || 'Kişi'}` : (contact.position || 'Kişi'),
+        href: `/kisiler`,
+      });
+    });
+
+    // Teklifleri (Deals) formata uygun ekle
+    offers.forEach((offer) => {
+      results.push({
+        id: `offer-${offer.id}`,
+        type: 'deal',
+        title: offer.title,
+        subtitle: `${offer.product} • ${offer.company?.name || 'Şirket Bilinmiyor'}`,
+        href: `/teklifler`, // Eğer teklif detay sayfan varsa `/teklifler/${offer.id}` yapabilirsin
+      });
+    });
+
+    return NextResponse.json({ results });
+
+  } catch (error) {
+    console.error('Arama sırasında hata oluştu:', error);
+    return NextResponse.json(
+      { error: 'Arama yapılırken bir hata oluştu.' },
+      { status: 500 }
+    );
+  }
 }
