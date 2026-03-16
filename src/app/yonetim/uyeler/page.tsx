@@ -11,7 +11,6 @@ export default function RoleManagementPage() {
     const context = useAuth() as any;
     const user = context?.user;
     const permissions = context?.permissions;
-    const [companies, setCompanies] = useState<any[]>([]);
 
     const [users, setUsers] = useState<User[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
