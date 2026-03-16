@@ -1,5 +1,5 @@
 'use client';
-
+import { useAuth } from '@/contexts/AuthContext';
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
@@ -33,6 +33,10 @@ const DURATION_LABELS: Record<string, string> = { SHORT: 'Kısa Dönem', MEDIUM:
 const OPEN_STATUS_LABELS: Record<string, string> = { NEW_OPEN: 'New Open', RE_OPEN: 'Re Open' };
 
 export default function CompanyDetailPage() {
+  const { user } = useAuth() as any;
+  const [showAddManagerModal, setShowAddManagerModal] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [selectedNewManagerId, setSelectedNewManagerId] = useState('');
   const router = useRouter();
   const params = useParams();
   const [company, setCompany] = useState<any>(null);
@@ -123,6 +127,49 @@ export default function CompanyDetailPage() {
   const handleDeleteCompany = async () => {
     await fetch(`/api/companies/${params.id}`, { method: 'DELETE' });
     router.push('/sirketler');
+  };
+  const currentUserRole = user?.role || 'TM';
+  const canAddManager = ['ADMIN', 'MCP', 'MCVP', 'LCP', 'LCVP', 'TL'].includes(currentUserRole);
+
+  const handleOpenAddManager = async () => {
+    setShowAddManagerModal(true);
+    const res = await fetch('/api/admin/users');
+    const data = await res.json();
+
+    const filtered = (data.users || []).filter((u: any) => {
+      // 1. Zaten menajerse listeden çıkar
+      if (company?.managers?.find((m: any) => m.id === u.id)) return false;
+
+      // 2. Ulusal yetkili (ADMIN, MCP) değilse, sadece kendi şubesini görsün
+      if (!['ADMIN', 'MCP', 'MCVP'].includes(currentUserRole) && u.chapter !== user?.chapter) return false;
+
+      // 3. Rol Hiyerarşisi Kontrolü
+      if (['ADMIN', 'MCP', 'MCVP'].includes(currentUserRole)) return true; // Ulusal herkesi atayabilir
+      if (['LCP', 'LCVP'].includes(currentUserRole) && ['TL', 'TM'].includes(u.role)) return true; // LCP/LCVP -> TL/TM atayabilir
+      if (currentUserRole === 'TL' && u.role === 'TM') return true; // TL -> Sadece TM atayabilir
+
+      return false;
+    });
+    setAvailableUsers(filtered);
+  };
+
+  const handleAddManagerSubmit = async () => {
+    if (!selectedNewManagerId) return;
+    const currentManagerIds = company.managers?.map((m: any) => m.id) || [];
+    const newManagerIds = [...currentManagerIds, parseInt(selectedNewManagerId)];
+
+    const res = await fetch(`/api/companies/${company.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ managerIds: newManagerIds })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setCompany(data.company); // Sayfayı yenilemeden menajerleri göster
+      setShowAddManagerModal(false);
+      setSelectedNewManagerId('');
+    }
   };
 
   const filteredActivities = activities.filter(activity => {
@@ -215,9 +262,19 @@ export default function CompanyDetailPage() {
         <div className="company-detail__card">
           <div className="company-detail__card-header">
             <h3 className="company-detail__card-title">Menajerler</h3>
-            <div className="company-detail__card-count">
-              <Shield className="company-detail__card-count-icon" size={16} />
-              {company.managers?.length || 0}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div className="company-detail__card-count">
+                <Shield className="company-detail__card-count-icon" size={16} />
+                {company.managers?.length || 0}
+              </div>
+              {canAddManager && (
+                <button
+                  onClick={handleOpenAddManager}
+                  style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <Plus size={14} /> Ekle
+                </button>
+              )}
             </div>
           </div>
           <div className="company-detail__contact-list">
@@ -567,6 +624,35 @@ export default function CompanyDetailPage() {
         cancelText="İptal"
         type="danger"
       />
+      {/* Menajer Ekle Modalı */}
+      {showAddManagerModal && (
+        <>
+          <div className="company-detail__modal-overlay" onClick={() => setShowAddManagerModal(false)} />
+          <div className="company-detail__activity-modal">
+            <div className="company-detail__activity-modal-header">
+              <h2 className="company-detail__activity-modal-title">Menajer Ata</h2>
+              <button className="company-detail__activity-modal-close" onClick={() => setShowAddManagerModal(false)}><X /></button>
+            </div>
+            <div className="company-detail__activity-modal-content" style={{ padding: '24px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-regular)' }}>Üye Seçin</label>
+              <select
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                value={selectedNewManagerId}
+                onChange={(e) => setSelectedNewManagerId(e.target.value)}
+              >
+                <option value="">Atanacak üyeyi seçin...</option>
+                {availableUsers.map(u => (
+                  <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                ))}
+              </select>
+            </div>
+            <div className="company-detail__activity-modal-actions">
+              <button className="company-detail__activity-modal-btn company-detail__activity-modal-btn--secondary" onClick={() => setShowAddManagerModal(false)}>İptal</button>
+              <button className="company-detail__activity-modal-btn company-detail__activity-modal-btn--primary" onClick={handleAddManagerSubmit}>Kaydet</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Upload Document Modal */}
       {showUploadModal && (
