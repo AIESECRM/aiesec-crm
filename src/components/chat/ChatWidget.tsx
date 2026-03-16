@@ -198,7 +198,7 @@ export default function ChatWidget() {
                 </div>
               ) : (
                 <h3 className="font-semibold text-[17px] tracking-wide ml-4">
-                  {view === 'list' && "Mesajlar"}
+                  {view === 'list' && " Mesajlar"}
                   {view === 'new_chat' && "Yeni Sohbet Başlat"}
                 </h3>
               )}
