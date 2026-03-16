@@ -208,6 +208,7 @@ export default function PeoplePage() {
         <form className="modal__form" onSubmit={handleAddContact}>
           <div className="modal__section">
             <h4 className="modal__section-title">Şirket Seçimi</h4>
+            {/* Arama özellikli şirket seçimi bloğu */}
             <div className="modal__field" ref={companyDropdownRef}>
               <label className="modal__label modal__label--required">Şirket</label>
               <div style={{ position: 'relative' }}>
@@ -254,6 +255,7 @@ export default function PeoplePage() {
                 )}
               </div>
             </div>
+          </div>
 
           <div className="modal__section">
             <h4 className="modal__section-title">Kişi Bilgileri</h4>
