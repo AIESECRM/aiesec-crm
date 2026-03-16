@@ -135,7 +135,7 @@ export default function LoginPage() {
                   Şifremi unuttum
                 </button>
               </div>
-              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
+              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "gray", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
                 {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
               </button>
             </form>
