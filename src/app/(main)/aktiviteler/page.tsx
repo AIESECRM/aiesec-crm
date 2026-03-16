@@ -67,6 +67,9 @@ export default function ActivitiesPage() {
   const [editNote, setEditNote] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const ITEMS_PER_PAGE = 6;
+  const [companySearch, setCompanySearch] = useState('');
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchCompanies();
@@ -82,6 +85,16 @@ export default function ActivitiesPage() {
     if (openMenuId) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openMenuId]);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
+        setShowCompanyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -91,7 +104,10 @@ export default function ActivitiesPage() {
     const res = await fetch('/api/companies');
     const data = await res.json();
     setCompanies(data.companies || []);
-    if (data.companies?.length > 0) setSelectedCompanyId(String(data.companies[0].id));
+    if (data.companies?.length > 0) {
+      setSelectedCompanyId(String(data.companies[0].id));
+      setCompanySearch(data.companies[0].name); 
+    };
   };
 
   const fetchActivities = async () => {
@@ -172,17 +188,49 @@ export default function ActivitiesPage() {
 
           <div className="activity-form__group">
             <label className="activity-form__label">Şirket Seçimi</label>
-            <select
-              className="activity-form__select"
-              value={selectedCompanyId}
-              onChange={(e) => setSelectedCompanyId(e.target.value)}
-              required
-            >
-              <option value="">Şirket seçin...</option>
-              {companies.map(company => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                className="activity-form__select" // input olmasına rağmen aynı stili alması için
+                placeholder="Şirket ara veya seçin..."
+                value={companySearch}
+                onChange={(e) => {
+                  setCompanySearch(e.target.value);
+                  setSelectedCompanyId(''); // Yazı değiştiğinde seçili id'yi sıfırla
+                  setShowCompanyDropdown(true);
+                }}
+                onFocus={() => setShowCompanyDropdown(true)}
+                required={!selectedCompanyId} // ID seçilmemişse formu göndermeyi engelle
+              />
+              {showCompanyDropdown && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: 0, right: 0, maxHeight: '200px',
+                  overflowY: 'auto', backgroundColor: 'var(--dashboard-bg)', border: '1px solid var(--border-color)',
+                  borderRadius: '8px', zIndex: 50, marginTop: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                }}>
+                  {companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).length > 0 ? (
+                    companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).map(company => (
+                      <div
+                        key={company.id}
+                        style={{ padding: '10px 12px', cursor: 'pointer', fontSize: '14px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-regular)' }}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Inputun focusunu kaybetmesini engeller
+                          setSelectedCompanyId(String(company.id));
+                          setCompanySearch(company.name);
+                          setShowCompanyDropdown(false);
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        {company.name}
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '10px 12px', fontSize: '14px', color: 'var(--text-light)' }}>Şirket bulunamadı</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="activity-form__group">
