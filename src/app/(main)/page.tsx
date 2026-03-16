@@ -138,19 +138,19 @@ export default function DashboardPage() {
                   key={company.id}
                   onClick={() => router.push(`/sirketler/${company.id}`)}
                   style={{
-                    padding: '12px 16px', backgroundColor: 'white', borderRadius: '8px',
-                    border: '1px solid #e5e7eb', cursor: 'pointer', marginBottom: '8px',
+                    padding: '12px 16px', backgroundColor: 'var(--neutral-light)', borderRadius: '8px',
+                    border: '1px solid var(--border-color)', cursor: 'pointer', marginBottom: '8px',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                   }}
                 >
                   <div>
-                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#111827' }}>{company.name}</div>
-                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                    <div style={{ fontWeight: '600', fontSize: '14px', color: 'var(--text-regular)' }}>{company.name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>
                       {company.email || '—'}
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: '#f3f4f6', color: '#374151',
+                    backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)',
                     padding: '4px 10px', borderRadius: '20px', fontSize: '12px'
                   }}>
                     {STATUS_LABELS[company.status] || company.status}
