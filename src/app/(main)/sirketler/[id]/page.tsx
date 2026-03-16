@@ -270,7 +270,7 @@ export default function CompanyDetailPage() {
               {canAddManager && (
                 <button
                   onClick={handleOpenAddManager}
-                  style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
                   <Plus size={14} /> Ekle
                 </button>
@@ -392,9 +392,9 @@ export default function CompanyDetailPage() {
               <button 
                 onClick={() => setShowUploadModal(true)}
                 className="company-detail__add-doc-btn"
-                style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
+                style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
               >
-                <Plus size={16} /> Yeni Doküman Ekle
+                <Plus size={16} /> Ekle
               </button>
             </div>
           </div>
