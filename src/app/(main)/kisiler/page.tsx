@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, Search, Plus, Building2, User, Phone, Mail, MessageSquare, Info, Save
+import {
+  Users, Search, Plus, Building2, User, Phone, Mail, MessageSquare, Info, Save,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import './page.css';
@@ -13,12 +15,19 @@ export default function PeoplePage() {
   const [companies, setCompanies] = useState<any[]>([]);
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedCompanies, setExpandedCompanies] = useState<Record<string, boolean>>({});
   const [newContact, setNewContact] = useState({
     companyId: '',
     name: '',
     email: '',
     phone: '',
   });
+  const toggleCompany = (companyId: string) => {
+    setExpandedCompanies(prev => ({
+      ...prev,
+      [companyId]: !prev[companyId] // Mevcut değerin tersini yap
+    }));
+  };
 
   useEffect(() => {
     fetchData();
@@ -99,57 +108,81 @@ export default function PeoplePage() {
       </div>
 
       <div className="people-page__companies">
-        {companiesWithContacts.map((company) => (
-          <div key={company.id} className="people-page__company">
-            <div className="people-page__company-header">
-              <div className="people-page__company-info">
-                <div className="people-page__company-icon"><Building2 /></div>
-                <div className="people-page__company-details">
-                  <h3 className="people-page__company-name">{company.name}</h3>
-                  <p className="people-page__company-meta">{company.email || '—'}</p>
+        {companiesWithContacts.map((company) => {
+          // Eğer kullanıcı arama çubuğuna bir şey yazdıysa, sonuçları hemen görebilmesi için paneli açık (true) tutuyoruz.
+          // Aksi halde kullanıcının tıklamasına (expandedCompanies state'ine) göre açıp kapatıyoruz.
+          const isExpanded = searchQuery.length > 0 || expandedCompanies[company.id];
+
+          return (
+            <div key={company.id} className="people-page__company">
+              {/* Tıklanabilir (Accordion) Şirket Başlığı */}
+              <div
+                className="people-page__company-header"
+                onClick={() => toggleCompany(company.id)}
+                style={{ cursor: 'pointer', userSelect: 'none' }}
+                title="Kişileri gizle/göster"
+              >
+                <div className="people-page__company-info">
+                  <div className="people-page__company-icon"><Building2 /></div>
+                  <div className="people-page__company-details">
+                    <h3 className="people-page__company-name">{company.name}</h3>
+                    <p className="people-page__company-meta">{company.email || '—'}</p>
+                  </div>
+                </div>
+
+                {/* Kişi Sayısı ve Açılır/Kapanır Ok İkonu */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span className="people-page__company-count">{company.contacts.length} kişi</span>
+                  {isExpanded ? (
+                    <ChevronUp size={20} style={{ color: '#6b7280' }} />
+                  ) : (
+                    <ChevronDown size={20} style={{ color: '#6b7280' }} />
+                  )}
                 </div>
               </div>
-              <span className="people-page__company-count">{company.contacts.length} kişi</span>
-            </div>
 
-            {company.contacts.length > 0 ? (
-              <div className="people-page__contacts">
-                {company.contacts.map((contact: any) => (
-                  <div key={contact.id} className="contact-card">
-                    <div className="contact-card__avatar">
-                      <User className="contact-card__avatar-icon" />
-                    </div>
-                    <div className="contact-card__content">
-                      <div className="contact-card__name">{contact.name}</div>
-                      <div className="contact-card__meta">
-                        {contact.phone && (
-                          <div className="contact-card__meta-item">
-                            <Phone className="contact-card__meta-icon" />
-                            {contact.phone}
+              {/* Sadece isExpanded "true" ise alt kısımdaki kişileri ekrana bas (Render et) */}
+              {isExpanded && (
+                company.contacts.length > 0 ? (
+                  <div className="people-page__contacts">
+                    {company.contacts.map((contact: any) => (
+                      <div key={contact.id} className="contact-card">
+                        <div className="contact-card__avatar">
+                          <User className="contact-card__avatar-icon" />
+                        </div>
+                        <div className="contact-card__content">
+                          <div className="contact-card__name">{contact.name}</div>
+                          <div className="contact-card__meta">
+                            {contact.phone && (
+                              <div className="contact-card__meta-item">
+                                <Phone className="contact-card__meta-icon" />
+                                {contact.phone}
+                              </div>
+                            )}
+                            {contact.email && (
+                              <div className="contact-card__meta-item">
+                                <Mail className="contact-card__meta-icon" />
+                                {contact.email}
+                              </div>
+                            )}
                           </div>
-                        )}
-                        {contact.email && (
-                          <div className="contact-card__meta-item">
-                            <Mail className="contact-card__meta-icon" />
-                            {contact.email}
-                          </div>
-                        )}
+                        </div>
+                        <div className="contact-card__actions">
+                          <button className="contact-card__action"><Phone className="contact-card__action-icon" /></button>
+                          <button className="contact-card__action"><MessageSquare className="contact-card__action-icon" /></button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="contact-card__actions">
-                      <button className="contact-card__action"><Phone className="contact-card__action-icon" /></button>
-                      <button className="contact-card__action"><MessageSquare className="contact-card__action-icon" /></button>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="people-page__contacts" style={{ padding: 'var(--spacing-lg)' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Bu şirkette henüz kişi bulunmuyor.</p>
-              </div>
-            )}
-          </div>
-        ))}
+                ) : (
+                  <div className="people-page__contacts" style={{ padding: 'var(--spacing-lg)' }}>
+                    <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Bu şirkette henüz kişi bulunmuyor.</p>
+                  </div>
+                )
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {companiesWithContacts.length === 0 && searchQuery && (

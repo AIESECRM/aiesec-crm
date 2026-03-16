@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export interface SearchResult {
@@ -38,6 +38,9 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]); // Artık API'den gelen veriyi tutacak
+  const [isSearching, setIsSearching] = useState(false); // Yüklenme durumu
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,11 +49,38 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     return pageSearchConfigs[pathname] || pageSearchConfigs['/'];
   }, [pathname]);
 
-  // Arama sonuçları artık API'den geliyor, context sadece query tutuyor
-  const results: SearchResult[] = [];
+  // Arama mantığı (Debounce işlemi eklendi)
+  useEffect(() => {
+    // 2 karakterden az yazıldıysa arama yapma
+    if (query.trim().length < 2) {
+      setResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    // Kullanıcı yazmayı bitirdikten 300ms sonra API isteği at
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        // Kendi projenin API yapısına göre bu adresi güncelle
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setResults(data.results || []);
+        }
+      } catch (error) {
+        console.error("Arama yapılırken hata oluştu:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer); // Yeni harf girilirse önceki sayacı iptal et
+  }, [query]);
 
   const clearSearch = useCallback(() => {
     setQuery('');
+    setResults([]);
   }, []);
 
   const navigateToResult = useCallback((result: SearchResult) => {
@@ -64,7 +94,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         query,
         setQuery,
         results,
-        isSearching: false,
+        isSearching,
         placeholder: pageConfig.placeholder,
         clearSearch,
         navigateToResult,
