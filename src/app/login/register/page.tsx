@@ -1,4 +1,135 @@
-return (
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+const CHAPTERS = [
+  { value: "ADANA", label: "Adana" },
+  { value: "ANKARA", label: "Ankara" },
+  { value: "ANTALYA", label: "Antalya" },
+  { value: "BURSA", label: "Bursa" },
+  { value: "DENIZLI", label: "Denizli" },
+  { value: "DOGU_AKDENIZ", label: "Doğu Akdeniz" },
+  { value: "ESKISEHIR", label: "Eskişehir" },
+  { value: "GAZIANTEP", label: "Gaziantep" },
+  { value: "ISTANBUL", label: "İstanbul" },
+  { value: "ISTANBUL_ASYA", label: "İstanbul Asya" },
+  { value: "BATI_ISTANBUL", label: "Batı İstanbul" },
+  { value: "IZMIR", label: "İzmir" },
+  { value: "KOCAELI", label: "Kocaeli" },
+  { value: "KONYA", label: "Konya" },
+  { value: "KUTAHYA", label: "Kütahya" },
+  { value: "SAKARYA", label: "Sakarya" },
+  { value: "TRABZON", label: "Trabzon" },
+];
+
+const ROLES = [
+  { value: "TM", label: "Team Member" },
+  { value: "TL", label: "Team Leader" },
+  { value: "LCVP", label: "LCVP" },
+  { value: "LCP", label: "LCP" },
+  { value: "MCVP", label: "MCVP" },
+  { value: "MCP", label: "MCP" },
+];
+
+const NATIONAL_ROLES = ["MCP", "MCVP"];
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const [step, setStep] = useState<"form" | "verify">("form");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    role: "TM",
+    chapter: "",
+    phone: "",
+  });
+  const [code, setCode] = useState("");
+
+  const isNational = NATIONAL_ROLES.includes(form.role);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    if (name === "role") {
+      if (NATIONAL_ROLES.includes(value)) {
+        // MCP/MCVP için chapter'ı otomatik GENEL_MERKEZ yap
+        setForm({ ...form, role: value, chapter: "GENEL_MERKEZ" });
+      } else {
+        setForm({ ...form, role: value, chapter: "" });
+      }
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError("");
+    if (!form.name || !form.email || !form.password || (!isNational && !form.chapter)) {
+      setError("Lütfen tüm zorunlu alanları doldurun!");
+      return;
+    }
+    if (form.password !== form.passwordConfirm) {
+      setError("Şifreler eşleşmiyor!");
+      return;
+    }
+    if (form.password.length < 8) {
+      setError("Şifre en az 8 karakter olmalı!");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send-code", ...form }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error);
+      } else {
+        setStep("verify");
+        setSuccess("Doğrulama kodu email adresinize gönderildi!");
+      }
+    } catch {
+      setError("Sunucu hatası!");
+    }
+    setLoading(false);
+  };
+
+  const handleVerify = async () => {
+    setError("");
+    if (!code || code.length !== 6) {
+      setError("Lütfen 6 haneli kodu girin!");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify-code", email: form.email, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error);
+      } else {
+        setSuccess("Hesabınız oluşturuldu! Yönlendiriliyorsunuz...");
+        setTimeout(() => router.push("/onay-bekleniyor"), 2000);
+      }
+    } catch {
+      setError("Sunucu hatası!");
+    }
+    setLoading(false);
+  };
+
+  return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
       <div style={{ backgroundColor: "var(--card)", padding: "32px", borderRadius: "12px", border: "1px solid var(--border-color)", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "480px" }}>
 
