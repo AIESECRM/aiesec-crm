@@ -1,105 +1,221 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+generator client {
+  provider = "prisma-client-js"
+}
 
-// Arama sonuçları için tip tanımlaması
-type SearchResult = {
-  id: string;
-  type: 'company' | 'contact' | 'deal' | 'activity';
-  title: string;
-  subtitle: string;
-  href: string;
-};
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
 
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
+enum UserRole {
+  MCP
+  MCVP
+  LCP
+  LCVP
+  TL
+  TM
+  ADMIN
+}
 
-    if (!query || query.length < 2) {
-      return NextResponse.json({ results: [] });
-    }
+enum UserStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
 
-    const searchFilter = {
-      contains: query,
-      // Prisma MySQL kullanırken 'mode: insensitive' desteklemez (MySQL varsayılan olarak harf duyarsızdır).
-      // Bu yüzden mode ayarını kaldırıyoruz.
-    };
+enum CompanyStatus {
+  POSITIVE
+  NEGATIVE
+  NO_ANSWER
+  CALL_AGAIN
+  MEETING_PLANNED
+}
 
-    // Veritabanı Sorguları (Paralel)
-    const [companies, contacts, offers] = await Promise.all([
-      // 1. Şirketlerde arama (Şirket adı veya e-postası)
-      prisma.company.findMany({
-        where: {
-          OR: [
-            { name: searchFilter },
-            { email: searchFilter }
-          ]
-        },
-        take: 5,
-      }),
-      // 2. Kişilerde arama (Kişi adı veya e-postası)
-      prisma.contact.findMany({
-        where: {
-          OR: [
-            { name: searchFilter },
-            { email: searchFilter }
-          ]
-        },
-        include: { company: true },
-        take: 5,
-      }),
-      // 3. Tekliflerde arama (Teklif başlığı)
-      prisma.offer.findMany({
-        where: {
-          title: searchFilter
-        },
-        include: { company: true },
-        take: 5,
-      })
-    ]);
+enum ActivityType {
+  COLD_CALL
+  MEETING
+  EMAIL
+  FOLLOW_UP
+}
 
-    const results: SearchResult[] = [];
+enum OfferProduct {
+  GTA
+  GV
+  GTE
+}
 
-    // Şirketleri formata uygun ekle
-    companies.forEach((company) => {
-      results.push({
-        id: `company-${company.id}`,
-        type: 'company',
-        title: company.name,
-        subtitle: company.category || company.email || 'Şirket', // 'sector' yerine senin şemandaki 'category' kullanıldı
-        href: `/sirketler/${company.id}`,
-      });
-    });
+enum OfferDuration {
+  SHORT
+  MEDIUM
+  LONG
+}
 
-    // Kişileri formata uygun ekle
-    contacts.forEach((contact) => {
-      results.push({
-        id: `contact-${contact.id}`,
-        type: 'contact',
-        title: contact.name,
-        subtitle: contact.company?.name ? `${contact.company.name} - ${contact.position || 'Kişi'}` : (contact.position || 'Kişi'),
-        href: `/kisiler`,
-      });
-    });
+enum OfferOpenStatus {
+  NEW_OPEN
+  RE_OPEN
+}
 
-    // Teklifleri (Deals) formata uygun ekle
-    offers.forEach((offer) => {
-      results.push({
-        id: `offer-${offer.id}`,
-        type: 'deal',
-        title: offer.title,
-        subtitle: `${offer.product} • ${offer.company?.name || 'Şirket Bilinmiyor'}`,
-        href: `/teklifler`, // Eğer teklif detay sayfan varsa `/teklifler/${offer.id}` yapabilirsin
-      });
-    });
+enum NotificationType {
+  NEW_OFFER
+  COMPANY_UPDATED
+  NEW_USER
+  USER_APPROVED
+  USER_REJECTED
+}
 
-    return NextResponse.json({ results });
+enum Chapter {
+  ADANA
+  ANKARA
+  ANTALYA
+  BURSA
+  DENIZLI
+  DOGU_AKDENIZ
+  ESKISEHIR
+  GAZIANTEP
+  ISTANBUL
+  ISTANBUL_ASYA
+  BATI_ISTANBUL
+  IZMIR
+  KOCAELI
+  KONYA
+  KUTAHYA
+  SAKARYA
+  TRABZON
+  GENEL_MERKEZ
+}
 
-  } catch (error) {
-    console.error('Arama sırasında hata oluştu:', error);
-    return NextResponse.json(
-      { error: 'Arama yapılırken bir hata oluştu.' },
-      { status: 500 }
-    );
-  }
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  role      UserRole   @default(TM)
+  chapter   Chapter?
+  status    UserStatus @default(PENDING)
+  image     String?
+  createdAt Int        @default(0)
+
+  activities       Activity[]
+  companies        Company[]  @relation("CompanyCreator")
+  managedCompanies Company[]  @relation("CompanyManagers")
+  offers           Offer[]
+  sentMessages     Message[]  @relation("SentMessages")
+  receivedMessages Message[]  @relation("ReceivedMessages")
+}
+
+model Company {
+  id          Int           @id @default(autoincrement())
+  name        String
+  category    String?
+  location    String?
+  domain      String?
+  taxId       String?
+  phone       String?
+  email       String?
+  website     String?
+  notes       String?       @db.Text
+  chapter     Chapter?
+  status      CompanyStatus @default(NO_ANSWER)
+  createdAt   Int           @default(0)
+  updatedAt   Int           @default(0)
+  createdById Int?
+
+  createdBy  User?             @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managers   User[]            @relation("CompanyManagers")
+  contacts   Contact[]
+  activities Activity[]
+  offers     Offer[]
+  documents  CompanyDocument[]
+}
+
+model Contact {
+  id        Int     @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  position  String?
+  companyId Int
+  createdAt Int     @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id        Int          @id @default(autoincrement())
+  type      ActivityType
+  note      String?      @db.Text
+  date      Int          @default(0)
+  companyId Int
+  userId    Int
+  createdAt Int          @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Offer {
+  id          Int             @id @default(autoincrement())
+  title       String
+  product     OfferProduct
+  duration    OfferDuration
+  openStatus  OfferOpenStatus @default(NEW_OPEN)
+  value       Float?
+  documentUrl String?
+  companyId   Int
+  createdById Int
+  createdAt   Int             @default(0)
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  title     String
+  message   String           @db.Text
+  read      Boolean          @default(false)
+  createdAt Int              @default(0)
+}
+
+model HandoverHistory {
+  id         Int     @id @default(autoincrement())
+  fromUserId Int
+  toUserId   Int
+  reason     String? @db.Text
+  timestamp  Int     @default(0)
+}
+
+model AuditLog {
+  id         Int     @id @default(autoincrement())
+  timestamp  Int     @default(0)
+  userId     Int
+  actionType String
+  entityId   String
+  oldVal     String? @db.Text
+  newVal     String? @db.Text
+  ipAddress  String?
+}
+
+model CompanyDocument {
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  companyId Int
+  createdAt Int     @default(0)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id         Int     @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  content    String  @db.Text
+  isRead     Boolean @default(false)
+  createdAt  Int     @default(0)
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }
