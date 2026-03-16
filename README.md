@@ -5,7 +5,29 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### 1) Environment
+
+Create a `.env` file from `.env.example` and update `DATABASE_URL`.
+
+### 2) Database + Seed
+
+Run the following command to create/update tables and load demo data:
+
+```bash
+npm run db:setup
+```
+
+This will insert sample users and companies for UI testing.
+
+Demo login accounts:
+
+- `admin@aiesec.org` / `12345678`
+- `lcvp@aiesec.org` / `12345678`
+- `tm@aiesec.org` / `12345678`
+
+### 3) Start app
+
+Run the development server:
 
 ```bash
 npm run dev

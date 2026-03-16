@@ -8,7 +8,9 @@
   z-index: 10000 !important;
   padding: var(--spacing-lg);
   backdrop-filter: blur(4px);
+  animation: modalOverlayIn 0.22s ease-out;
 }
+
 
 .modal {
   background: var(--neutral-light);
@@ -19,17 +21,28 @@
   flex-direction: column;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border-color-light);
-  animation: modalFadeIn 0.15s ease-out;
+  animation: modalLiftIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-@keyframes modalFadeIn {
+@keyframes modalOverlayIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
   }
+
   to {
     opacity: 1;
-    transform: scale(1);
+  }
+}
+
+@keyframes modalLiftIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -280,5 +293,12 @@
 
   .modal__btn {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__overlay,
+  .modal {
+    animation: none;
   }
 }

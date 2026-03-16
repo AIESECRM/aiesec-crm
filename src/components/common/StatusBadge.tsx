@@ -29,13 +29,51 @@ const statusMap: Record<string, { label: string, bg: string, color: string }> = 
     'postponed': { label: 'Ertelendi', bg: 'var(--activity-postponed-bg)', color: 'var(--activity-postponed)' },
 };
 
+const statusAliases: Record<string, string> = {
+    POSITIVE: 'pozitif',
+    NEGATIVE: 'negatif',
+    NO_ANSWER: 'cevap_yok',
+    CALL_AGAIN: 'tekrar_ara',
+    MEETING_PLANNED: 'toplanti_planlandi',
+    ACTIVE: 'aktif',
+    PASSIVE: 'pasif',
+    COLD_CALL: 'cold_call',
+    MEETING: 'meeting',
+    EMAIL: 'email',
+    FOLLOW_UP: 'pending',
+    POSTPONED: 'postponed',
+    TASK: 'task',
+    PROPOSAL: 'proposal',
+};
+
+function normalizeStatus(value: string): string {
+    const normalized = String(value || '')
+        .trim()
+        .toUpperCase()
+        .replaceAll('İ', 'I')
+        .replaceAll('Ş', 'S')
+        .replaceAll('Ğ', 'G')
+        .replaceAll('Ü', 'U')
+        .replaceAll('Ö', 'O')
+        .replaceAll('Ç', 'C')
+        .replace(/[\s-]+/g, '_');
+
+    const alias = statusAliases[normalized];
+    if (alias) return alias;
+
+    return normalized.toLowerCase();
+}
+
 export default function StatusBadge({ status, type = 'default', showIcon = false }: StatusBadgeProps) {
     let colors = { bg: 'var(--border-color-light)', color: 'var(--text-regular)' };
-    let label = typeof status === 'boolean' ? (status ? 'Evet' : 'Hayır') : status;
+    let label = typeof status === 'boolean' ? (status ? 'Evet' : 'Hayır') : String(status);
 
-    if (typeof status === 'string' && statusMap[status]) {
-        colors = { bg: statusMap[status].bg, color: statusMap[status].color };
-        label = statusMap[status].label;
+    if (typeof status === 'string') {
+        const key = normalizeStatus(status);
+        if (statusMap[key]) {
+            colors = { bg: statusMap[key].bg, color: statusMap[key].color };
+            label = statusMap[key].label;
+        }
     } else {
         switch (type) {
             case 'success': colors = { bg: 'var(--status-active-bg)', color: 'var(--status-active)' }; break;

@@ -48,7 +48,7 @@ export default function LoginPage() {
     } else if (role === "ADMIN") {
       router.push("/admin");
     } else {
-      router.push("/");
+      router.push("/sirketler");
     }
   };
 

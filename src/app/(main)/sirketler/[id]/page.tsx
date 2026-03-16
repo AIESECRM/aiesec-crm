@@ -9,7 +9,10 @@ import {
 } from 'lucide-react';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import AppLoader from '@/components/common/AppLoader';
+import AppToast from '@/components/common/AppToast';
 import './page.css';
+
 
 const ACTIVITY_LABELS: Record<string, string> = {
   COLD_CALL: 'Cold Call', MEETING: 'Görüşme', EMAIL: 'Email', FOLLOW_UP: 'Takip',
@@ -52,6 +55,11 @@ export default function CompanyDetailPage() {
   const [editNote, setEditNote] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [toast, setToast] = useState<{ open: boolean; message: string; type: 'success' | 'warning' | 'info' }>({
+    open: false,
+    message: '',
+    type: 'info',
+  });
   const menuRef = useRef<HTMLDivElement>(null);
   const ITEMS_PER_PAGE = 6;
 
@@ -107,6 +115,7 @@ export default function CompanyDetailPage() {
     await fetch(`/api/activities/${deleteActivityModal.activity.id}`, { method: 'DELETE' });
     setDeleteActivityModal({ isOpen: false, activity: null });
     fetchData();
+    setToast({ open: true, message: 'Aktivite silindi.', type: 'success' });
   };
 
   const handleEditActivity = async () => {
@@ -118,6 +127,7 @@ export default function CompanyDetailPage() {
     });
     setEditModal({ isOpen: false, activity: null });
     fetchData();
+    setToast({ open: true, message: 'Aktivite güncellendi.', type: 'success' });
   };
 
   const handleDeleteCompany = async () => {
@@ -141,13 +151,19 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <AppLoader label="Sirket detayi yukleniyor..." showSkeleton skeletonCount={4} />;
 
   if (!company) return (
     <div className="company-detail">
-      <p>Şirket bulunamadı</p>
+      <div className="app-empty-state">
+        <Building2 className="app-empty-state__icon" />
+        <div className="app-empty-state__title">Şirket bulunamadı</div>
+        <div className="app-empty-state__hint">Kayıt silinmiş olabilir veya erişim yetkin olmayabilir.</div>
+      </div>
     </div>
   );
+
+  const lastUpdatedLabel = new Date().toLocaleDateString('tr-TR');
 
   return (
     <div className="company-detail">
@@ -162,6 +178,16 @@ export default function CompanyDetailPage() {
             Şirket Ayarları
           </button>
         </div>
+      </div>
+
+      <div className="company-detail__context-bar">
+        <span className="company-detail__context-item">Bağlantı: {contacts.length}</span>
+        <span className="company-detail__context-separator" aria-hidden="true">•</span>
+        <span className="company-detail__context-item">Teklif: {offers.length}</span>
+        <span className="company-detail__context-separator" aria-hidden="true">•</span>
+        <span className="company-detail__context-item">Doküman: {documents.length}</span>
+        <span className="company-detail__context-separator" aria-hidden="true">•</span>
+        <span className="company-detail__context-item">Güncellendi: {lastUpdatedLabel}</span>
       </div>
 
       <div className="company-detail__content">
@@ -240,7 +266,11 @@ export default function CompanyDetailPage() {
                 </div>
               </div>
             )) : (
-              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Henüz bağlantı eklenmemiş.</p>
+              <div className="app-empty-state company-detail__empty-card">
+                <Users className="app-empty-state__icon" />
+                <div className="app-empty-state__title">Henüz bağlantı eklenmemiş</div>
+                <div className="app-empty-state__hint">İlk bağlantıyı ekleyerek iletişim ağını başlatabilirsin.</div>
+              </div>
             )}
           </div>
         </div>
@@ -272,7 +302,11 @@ export default function CompanyDetailPage() {
                 )}
               </div>
             )) : (
-              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Henüz teklif eklenmemiş.</p>
+              <div className="app-empty-state company-detail__empty-card">
+                <RefreshCw className="app-empty-state__icon" />
+                <div className="app-empty-state__title">Henüz teklif eklenmemiş</div>
+                <div className="app-empty-state__hint">Teklif oluşturduğunda burada görünecek.</div>
+              </div>
             )}
           </div>
         </div>
@@ -319,7 +353,11 @@ export default function CompanyDetailPage() {
                 </a>
               </div>
             )) : (
-              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Doküman bulunmamaktadır.</p>
+              <div className="app-empty-state company-detail__empty-card">
+                <FileText className="app-empty-state__icon" />
+                <div className="app-empty-state__title">Doküman bulunmuyor</div>
+                <div className="app-empty-state__hint">Yüklenen dosyalar bu alanda listelenecek.</div>
+              </div>
             )}
           </div>
         </div>
@@ -341,6 +379,12 @@ export default function CompanyDetailPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+            {searchQuery.trim() && (
+              <button className="company-detail__search-chip" onClick={() => setSearchQuery('')}>
+                Arama: {searchQuery}
+                <X className="company-detail__search-chip-icon" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -416,6 +460,35 @@ export default function CompanyDetailPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="company-detail__mobile-sticky-actions">
+        <a
+          className={`company-detail__mobile-sticky-btn ${!company.phone ? 'company-detail__mobile-sticky-btn--disabled' : ''}`}
+          href={company.phone ? `tel:${String(company.phone).replaceAll(' ', '')}` : '#'}
+          aria-disabled={!company.phone}
+          onClick={(event) => {
+            if (!company.phone) event.preventDefault();
+          }}
+        >
+          <Phone className="company-detail__mobile-sticky-icon" />
+          Ara
+        </a>
+        <a
+          className={`company-detail__mobile-sticky-btn ${!company.email ? 'company-detail__mobile-sticky-btn--disabled' : ''}`}
+          href={company.email ? `mailto:${company.email}` : '#'}
+          aria-disabled={!company.email}
+          onClick={(event) => {
+            if (!company.email) event.preventDefault();
+          }}
+        >
+          <Mail className="company-detail__mobile-sticky-icon" />
+          E-posta
+        </a>
+        <button className="company-detail__mobile-sticky-btn" onClick={() => setShowSettingsModal(true)}>
+          <Settings className="company-detail__mobile-sticky-icon" />
+          Ayarlar
+        </button>
       </div>
 
       {/* Settings Modal */}
@@ -552,14 +625,17 @@ export default function CompanyDetailPage() {
                       
                       // 2. Modalı kapat
                       setShowUploadModal(false);
+                      setToast({ open: true, message: 'Doküman başarıyla yüklendi.', type: 'success' });
                       
                       // Not: fetchData() çağrısını kaldırdık. Böylece sayfa loading ekranına 
                       // düşmeyecek ve yeni doküman anında listede belirecektir.
                     } else {
                       console.error("Doküman veritabanına kaydedilemedi.");
+                      setToast({ open: true, message: 'Doküman kaydedilemedi.', type: 'warning' });
                     }
                   } catch (error) {
                     console.error("Doküman yükleme hatası:", error);
+                    setToast({ open: true, message: 'Doküman yüklenirken hata oluştu.', type: 'warning' });
                   } finally {
                     setUploadingDoc(false);
                   }
@@ -574,6 +650,12 @@ export default function CompanyDetailPage() {
           </div>
         </>
       )}
+      <AppToast
+        open={toast.open}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

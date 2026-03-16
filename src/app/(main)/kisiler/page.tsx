@@ -5,7 +5,10 @@ import {
   Users, Search, Plus, Building2, User, Phone, Mail, MessageSquare, Info, Save
 } from 'lucide-react';
 import Modal from '@/components/common/Modal';
+import AppLoader from '@/components/common/AppLoader';
+import AppToast from '@/components/common/AppToast';
 import './page.css';
+
 
 export default function PeoplePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +21,11 @@ export default function PeoplePage() {
     name: '',
     email: '',
     phone: '',
+  });
+  const [toast, setToast] = useState<{ open: boolean; message: string; type: 'success' | 'warning' | 'info' }>({
+    open: false,
+    message: '',
+    type: 'info',
   });
 
   useEffect(() => {
@@ -39,20 +47,27 @@ export default function PeoplePage() {
 
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: newContact.name,
-        email: newContact.email || null,
-        phone: newContact.phone || null,
-        companyId: Number(newContact.companyId),
-      }),
-    });
-    if (res.ok) {
-      setShowAddModal(false);
-      setNewContact({ companyId: '', name: '', email: '', phone: '' });
-      fetchData();
+    try {
+      const res = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newContact.name,
+          email: newContact.email || null,
+          phone: newContact.phone || null,
+          companyId: Number(newContact.companyId),
+        }),
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        setNewContact({ companyId: '', name: '', email: '', phone: '' });
+        fetchData();
+        setToast({ open: true, message: 'Kişi başarıyla eklendi.', type: 'success' });
+        return;
+      }
+      setToast({ open: true, message: 'Kişi eklenemedi. Lütfen tekrar dene.', type: 'warning' });
+    } catch {
+      setToast({ open: true, message: 'Bağlantı hatası nedeniyle kişi eklenemedi.', type: 'warning' });
     }
   };
 
@@ -63,8 +78,9 @@ export default function PeoplePage() {
     );
     return { ...company, contacts: companyContacts };
   }).filter(company => company.contacts.length > 0 || searchQuery === '');
+  const lastUpdatedLabel = new Date().toLocaleDateString('tr-TR');
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <AppLoader label="Kisiler yukleniyor..." showSkeleton />;
 
   return (
     <div className="people-page">
@@ -96,6 +112,14 @@ export default function PeoplePage() {
         <span className="people-page__info-text">
           Tüm kişiler şirketlere bağlıdır. Yeni kişi eklemek için önce bir şirket seçin.
         </span>
+      </div>
+
+      <div className="people-page__context-bar">
+        <span className="people-page__context-item">Toplam şirket: {companies.length}</span>
+        <span className="people-page__context-separator" aria-hidden="true">•</span>
+        <span className="people-page__context-item">Toplam kişi: {contacts.length}</span>
+        <span className="people-page__context-separator" aria-hidden="true">•</span>
+        <span className="people-page__context-item">Güncellendi: {lastUpdatedLabel}</span>
       </div>
 
       <div className="people-page__companies">
@@ -145,7 +169,11 @@ export default function PeoplePage() {
               </div>
             ) : (
               <div className="people-page__contacts" style={{ padding: 'var(--spacing-lg)' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Bu şirkette henüz kişi bulunmuyor.</p>
+                <div className="app-empty-state">
+                  <Users className="app-empty-state__icon" />
+                  <div className="app-empty-state__title">Bu şirkette henüz kişi yok</div>
+                  <div className="app-empty-state__hint">Kişi eklemek için sağ üstteki butonu kullanabilirsin.</div>
+                </div>
               </div>
             )}
           </div>
@@ -153,8 +181,10 @@ export default function PeoplePage() {
       </div>
 
       {companiesWithContacts.length === 0 && searchQuery && (
-        <div style={{ textAlign: 'center', padding: 'var(--spacing-2xl)' }}>
-          <p style={{ color: 'var(--text-light)' }}>&quot;{searchQuery}&quot; için sonuç bulunamadı.</p>
+        <div className="app-empty-state">
+          <Search className="app-empty-state__icon" />
+          <div className="app-empty-state__title">Sonuç bulunamadı</div>
+          <div className="app-empty-state__hint">&quot;{searchQuery}&quot; için eşleşen kişi yok.</div>
         </div>
       )}
 
@@ -225,6 +255,13 @@ export default function PeoplePage() {
           </div>
         </form>
       </Modal>
+
+      <AppToast
+        open={toast.open}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

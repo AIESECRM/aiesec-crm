@@ -4,15 +4,29 @@
   border-radius: var(--border-radius);
   padding: var(--spacing-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
+
 .company-card:hover {
   border-color: var(--primary-200);
   box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.dark .company-card {
+  background: linear-gradient(180deg, color-mix(in oklch, var(--neutral-light) 98%, var(--primary-100) 2%), var(--neutral-light));
+  border-color: var(--border-color);
+}
+
+.dark .company-card:hover {
+  border-color: color-mix(in oklch, var(--primary-300) 48%, var(--border-color));
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(27, 141, 243, 0.16);
 }
 
 .company-card__header {
@@ -86,7 +100,8 @@
   flex-direction: column;
   gap: 2px;
   font-size: 12px;
-  color: var(--text-light);
+  color: var(--text-regular);
+  opacity: 0.85;
 }
 
 .company-card__category {
@@ -120,10 +135,11 @@
 .company-card__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--spacing-md);
   padding-top: var(--spacing-sm);
   border-top: 1px solid var(--border-color-light);
+  flex-wrap: wrap;
 }
 
 .company-card__proposals {
@@ -136,6 +152,11 @@
   padding: 4px var(--spacing-sm);
   border-radius: var(--border-radius-sm);
   white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.dark .company-card__proposals {
+  border-color: color-mix(in oklch, var(--primary-300) 28%, transparent);
 }
 
 .company-card__proposals-icon {
@@ -145,8 +166,8 @@
 }
 
 .company-card__proposals--empty {
-  color: var(--status-negative);
-  background-color: var(--status-negative-bg);
+  color: var(--text-regular);
+  background-color: var(--sidenav-bg);
 }
 
 .company-card__contacts {
@@ -154,8 +175,16 @@
   align-items: center;
   gap: var(--spacing-xs);
   font-size: 12px;
-  color: var(--text-light);
+  color: var(--text-regular);
   white-space: nowrap;
+  background-color: var(--sidenav-bg);
+  border: 1px solid transparent;
+  padding: 4px var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+}
+
+.dark .company-card__contacts {
+  border-color: color-mix(in oklch, var(--border-color) 90%, transparent);
 }
 
 .company-card__contacts-icon {
@@ -165,7 +194,7 @@
 }
 
 .company-card__contacts--empty {
-  color: var(--status-negative);
+  color: var(--text-regular);
 }
 
 /* Responsive - Mobile */

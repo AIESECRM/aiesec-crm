@@ -10,10 +10,10 @@ import {
   Edit3,
   Eye,
   Settings,
-  User as UserIcon,
   Users,
   Sparkles,
-  MessageSquare
+  MessageSquare,
+  MoreHorizontal
 } from 'lucide-react';
 import { Company, Activity, User } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,9 +23,9 @@ import './CompanySidebar.css';
 import { generateEmailContent, summarizeMeetingNotes } from '@/actions/ai';
 
 const ACTIVITY_LABELS: Record<string, string> = {
-  COLD_CALL: 'Cold Call',
+  COLD_CALL: 'Soğuk Arama',
   MEETING: 'Görüşme',
-  EMAIL: 'Email',
+  EMAIL: 'E-posta',
   FOLLOW_UP: 'Takip',
   TASK: 'Görev',
   PROPOSAL: 'Teklif',
@@ -60,6 +60,20 @@ export default function CompanySidebar({
 }: CompanySidebarProps) {
   const { permissions } = useAuth();
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [showMoreActions, setShowMoreActions] = React.useState(false);
+  const moreActionsRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!moreActionsRef.current) return;
+      if (!moreActionsRef.current.contains(event.target as Node)) {
+        setShowMoreActions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleGenerateEmail = async () => {
     setIsGenerating(true);
@@ -107,7 +121,7 @@ export default function CompanySidebar({
               {company.category}
             </div>
           )}
-          <div style={{ marginTop: '4px' }}>
+          <div className="company-sidebar__status">
             <StatusBadge status={company.status} />
           </div>
         </div>
@@ -149,21 +163,20 @@ export default function CompanySidebar({
           </div>
         )}
 
-        {/* Assigned Managers */}
         {company.managers && (
-          <div className="company-sidebar__info-item" style={{ marginTop: '16px' }}>
+          <div className="company-sidebar__info-item company-sidebar__info-item--managers">
             <Users className="company-sidebar__info-icon" />
             <div className="company-sidebar__info-content">
               <div className="company-sidebar__info-label">Atanan Menajer(ler)</div>
-              <div className="company-sidebar__info-value" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+              <div className="company-sidebar__manager-list">
                 {company.managers.length > 0 ? (
                   company.managers.map((manager: User) => (
-                    <span key={manager.id} style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Avatar 
-                        src={manager.image} 
-                        alt={manager.name} 
-                        size={22} 
-                        fallbackIcon={<span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{manager.name.charAt(0).toUpperCase()}</span>}
+                    <span key={manager.id} className="company-sidebar__manager-item">
+                      <Avatar
+                        src={manager.image}
+                        alt={manager.name}
+                        size={22}
+                        fallbackIcon={<span className="company-sidebar__manager-fallback">{manager.name.charAt(0).toUpperCase()}</span>}
                         className="company-sidebar__manager-avatar"
                         style={{ backgroundColor: 'var(--primary-400)' }}
                       />
@@ -171,7 +184,7 @@ export default function CompanySidebar({
                     </span>
                   ))
                 ) : (
-                  <span style={{ fontSize: '13px', color: 'var(--text-light)' }}>Atanmış menajer yok</span>
+                  <span className="company-sidebar__manager-empty">Atanmış menajer yok</span>
                 )}
               </div>
             </div>
@@ -191,10 +204,7 @@ export default function CompanySidebar({
           {recentActivities.slice(0, 4).map((activity) => (
             <div key={activity.id} className="company-sidebar__activity-item">
               <div className="company-sidebar__activity-left">
-                <span style={{
-                  backgroundColor: '#e0f2fe', color: '#0369a1',
-                  padding: '3px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600'
-                }}>
+                <span className="company-sidebar__activity-type">
                   {ACTIVITY_LABELS[activity.type] || activity.type}
                 </span>
               </div>
@@ -228,31 +238,49 @@ export default function CompanySidebar({
         <button
           className="company-sidebar__action-btn company-sidebar__action-btn--secondary"
           onClick={onManageActivities}
-          style={{ marginBottom: '12px' }}
         >
           <Settings className="company-sidebar__action-icon" />
           Aktiviteyi Yönet
         </button>
 
-        <button
-          className="company-sidebar__action-btn"
-          style={{ backgroundColor: '#F3F4F6', color: '#4F46E5', marginBottom: '12px', borderColor: '#4F46E5' }}
-          onClick={handleGenerateEmail}
-          disabled={isGenerating}
-        >
-          <Sparkles className="company-sidebar__action-icon" size={16} />
-          {isGenerating ? 'Hazırlanıyor...' : 'AI ile E-Posta Yaz'}
-        </button>
+        <div className="company-sidebar__more" ref={moreActionsRef}>
+          {showMoreActions && (
+            <div className="company-sidebar__more-panel">
+              <button
+                className="company-sidebar__action-btn company-sidebar__action-btn--ai-email"
+                onClick={async () => {
+                  setShowMoreActions(false);
+                  await handleGenerateEmail();
+                }}
+                disabled={isGenerating}
+              >
+                <Sparkles className="company-sidebar__action-icon" size={16} />
+                {isGenerating ? 'Hazırlanıyor...' : 'AI ile E-Posta Yaz'}
+              </button>
 
-        <button
-          className="company-sidebar__action-btn"
-          style={{ backgroundColor: '#F3F4F6', color: '#059669', borderColor: '#059669' }}
-          onClick={handleSummarizeNotes}
-          disabled={isGenerating}
-        >
-          <MessageSquare className="company-sidebar__action-icon" size={16} />
-          {isGenerating ? 'Hazırlanıyor...' : 'AI Toplantı Özeti Çıkart'}
-        </button>
+              <button
+                className="company-sidebar__action-btn company-sidebar__action-btn--ai-summary"
+                onClick={async () => {
+                  setShowMoreActions(false);
+                  await handleSummarizeNotes();
+                }}
+                disabled={isGenerating}
+              >
+                <MessageSquare className="company-sidebar__action-icon" size={16} />
+                {isGenerating ? 'Hazırlanıyor...' : 'AI Toplantı Özeti Çıkart'}
+              </button>
+            </div>
+          )}
+
+          <button
+            className="company-sidebar__action-btn company-sidebar__action-btn--more"
+            onClick={() => setShowMoreActions(prev => !prev)}
+            disabled={isGenerating}
+          >
+            <MoreHorizontal className="company-sidebar__action-icon" />
+            Daha fazla
+          </button>
+        </div>
       </div>
     </div>
   );

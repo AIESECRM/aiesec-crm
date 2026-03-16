@@ -56,11 +56,11 @@ export default function CompanyCard({ company, onClick }: CompanyCardProps) {
       <div className="company-card__footer">
         <div className={`company-card__proposals ${offerCount === 0 ? 'company-card__proposals--empty' : ''}`}>
           <RefreshCw className="company-card__proposals-icon" />
-          {offerCount > 0 ? `${offerCount} Adet Aktif Teklif` : 'Teklif Yok'}
+          {offerCount > 0 ? `${offerCount} Aktif Teklif` : '0 Teklif'}
         </div>
         <div className={`company-card__contacts ${contactCount === 0 ? 'company-card__contacts--empty' : ''}`}>
           <Users className="company-card__contacts-icon" />
-          {contactCount > 0 ? `${contactCount} Bağlantı` : 'Bağlantı Yok'}
+          {contactCount > 0 ? `${contactCount} Bağlantı` : '0 Bağlantı'}
         </div>
       </div>
 

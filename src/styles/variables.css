@@ -1,5 +1,6 @@
 /* AIESEC B2B CRM Design System Variables */
 
+
 :root {
   /* Font */
   --font-main: "Open Sans", sans-serif;
@@ -35,8 +36,8 @@
   /* Dashboard Side Nav (Neutral) */
   --sidenav-child: #858585;
   --sidenav-bg: rgba(78, 78, 78, 0.03);
-  --sidenav-hover: rgba(3, 126, 243, 0.08);
-  --sidenav-active-bg: rgba(3, 126, 243, 0.1);
+  --sidenav-hover: rgba(3, 126, 243, 0.05);
+  --sidenav-active-bg: rgba(3, 126, 243, 0.18);
 
   /* Logo Colors */
   --logo-primary: var(--primary-400);
@@ -105,17 +106,17 @@
 /* Dark Mode Overrides */
 .dark {
   /* Light Mode Equivalents */
-  --background: #121212;
-  --dashboard-bg: #1A1A1A;
-  --text-regular: #EDEDED;
-  --text-light: #A0A0A0;
-  --text-muted: #737373;
+  --background: #12161B;
+  --dashboard-bg: #0F141A;
+  --text-regular: #E8EDF3;
+  --text-light: #B3BDCA;
+  --text-muted: #8D98A6;
 
   /* Dashboard Side Nav (Neutral) */
-  --sidenav-child: #A0A0A0;
-  --sidenav-bg: rgba(237, 237, 237, 0.05);
-  --sidenav-hover: rgba(3, 126, 243, 0.15);
-  --sidenav-active-bg: rgba(3, 126, 243, 0.2);
+  --sidenav-child: #B1BBC8;
+  --sidenav-bg: rgba(229, 236, 245, 0.05);
+  --sidenav-hover: rgba(27, 141, 243, 0.16);
+  --sidenav-active-bg: rgba(27, 141, 243, 0.28);
 
   /* Primary Colors Adjustment for Dark */
   --primary-100: #02203F;
@@ -144,8 +145,8 @@
   --logo-neutral-white: #000000;
 
   /* Borders */
-  --border-color: #2D2D2D;
-  --border-color-light: #242424;
+  --border-color: #2A333D;
+  --border-color-light: #202932;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);

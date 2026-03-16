@@ -12,6 +12,7 @@
   padding: 0 var(--spacing-xl);
   z-index: 99;
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.015);
+  border-bottom-right-radius: 35px;
 }
 
 .header__search {

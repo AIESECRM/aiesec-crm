@@ -8,7 +8,10 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ExecutiveDashboard from '@/components/dashboard/ExecutiveDashboard';
+import AppLoader from '@/components/common/AppLoader';
+import { mockCompanies, mockActivities } from '@/data/mockData';
 import './page.css';
+
 
 const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
 
@@ -45,23 +48,40 @@ export default function DashboardPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [companiesRes, activitiesRes] = await Promise.all([
-      fetch('/api/companies'),
-      fetch('/api/activities'),
-    ]);
-    const companiesData = await companiesRes.json();
-    const activitiesData = await activitiesRes.json();
-    setCompanies(companiesData.companies || []);
-    setActivities(activitiesData.activities || []);
-    setLoading(false);
+
+    try {
+      const [companiesRes, activitiesRes] = await Promise.all([
+        fetch('/api/companies'),
+        fetch('/api/activities'),
+      ]);
+
+      if (!companiesRes.ok || !activitiesRes.ok) {
+        throw new Error('API is not available');
+      }
+
+      const companiesData = await companiesRes.json();
+      const activitiesData = await activitiesRes.json();
+
+      const apiCompanies = companiesData.companies || [];
+      const apiActivities = activitiesData.activities || [];
+
+      if (apiCompanies.length === 0) {
+        setCompanies(mockCompanies as any[]);
+        setActivities(mockActivities as any[]);
+      } else {
+        setCompanies(apiCompanies);
+        setActivities(apiActivities);
+      }
+    } catch {
+      setCompanies(mockCompanies as any[]);
+      setActivities(mockActivities as any[]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // User henüz yüklenmediyse bekle
-  if (!user) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh' }}>
-      <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
-    </div>
-  );
+  if (!user) return <AppLoader label="Profil yukleniyor..." />;
 
   // MCVP/MCP/ADMIN → Executive Dashboard
   if (NATIONAL_ROLES.includes(user.role)) {
@@ -90,12 +110,9 @@ export default function DashboardPage() {
 
   const recentCompanies = companies.slice(0, 4);
   const recentActivities = activities.slice(0, 5);
+  const lastUpdatedLabel = new Date().toLocaleDateString('tr-TR');
 
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh' }}>
-      <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
-    </div>
-  );
+  if (loading) return <AppLoader label="Anasayfa verileri hazirlaniyor..." showSkeleton skeletonCount={6} />;
 
   return (
     <div className="dashboard">
@@ -105,10 +122,18 @@ export default function DashboardPage() {
           <h1 className="dashboard__title-text">Anasayfa</h1>
         </div>
         {user && (
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          <div className="dashboard__welcome">
             Hoşgeldin, <strong>{user.name}</strong>
           </div>
         )}
+      </div>
+
+      <div className="dashboard__context-bar">
+        <span className="dashboard__context-item">Toplam şirket: {companies.length}</span>
+        <span className="dashboard__context-separator" aria-hidden="true">•</span>
+        <span className="dashboard__context-item">Toplam aktivite: {activities.length}</span>
+        <span className="dashboard__context-separator" aria-hidden="true">•</span>
+        <span className="dashboard__context-item">Güncellendi: {lastUpdatedLabel}</span>
       </div>
 
       <div className="dashboard__stats">
@@ -137,27 +162,24 @@ export default function DashboardPage() {
                 <div
                   key={company.id}
                   onClick={() => router.push(`/sirketler/${company.id}`)}
-                  style={{
-                    padding: '12px 16px', backgroundColor: 'white', borderRadius: '8px',
-                    border: '1px solid #e5e7eb', cursor: 'pointer', marginBottom: '8px',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-                  }}
+                  className="dashboard__recent-company"
                 >
                   <div>
-                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#111827' }}>{company.name}</div>
-                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                    <div className="dashboard__recent-company-name">{company.name}</div>
+                    <div className="dashboard__recent-company-mail">
                       {company.email || '—'}
                     </div>
                   </div>
-                  <span style={{
-                    backgroundColor: '#f3f4f6', color: '#374151',
-                    padding: '4px 10px', borderRadius: '20px', fontSize: '12px'
-                  }}>
+                  <span className="dashboard__recent-company-status">
                     {STATUS_LABELS[company.status] || company.status}
                   </span>
                 </div>
               )) : (
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>Henüz şirket eklenmemiş.</p>
+                <div className="app-empty-state">
+                  <Building2 className="app-empty-state__icon" />
+                  <div className="app-empty-state__title">Henüz şirket eklenmemiş</div>
+                  <div className="app-empty-state__hint">Yeni kayıtlar geldikçe burada listelenecek.</div>
+                </div>
               )}
             </div>
           </div>
@@ -185,7 +207,11 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )) : (
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>Henüz aktivite eklenmemiş.</p>
+                <div className="app-empty-state">
+                  <Calendar className="app-empty-state__icon" />
+                  <div className="app-empty-state__title">Henüz aktivite eklenmemiş</div>
+                  <div className="app-empty-state__hint">Aktiviteler tamamlandıkça bu alanda görünecek.</div>
+                </div>
               )}
             </div>
           </div>

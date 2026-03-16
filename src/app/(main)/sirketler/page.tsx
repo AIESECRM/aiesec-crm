@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Building2, Filter, Plus, X, Save } from 'lucide-react';
 import { CompanyCard, CompanySidebar } from '@/components/companies';
 import Modal from '@/components/common/Modal';
+import AppToast from '@/components/common/AppToast';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import AppLoader from '@/components/common/AppLoader';
+import { mockCompanies, mockActivities } from '@/data/mockData';
 import './page.css';
+
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Tüm Durumlar' },
@@ -52,6 +56,11 @@ export default function CompaniesPage() {
   const [filterChapter, setFilterChapter] = useState('');
   const [visibleCount, setVisibleCount] = useState(12);
   const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState<{ open: boolean; message: string; type: 'success' | 'warning' | 'info' }>({
+    open: false,
+    message: '',
+    type: 'info',
+  });
 
   const [newCompany, setNewCompany] = useState({
     name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: ''
@@ -79,31 +88,98 @@ export default function CompaniesPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [companiesRes, activitiesRes] = await Promise.all([
-      fetch('/api/companies'),
-      fetch('/api/activities'),
-    ]);
-    const companiesData = await companiesRes.json();
-    const activitiesData = await activitiesRes.json();
-    setCompanies(companiesData.companies || []);
-    setActivities(activitiesData.activities || []);
-    setLoading(false);
+
+    try {
+      const [companiesRes, activitiesRes] = await Promise.all([
+        fetch('/api/companies'),
+        fetch('/api/activities'),
+      ]);
+
+      if (!companiesRes.ok || !activitiesRes.ok) {
+        throw new Error('API is not available');
+      }
+
+      const companiesData = await companiesRes.json();
+      const activitiesData = await activitiesRes.json();
+
+      const apiCompanies = companiesData.companies || [];
+      const apiActivities = activitiesData.activities || [];
+
+      if (apiCompanies.length === 0) {
+        setCompanies(mockCompanies);
+        setActivities(mockActivities);
+      } else {
+        setCompanies(apiCompanies);
+        setActivities(apiActivities);
+      }
+    } catch {
+      setCompanies(mockCompanies);
+      setActivities(mockActivities);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddCompany = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const res = await fetch('/api/companies', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newCompany),
-    });
-    if (res.ok) {
+
+    try {
+      const res = await fetch('/api/companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCompany),
+      });
+
+      if (res.ok) {
+        setShowAddModal(false);
+        setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '' });
+        fetchData();
+        setToast({ open: true, message: 'Şirket başarıyla eklendi.', type: 'success' });
+      } else {
+        const localCompany = {
+          id: `${Date.now()}`,
+          name: newCompany.name,
+          phone: newCompany.phone || null,
+          email: newCompany.email || null,
+          status: newCompany.status,
+          notes: newCompany.notes || null,
+          chapter: newCompany.chapter || null,
+          category: null,
+          location: null,
+          website: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          assignedManagerIds: [],
+        };
+        setCompanies(prev => [localCompany, ...prev]);
+        setShowAddModal(false);
+        setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '' });
+        setToast({ open: true, message: 'Şirket eklendi (yerel kayıt).', type: 'warning' });
+      }
+    } catch {
+      const localCompany = {
+        id: `${Date.now()}`,
+        name: newCompany.name,
+        phone: newCompany.phone || null,
+        email: newCompany.email || null,
+        status: newCompany.status,
+        notes: newCompany.notes || null,
+        chapter: newCompany.chapter || null,
+        category: null,
+        location: null,
+        website: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        assignedManagerIds: [],
+      };
+      setCompanies(prev => [localCompany, ...prev]);
       setShowAddModal(false);
       setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '' });
-      fetchData();
+      setToast({ open: true, message: 'Bağlantı sorunu nedeniyle yerel kayıt yapıldı.', type: 'warning' });
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const filteredCompanies = companies.filter(c => {
@@ -114,6 +190,24 @@ export default function CompaniesPage() {
 
   const displayedCompanies = filteredCompanies.slice(0, visibleCount);
   const hasMore = visibleCount < filteredCompanies.length;
+  const hasActiveFilters = Boolean(filterStatus || filterChapter);
+  const activeFilterCount = Number(Boolean(filterStatus)) + Number(Boolean(filterChapter));
+  const statusLabel = STATUS_OPTIONS.find(option => option.value === filterStatus)?.label;
+  const chapterLabel = CHAPTER_OPTIONS.find(option => option.value === filterChapter)?.label;
+  const lastUpdatedLabel = new Date().toLocaleDateString('tr-TR');
+
+  const activeFilterChips = [
+    filterStatus ? { key: 'status', label: `Durum: ${statusLabel}` } : null,
+    filterChapter ? { key: 'chapter', label: `Şube: ${chapterLabel}` } : null,
+  ].filter(Boolean) as Array<{ key: 'status' | 'chapter'; label: string }>;
+
+  const clearFilter = (key: 'status' | 'chapter') => {
+    if (key === 'status') {
+      setFilterStatus('');
+      return;
+    }
+    setFilterChapter('');
+  };
 
   const handleCompanyClick = (company: any) => {
     setSelectedCompany(company);
@@ -124,7 +218,7 @@ export default function CompaniesPage() {
     ? activities.filter(a => a.companyId === selectedCompany.id)
     : [];
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <AppLoader label="Sirketler yukleniyor..." showSkeleton skeletonCount={8} />;
 
   return (
     <div className="companies-page">
@@ -135,9 +229,9 @@ export default function CompaniesPage() {
             <h1 className="companies-page__title-text">Tüm Şirketler</h1>
           </div>
           <div className="companies-page__actions">
-            <button className="companies-page__filter-btn" onClick={() => setShowFilter(!showFilter)}>
+            <button className={`companies-page__filter-btn ${hasActiveFilters ? 'companies-page__filter-btn--active' : ''}`} onClick={() => setShowFilter(!showFilter)}>
               <Filter className="companies-page__filter-btn-icon" />
-              Filtrele
+              {hasActiveFilters ? 'Filtreler Aktif' : 'Filtrele'}
             </button>
             <button className="companies-page__add-btn" onClick={() => setShowAddModal(true)}>
               <Plus className="companies-page__add-btn-icon" />
@@ -146,9 +240,42 @@ export default function CompaniesPage() {
           </div>
         </div>
 
+        <div className="companies-page__summary">
+          <span className="companies-page__summary-count">{filteredCompanies.length}</span>
+          <span className="companies-page__summary-label">şirket listeleniyor</span>
+        </div>
+
+        <div className="companies-page__context-bar">
+          <span className="companies-page__context-item">Toplam: {companies.length}</span>
+          <span className="companies-page__context-separator" aria-hidden="true">•</span>
+          <span className="companies-page__context-item">Aktif filtre: {activeFilterCount}</span>
+          <span className="companies-page__context-separator" aria-hidden="true">•</span>
+          <span className="companies-page__context-item">Güncellendi: {lastUpdatedLabel}</span>
+        </div>
+
+        {hasActiveFilters && (
+          <div className="companies-page__chips">
+            {activeFilterChips.map(chip => (
+              <button
+                key={chip.key}
+                className="companies-page__chip"
+                onClick={() => clearFilter(chip.key)}
+              >
+                {chip.label}
+                <X className="companies-page__chip-icon" />
+              </button>
+            ))}
+            <button className="companies-page__chip companies-page__chip--clear" onClick={() => { setFilterStatus(''); setFilterChapter(''); }}>
+              Tümünü Temizle
+            </button>
+          </div>
+        )}
+
         {filteredCompanies.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>
-            Şirket bulunamadı.
+          <div className="app-empty-state">
+            <Building2 className="app-empty-state__icon" />
+            <div className="app-empty-state__title">Şirket bulunamadı</div>
+            <div className="app-empty-state__hint">Filtreleri temizleyip tekrar deneyebilirsin.</div>
           </div>
         ) : (
           <div className="companies-page__grid">
@@ -191,7 +318,6 @@ export default function CompaniesPage() {
         </>
       )}
 
-      {/* Add Company Modal */}
       <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Yeni Şirket Ekle" maxWidth="600px">
         <form className="modal__form" onSubmit={handleAddCompany}>
           <div className="modal__section">
@@ -294,7 +420,6 @@ export default function CompaniesPage() {
         </form>
       </Modal>
 
-      {/* Filter Modal */}
       {showFilter && (
         <>
           <div className="filter-modal__overlay" onClick={() => setShowFilter(false)} />
@@ -327,6 +452,13 @@ export default function CompaniesPage() {
           </div>
         </>
       )}
+
+      <AppToast
+        open={toast.open}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

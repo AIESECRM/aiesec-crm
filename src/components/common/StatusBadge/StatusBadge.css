@@ -1,50 +1,53 @@
 .status-badge {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   padding: 4px 10px;
-  border-radius: var(--border-radius-sm);
+  border-radius: 999px;
+  border: 1px solid transparent;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
-/* Company Status */
-.status-badge--aktif {
+.status-badge--active {
   background-color: var(--status-active-bg);
   color: var(--status-active);
 }
 
-.status-badge--pasif {
+.status-badge--passive {
   background-color: var(--status-passive-bg);
   color: var(--status-passive);
 }
 
-.status-badge--negatif {
+.status-badge--negative {
   background-color: var(--status-negative-bg);
   color: var(--status-negative);
 }
 
-.status-badge--pozitif {
-  background-color: var(--status-active-bg);
+.status-badge--positive {
+  background-color: rgba(34, 197, 94, 0.16);
   color: var(--status-active);
+  border-color: rgba(34, 197, 94, 0.35);
 }
 
-.status-badge--cevap_yok {
-  background-color: var(--status-pending-bg);
-  color: var(--status-pending);
+.status-badge--no_answer {
+  background-color: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.35);
 }
 
-.status-badge--tekrar_ara {
+.status-badge--call_again {
   background-color: var(--activity-cold-call-bg);
   color: var(--activity-cold-call);
 }
 
-.status-badge--toplanti_planlandi {
+.status-badge--meeting_planned {
   background-color: var(--activity-meeting-bg);
   color: var(--activity-meeting);
 }
 
-/* Activity Status */
 .status-badge--cold_call {
   background-color: var(--activity-cold-call-bg);
   color: var(--activity-cold-call);
@@ -75,7 +78,6 @@
   color: var(--status-passive);
 }
 
-/* Deal Stage */
 .status-badge--new_lead {
   background-color: var(--activity-main-bg);
   color: var(--activity-text-primary);
@@ -101,7 +103,6 @@
   color: var(--status-negative);
 }
 
-/* Activity completion status */
 .status-badge--completed {
   background-color: var(--status-active-bg);
   color: var(--status-active);

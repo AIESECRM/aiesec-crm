@@ -9,16 +9,26 @@ interface StatusBadgeProps {
   showIcon?: boolean;
 }
 
+const statusAliases: Record<string, string> = {
+  POZITIF: 'POSITIVE',
+  NEGATIF: 'NEGATIVE',
+  CEVAP_YOK: 'NO_ANSWER',
+  TEKRAR_ARA: 'CALL_AGAIN',
+  TOPLANTI_PLANLANDI: 'MEETING_PLANNED',
+  AKTIF: 'ACTIVE',
+  PASIF: 'PASSIVE',
+};
+
 const statusLabels: Record<string, string> = {
-  // Company Status
   POSITIVE: 'Pozitif',
   NEGATIVE: 'Negatif',
   NO_ANSWER: 'Cevap Yok',
   CALL_AGAIN: 'Tekrar Ara',
   MEETING_PLANNED: 'Toplantı Planlandı',
+  ACTIVE: 'Aktif',
+  PASSIVE: 'Pasif',
 
-  // Activity Type
-  COLD_CALL: 'Cold Call',
+  COLD_CALL: 'Soğuk Arama',
   MEETING: 'Görüşme',
   EMAIL: 'E-posta',
   FOLLOW_UP: 'Takip',
@@ -33,12 +43,29 @@ const statusIcons: Record<string, React.ReactNode> = {
   NO_ANSWER: <RefreshCw className="status-badge__icon" />,
 };
 
+function toStatusKey(value: string): string {
+  const normalized = String(value || '')
+    .trim()
+    .toUpperCase()
+    .replaceAll('İ', 'I')
+    .replaceAll('Ş', 'S')
+    .replaceAll('Ğ', 'G')
+    .replaceAll('Ü', 'U')
+    .replaceAll('Ö', 'O')
+    .replaceAll('Ç', 'C')
+    .replace(/[\s-]+/g, '_');
+
+  return statusAliases[normalized] || normalized;
+}
+
 export default function StatusBadge({ status, showIcon = false }: StatusBadgeProps) {
-  const label = statusLabels[status] || status;
-  const icon = showIcon ? statusIcons[status] : null;
+  const statusKey = toStatusKey(status);
+  const label = statusLabels[statusKey] || statusKey.replaceAll('_', ' ');
+  const icon = showIcon ? statusIcons[statusKey] : null;
+  const classNameSuffix = statusKey.toLowerCase();
 
   return (
-    <span className={`status-badge status-badge--${status.toLowerCase()}`}>
+    <span className={`status-badge status-badge--${classNameSuffix}`}>
       {icon}
       {label}
     </span>

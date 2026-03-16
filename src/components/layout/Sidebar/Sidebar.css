@@ -10,7 +10,9 @@
   flex-direction: column;
   z-index: 100;
   transition: width var(--transition-normal);
+  border-bottom-right-radius: 50px;
 }
+
 
 .sidebar__logo {
   padding: var(--spacing-lg);
@@ -87,16 +89,53 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   text-decoration: none;
+  position: relative;
+  border: 1px solid transparent;
 }
 
-.sidebar__nav-item:hover {
+.sidebar__nav-item:not(.sidebar__nav-item--active):hover {
   background-color: var(--sidenav-hover);
-  color: var(--primary-400);
+  color: var(--text-regular);
+  border-color: var(--border-color);
+}
+
+.sidebar__nav-item:not(.sidebar__nav-item--active):hover .sidebar__nav-icon {
+  color: var(--primary-500);
 }
 
 .sidebar__nav-item--active {
   background-color: var(--sidenav-active-bg);
   color: var(--primary-400);
+  border-color: rgba(3, 126, 243, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(3, 126, 243, 0.18);
+}
+
+.dark .sidebar__nav-item {
+  backdrop-filter: blur(4px);
+}
+
+.dark .sidebar__nav-item:not(.sidebar__nav-item--active):hover {
+  background-color: color-mix(in oklch, var(--sidenav-hover) 84%, transparent);
+  border-color: color-mix(in oklch, var(--primary-300) 38%, var(--border-color));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.dark .sidebar__nav-item--active {
+  box-shadow:
+    inset 0 0 0 1px rgba(27, 141, 243, 0.3),
+    0 10px 22px rgba(8, 16, 24, 0.45);
+}
+
+.sidebar__nav-item--active::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 58%;
+  border-radius: 999px;
+  background: var(--primary-400);
 }
 
 .sidebar__nav-item--active .sidebar__nav-icon {
@@ -150,13 +189,14 @@
 
 /* Mobile Menu Toggle */
 .sidebar__mobile-toggle {
+  --mobile-toggle-size: 44px;
   display: none;
   position: fixed;
-  top: 26px;
-  left: 27px;
+  top: calc((var(--header-height) - var(--mobile-toggle-size)) / 2);
+  left: var(--spacing-md);
   z-index: 101;
-  width: 44px;
-  height: 44px;
+  width: var(--mobile-toggle-size);
+  height: var(--mobile-toggle-size);
   border-radius: var(--border-radius);
   background-color: var(--neutral-light);
   border: 1px solid var(--border-color);
@@ -170,6 +210,11 @@
   width: 24px;
   height: 24px;
   color: var(--text-regular);
+}
+
+.sidebar__mobile-toggle:hover {
+  border-color: color-mix(in oklch, var(--primary-400) 40%, var(--border-color));
+  box-shadow: 0 8px 20px rgba(3, 126, 243, 0.2);
 }
 
 .sidebar__mobile-toggle--hidden {

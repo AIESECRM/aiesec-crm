@@ -181,11 +181,11 @@ export function FileUpload({
   }
 
   return (
-    <div className={cn("flex flex-col gap-4", className)}>
+    <div className={cn("flex flex-col gap-5 md:gap-6 rounded-2xl border border-border/60 bg-muted/10 p-4 md:p-5", className)}>
       <div
         className={cn(
-          "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer",
-          file ? "border-[#037EF3]/50 bg-[#037EF3]/5" : "border-gray-200 hover:border-[#037EF3]/50 dark:border-gray-800 hover:bg-muted/30",
+          "group border-2 border-dashed rounded-2xl p-10 md:p-12 min-h-[220px] flex flex-col items-center justify-center text-center transition-all cursor-pointer",
+          file ? "border-[#037EF3]/50 bg-[#037EF3]/10" : "border-border/70 hover:border-[#037EF3]/50 bg-background/20 hover:bg-muted/30",
           error && "border-red-400 bg-red-50/50"
         )}
         onClick={() => !file && !uploadedUrl && fileInputRef.current?.click()}
@@ -225,13 +225,13 @@ export function FileUpload({
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-[#037EF3]/10 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-              <UploadCloud className="w-6 h-6 text-[#037EF3]" />
+            <div className="w-14 h-14 bg-[#037EF3]/12 rounded-full flex items-center justify-center mb-5 transition-transform group-hover:scale-105">
+              <UploadCloud className="w-7 h-7 text-[#037EF3]" />
             </div>
-            <p className="text-sm font-bold text-foreground">
+            <p className="text-base font-semibold text-foreground">
               {label}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">Sürükle bırak veya tıkla (Maks. {maxSizeMB}MB)</p>
+            <p className="text-sm text-muted-foreground mt-2">Sürükle bırak veya tıkla (Maks. {maxSizeMB}MB)</p>
           </div>
         )}
       </div>
@@ -243,7 +243,7 @@ export function FileUpload({
         </div>
       )}
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center pt-1">
         {uploadedUrl ? (
           <div className="w-full flex flex-col items-center animate-in zoom-in-95 duration-300">
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 border-2 border-green-200 dark:border-green-800">
@@ -254,7 +254,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => onUploadSuccess(uploadedUrl, file?.name || "pdf_dosyasi.pdf")}
-              className="w-full py-4 px-6 bg-[#037EF3] hover:bg-[#0266c8] text-white rounded-xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-wide"
+              className="w-full py-4 px-6 mb-2 bg-[#037EF3] hover:bg-[#0266c8] text-white rounded-xl font-bold text-sm shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-wide"
             >
               <Upload size={18} /> Veritabanına Kaydet ve Bitir
             </button>
@@ -265,7 +265,7 @@ export function FileUpload({
             disabled={!file || isUploading}
             onClick={handleUpload}
             className={cn(
-              "w-full py-4 px-6 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-3 shadow-lg uppercase tracking-wide",
+              "w-full py-4 px-6 mb-2 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-3 shadow-lg uppercase tracking-wide",
               !file || isUploading
                 ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                 : "bg-[#037EF3] hover:bg-[#0266c8] text-white shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]"
