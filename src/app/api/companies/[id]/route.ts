@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const hasAccess = await verifyCompanyAccess(user.id, id);
   if (!hasAccess) return NextResponse.json({ error: "Bu şirketi düzenleme yetkiniz yok!" }, { status: 403 });
 
-  const { name, phone, email, status, notes, chapter, category, location, domain, taxId, website } = await req.json();
+  const { name, phone, email, status, notes, chapter, category, location, domain, taxId, website, managerIds } = await req.json();
 
   const company = await prisma.company.update({
     where: { id: parseInt(id) },
@@ -61,6 +61,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(website !== undefined && { website }),
       updatedAt: Math.floor(Date.now() / 1000),
     },
+    if (managerIds && Array.isArray(managerIds)) {
+    updateData.managers = {
+      set: managerIds.map((id: number | string) => ({ id: parseInt(String(id), 10) }))
+    };
+  }
+
+  const company = await prisma.company.update({
+    where: { id: parseInt(id) },
+    data: updateData,
+    // Güncel menajerleri geri döndürmek için include ediyoruz
+    include: {
+        managers: { select: { id: true, name: true, image: true, role: true, chapter: true } }
   });
 
   await logAudit(user.id, "UPDATE_COMPANY", id, undefined, JSON.stringify(company));
