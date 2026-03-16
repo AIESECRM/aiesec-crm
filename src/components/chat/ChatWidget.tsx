@@ -197,7 +197,7 @@ export default function ChatWidget() {
                   </div>
                 </div>
               ) : (
-                <h3 className="font-semibold text-[17px] tracking-wide">
+                <h3 className="font-semibold text-[17px] tracking-wide ml-2">
                   {view === 'list' && "Mesajlar"}
                   {view === 'new_chat' && "Yeni Sohbet Başlat"}
                 </h3>
@@ -345,14 +345,14 @@ export default function ChatWidget() {
                 {messages.map((m, idx) => {
                   const isMe = m.senderId === parseInt(currentUser.id, 10);
                   return (
-                    <div key={idx} className={`flex flex-col max-w-[82%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}>
+                    <div key={idx} className={`flex flex-col max-w-[82%] min-w-0 ${isMe ? 'self-end items-end' : 'self-start items-start'}`}>
                       <div
-                        className={`px-4 py-2.5 shadow-sm relative ${isMe
+                        className={`px-4 py-2.5 shadow-sm relative overflow-hidden ${isMe
                             ? 'bg-[#037EF3] text-white rounded-2xl rounded-br-sm'
                             : 'bg-card border border-border/50 text-foreground rounded-2xl rounded-bl-sm'
                           }`}
                       >
-                        <p className="text-[14px] leading-relaxed break-words whitespace-pre-wrap">{m.content}</p>
+                        <p className="text-[14px] leading-relaxed break-words break-all whitespace-pre-wrap">{m.content}</p>
                       </div>
                       <div className={`flex items-center gap-1.5 text-[10px] mt-1.5 px-1 ${isMe ? 'text-[#037EF3]' : 'text-muted-foreground'}`}>
                         <span className="text-muted-foreground">{formatTime(m.createdAt)}</span>
