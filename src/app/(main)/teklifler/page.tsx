@@ -32,6 +32,9 @@ export default function DealsPage() {
   const [tempFilterOpenStatus, setTempFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
   const [submitting, setSubmitting] = useState(false);
   const filterWrapperRef = useRef<HTMLDivElement>(null);
+  const [companySearch, setCompanySearch] = useState('');
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
 
   const [newOffer, setNewOffer] = useState({
     companyId: '',
@@ -47,6 +50,15 @@ export default function DealsPage() {
   useEffect(() => {
     fetchData('', '');
     fetchCompanies();
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
+        setShowCompanyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -306,13 +318,7 @@ export default function DealsPage() {
           <div className="modal__section">
             <h4 className="modal__section-title">Teklif Bilgileri</h4>
             <div className="modal__row">
-              <div className="modal__field">
-                <label className="modal__label modal__label--required">Şirket</label>
-                <select className="modal__select" value={newOffer.companyId} onChange={(e) => setNewOffer(prev => ({ ...prev, companyId: e.target.value }))} required>
-                  <option value="">Şirket seçin</option>
-                  {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </div>
+              modal__field
               <div className="modal__field">
                 <label className="modal__label modal__label--required">Ürün</label>
                 <select className="modal__select" value={newOffer.product} onChange={(e) => setNewOffer(prev => ({ ...prev, product: e.target.value as OfferProduct }))}>
