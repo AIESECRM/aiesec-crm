@@ -11,6 +11,7 @@ export default function RoleManagementPage() {
     const context = useAuth() as any;
     const user = context?.user;
     const permissions = context?.permissions;
+    const [companies, setCompanies] = useState<any[]>([]);
 
     const [users, setUsers] = useState<User[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -43,6 +44,35 @@ export default function RoleManagementPage() {
         }
         fetchData();
     }, [user]);
+    // Sadece LCVP ve üstü yetkililer için şirketleri önceden çekiyoruz
+    useEffect(() => {
+        if (['ADMIN', 'MCP', 'MCVP', 'LCP', 'LCVP'].includes(user?.role)) {
+            fetch('/api/companies').then(r => r.json()).then(d => setCompanies(d.companies || []));
+        }
+    }, [user]);
+
+    const handleAssignManager = async (userId: number, companyId: string) => {
+        if (!companyId) return;
+        try {
+            // Şirketin mevcut menajerlerini alıyoruz ki silinmeden üstüne ekleyelim
+            const compRes = await fetch(`/api/companies/${companyId}`);
+            const compData = await compRes.json();
+            const existingIds = compData.company?.managers?.map((m: any) => m.id) || [];
+
+            if (!existingIds.includes(userId)) {
+                await fetch(`/api/companies/${companyId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ managerIds: [...existingIds, userId] })
+                });
+                alert('Üye başarıyla seçilen şirkete atandı!');
+            } else {
+                alert('Uyarı: Bu üye zaten seçili şirketin menajeri konumunda.');
+            }
+        } catch (error) {
+            alert('Atama işlemi sırasında bir hata oluştu.');
+        }
+    };
 
     if (isLoading || !user) {
         return <div style={{ padding: '40px', textAlign: 'center' }}>Yükleniyor...</div>;
@@ -166,7 +196,7 @@ export default function RoleManagementPage() {
                                 <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{member.email}</div>
                                 <div style={{ fontSize: '12px', color: '#2563eb', marginTop: '2px' }}>{member.role} • {member.chapter || 'Genel Merkez'}</div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <label style={{ fontSize: '12px', color: 'var(--text-light)' }}>Rol:</label>
                                 <select
                                     style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px',backgroundColor: 'var(--neutral-light)',color: 'var(--text-regular)', outline: 'none'}}
@@ -178,6 +208,21 @@ export default function RoleManagementPage() {
                                         <option key={role} value={role} style={{ backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)' }}>{role}</option>
                                     ))}
                                 </select>
+                                {['ADMIN', 'MCP', 'MCVP', 'LCP', 'LCVP'].includes(user?.role) && (
+                                    <select
+                                        style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '13px', backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)', outline: 'none', maxWidth: '170px' }}
+                                        onChange={(e) => {
+                                            handleAssignManager(member.id, e.target.value);
+                                            e.target.value = ""; // Seçimden sonra eski placeholder haline geri döner
+                                        }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled style={{ backgroundColor: 'var(--neutral-light)', color: 'var(--text-light)' }}>Şirkete Ata...</option>
+                                        {companies.map(c => (
+                                            <option key={c.id} value={c.id} style={{ backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)' }}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                )}
                             </div>
                         </div>
                     ))}
