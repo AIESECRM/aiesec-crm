@@ -211,6 +211,52 @@ export default function CompanyDetailPage() {
           )}
         </div>
 
+        {/* YENİ EKLENEN KISIM: Menajerler */}
+        <div className="company-detail__card">
+          <div className="company-detail__card-header">
+            <h3 className="company-detail__card-title">Menajerler</h3>
+            <div className="company-detail__card-count">
+              <Shield className="company-detail__card-count-icon" size={16} />
+              {company.managers?.length || 0}
+            </div>
+          </div>
+          <div className="company-detail__contact-list">
+            {company.managers && company.managers.length > 0 ? company.managers.map((manager: any) => (
+              <div key={manager.id} className="company-detail__contact-item">
+                <div className="company-detail__contact-left">
+                  <div className="company-detail__contact-avatar">
+                    {manager.image ? (
+                      <img 
+                        src={manager.image} 
+                        alt={manager.name} 
+                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+                      />
+                    ) : (
+                      <User className="company-detail__contact-avatar-icon" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="company-detail__contact-name">{manager.name}</div>
+                    <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                      {manager.role || 'Menajer'} {manager.chapter ? `• ${manager.chapter}` : ''}
+                    </div>
+                  </div>
+                </div>
+                <div className="company-detail__contact-actions">
+                  {manager.email && (
+                    <a href={`mailto:${manager.email}`} className="company-detail__contact-action" title="E-posta Gönder">
+                      <Mail className="company-detail__contact-action-icon" size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )) : (
+              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Bu şirkete atanmış menajer bulunmuyor.</p>
+            )}
+          </div>
+        </div>
+        {/* YENİ EKLENEN KISIM SONU */}
+
         {/* Contacts */}
         <div className="company-detail__card">
           <div className="company-detail__card-header">
