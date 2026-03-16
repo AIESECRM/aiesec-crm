@@ -564,6 +564,8 @@ export default function CompanyDetailPage() {
                     setUploadingDoc(false);
                   }
                 }}
+                accept="application/pdf,image/*,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                label="Doküman Seç (PDF, Resim, Word)"
               />
               {uploadingDoc && (
                 <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '13px', color: '#6b7280' }}>

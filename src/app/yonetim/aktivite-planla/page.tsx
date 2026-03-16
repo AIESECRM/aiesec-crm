@@ -4,6 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { CalendarPlus, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityType, Company, User } from '@/types';
+import TimeKeeper from 'react-timekeeper';
+import { Calendar, Clock } from 'lucide-react';
+
+
 
 export default function AktivitePlanlaPage() {
     const { user } = useAuth();
@@ -11,7 +15,8 @@ export default function AktivitePlanlaPage() {
     const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
     const [selectedManagerId, setSelectedManagerId] = useState<string>('');
     const [date, setDate] = useState<string>('');
-    const [time, setTime] = useState<string>('');
+    const [time, setTime] = useState<string>('09:00');
+    const [showClock, setShowClock] = useState(false);
     const [type, setType] = useState<ActivityType>('COLD_CALL');
     const [notes, setNotes] = useState<string>('');
 
@@ -85,6 +90,11 @@ export default function AktivitePlanlaPage() {
             alert('Bir hata oluştu.');
         }
     };
+    const formatDisplayDate = (dateString: string) => {
+        if (!dateString) return '';
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    };
 
     return (
         <div style={{ maxWidth: '600px', padding: '24px' }}>
@@ -128,26 +138,78 @@ export default function AktivitePlanlaPage() {
                         </select>
                     </div>
 
+                    {/* TARİH VE SAAT BÖLÜMÜ GÜNCELLENDİ */}
                     <div style={{ display: 'flex', gap: '16px' }}>
+                        {/* 1. Tarih Seçici */}
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Tarih</label>
-                            <input
-                                type="date"
-                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                required
-                            />
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type="date"
+                                    style={{ padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', width: '100%', boxSizing: 'border-box' }}
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    required
+                                />
+                                <CalendarPlus
+                                    size={18}
+                                    style={{ position: 'absolute', left: '12px', top: '12px', color: '#6b7280', pointerEvents: 'none' }}
+                                />
+                            </div>
+                            {/* Formatlanmış Tarih Gösterimi */}
+                            {date && (
+                                <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                                    Seçilen: {formatDisplayDate(date)}
+                                </span>
+                            )}
                         </div>
+
+                        {/* 2. Yuvarlak Saat Seçici */}
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Saat</label>
-                            <input
-                                type="time"
-                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
-                                value={time}
-                                onChange={(e) => setTime(e.target.value)}
-                                required
-                            />
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type="text"
+                                    style={{ padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', width: '100%', boxSizing: 'border-box', cursor: 'pointer' }}
+                                    value={time}
+                                    readOnly
+                                    onClick={() => setShowClock(true)}
+                                    placeholder="Saat seçin"
+                                    required
+                                />
+                                {/* Not: 'lucide-react'tan 'Clock' ikonunu import etmeyi unutma */}
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                    style={{ position: 'absolute', left: '12px', top: '12px', color: '#6b7280', pointerEvents: 'none' }}
+                                >
+                                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                                </svg>
+
+                                {showClock && (
+                                    <div style={{ position: 'absolute', zIndex: 1000, marginTop: '4px', left: 0 }}>
+                                        {/* Tıklayınca kapanması için arkaplan */}
+                                        <div
+                                            style={{ position: 'fixed', inset: 0 }}
+                                            onClick={() => setShowClock(false)}
+                                        />
+                                        <div style={{ position: 'relative', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
+                                            <TimeKeeper
+                                                time={time || '09:00'}
+                                                onChange={(newTime: any) => setTime(newTime.formatted24)}
+                                                onDoneClick={() => setShowClock(false)}
+                                                switchToMinuteOnHourSelect={true}
+                                            />
+                                            {/* Özel Tamam Butonu */}
+                                            <div
+                                                onClick={() => setShowClock(false)}
+                                                style={{ textAlign: 'center', padding: '12px 0', color: '#2563eb', cursor: 'pointer', fontWeight: '600', borderTop: '1px solid #e5e7eb', backgroundColor: '#f8fafc' }}
+                                            >
+                                                Tamam
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
