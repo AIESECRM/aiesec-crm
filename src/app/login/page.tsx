@@ -90,58 +90,80 @@ export default function LoginPage() {
   const btnStyle = (disabled: boolean) => ({ width: "100%", backgroundColor: disabled ? "#93c5fd" : "#2563eb", color: "white", padding: "10px", borderRadius: "8px", fontWeight: "600", fontSize: "16px", border: "none", cursor: disabled ? "not-allowed" : "pointer" });
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f9fafb" }}>
-      <div style={{ backgroundColor: "white", padding: "32px", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "400px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
+      <div style={{ backgroundColor: "var(--card)", padding: "32px", borderRadius: "12px", border: "1px solid var(--border-color)", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "400px" }}>
 
-        <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "#1d4ed8", marginBottom: "8px" }}>AIESEC CRM</h1>
-        <p style={{ textAlign: "center", color: "#6b7280", marginBottom: "24px" }}>
+        <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "var(--primary)", marginBottom: "8px" }}>AIESEC CRM</h1>
+        <p style={{ textAlign: "center", color: "var(--text-regular)", marginBottom: "24px", fontWeight: "500" }}>
           {step === "login" && "Hesabınıza giriş yapın"}
           {step === "forgot-email" && "Şifre sıfırlama"}
           {step === "forgot-code" && "Doğrulama kodu"}
         </p>
 
-        {error && <div style={{ backgroundColor: "#fef2f2", color: "#dc2626", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px" }}>{error}</div>}
-        {success && <div style={{ backgroundColor: "#f0fdf4", color: "#16a34a", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px" }}>{success}</div>}
+        {error && <div style={{ backgroundColor: "rgba(220, 38, 38, 0.1)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "#ef4444", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>{error}</div>}
+        {success && <div style={{ backgroundColor: "rgba(22, 163, 74, 0.1)", border: "1px solid rgba(22, 163, 74, 0.3)", color: "#10b981", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>{success}</div>}
 
         {/* LOGIN */}
         {step === "login" && (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} placeholder="ornek@aiesec.net" required />
-            </div>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Şifre</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder="••••••••" required />
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <button type="button" onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}
-                style={{ background: "none", border: "none", color: "#2563eb", fontSize: "13px", cursor: "pointer" }}>
-                Şifremi unuttum
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email</label>
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
+                  placeholder="ornek@aiesec.net" 
+                  required 
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şifre</label>
+                <input 
+                  type="password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
+                  placeholder="••••••••" 
+                  required 
+                />
+              </div>
+              <div style={{ textAlign: "right", marginTop: "-4px" }}>
+                <button type="button" onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}
+                  style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
+                  Şifremi unuttum
+                </button>
+              </div>
+              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
+                {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
               </button>
-            </div>
-            <button type="submit" disabled={loading} style={btnStyle(loading)}>
-              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
-            </button>
-            <p style={{ textAlign: "center", fontSize: "14px", color: "#6b7280" }}>
+            </form>
+            <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text-regular)", marginTop: "8px" }}>
               Hesabın yok mu?{" "}
-              <Link href="/login/register" style={{ color: "#2563eb" }}>Kayıt ol</Link>
+              <Link href="/login/register" style={{ color: "var(--primary)", fontWeight: "600", textDecoration: "none" }}>Kayıt ol</Link>
             </p>
-          </form>
+          </div>
         )}
 
         {/* FORGOT - EMAIL */}
         {step === "forgot-email" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Email Adresiniz</label>
-              <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} style={inputStyle} placeholder="ornek@aiesec.net" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email Adresiniz</label>
+              <input 
+                type="email" 
+                value={resetEmail} 
+                onChange={e => setResetEmail(e.target.value)} 
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
+                placeholder="ornek@aiesec.net" 
+              />
             </div>
-            <button onClick={handleSendCode} disabled={loading} style={btnStyle(loading)}>
+            <button onClick={handleSendCode} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
               {loading ? "Gönderiliyor..." : "Doğrulama Kodu Gönder"}
             </button>
             <button onClick={() => { setStep("login"); setError(""); setSuccess(""); }}
-              style={{ background: "none", border: "none", color: "#6b7280", fontSize: "14px", cursor: "pointer" }}>
+              style={{ background: "none", border: "none", color: "var(--text-regular)", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "8px" }}>
               ← Geri dön
             </button>
           </div>
@@ -150,27 +172,45 @@ export default function LoginPage() {
         {/* FORGOT - CODE + NEW PASS */}
         {step === "forgot-code" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <p style={{ fontSize: "14px", color: "#6b7280", textAlign: "center" }}>
-              <strong>{resetEmail}</strong> adresine kod gönderdik.
+            <p style={{ fontSize: "14px", color: "var(--text-regular)", textAlign: "center" }}>
+              <strong style={{ color: "var(--foreground)" }}>{resetEmail}</strong> adresine kod gönderdik.
             </p>
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Doğrulama Kodu</label>
-              <input type="text" value={resetCode} onChange={e => setResetCode(e.target.value)} maxLength={6}
-                style={{ ...inputStyle, fontSize: "24px", fontWeight: "bold", textAlign: "center", letterSpacing: "8px" }} placeholder="000000" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Doğrulama Kodu</label>
+              <input 
+                type="text" 
+                value={resetCode} 
+                onChange={e => setResetCode(e.target.value)} 
+                maxLength={6}
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--primary)", border: "1px solid var(--border-color)", padding: "12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "28px", fontWeight: "bold", textAlign: "center", letterSpacing: "12px" }} 
+                placeholder="000000" 
+              />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Yeni Şifre</label>
-              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={inputStyle} placeholder="En az 8 karakter" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre</label>
+              <input 
+                type="password" 
+                value={newPassword} 
+                onChange={e => setNewPassword(e.target.value)} 
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
+                placeholder="En az 8 karakter" 
+              />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>Yeni Şifre Tekrar</label>
-              <input type="password" value={newPasswordConfirm} onChange={e => setNewPasswordConfirm(e.target.value)} style={inputStyle} placeholder="Şifrenizi tekrar girin" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre Tekrar</label>
+              <input 
+                type="password" 
+                value={newPasswordConfirm} 
+                onChange={e => setNewPasswordConfirm(e.target.value)} 
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
+                placeholder="Şifrenizi tekrar girin" 
+              />
             </div>
-            <button onClick={handleResetPassword} disabled={loading} style={btnStyle(loading)}>
+            <button onClick={handleResetPassword} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
               {loading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
             </button>
             <button onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}
-              style={{ background: "none", border: "none", color: "#6b7280", fontSize: "14px", cursor: "pointer" }}>
+              style={{ background: "none", border: "none", color: "var(--text-regular)", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "8px" }}>
               ← Geri dön
             </button>
           </div>
