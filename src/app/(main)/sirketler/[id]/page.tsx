@@ -73,14 +73,17 @@ export default function CompanyDetailPage() {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  const fetchData = async () => {
+ const fetchData = async () => {
     try {
       setLoading(true);
+      // fetch isteklerine { cache: 'no-store' } ekliyoruz
+      const fetchOptions = { cache: 'no-store' as RequestCache };
+
       const [companyRes, contactsRes, activitiesRes, offersRes] = await Promise.all([
-        fetch(`/api/companies/${params.id}`, { cache: 'no-store' }),
-        fetch(`/api/contacts?companyId=${params.id}`, { cache: 'no-store' }),
-        fetch(`/api/activities?companyId=${params.id}`, { cache: 'no-store' }),
-        fetch(`/api/offers?companyId=${params.id}`, { cache: 'no-store' }),
+        fetch(`/api/companies/${params.id}`, fetchOptions),
+        fetch(`/api/contacts?companyId=${params.id}`, fetchOptions),
+        fetch(`/api/activities?companyId=${params.id}`, fetchOptions),
+        fetch(`/api/offers?companyId=${params.id}`, fetchOptions),
       ]);
 
       const companyData = companyRes.ok ? await companyRes.json() : { company: null };
@@ -99,7 +102,6 @@ export default function CompanyDetailPage() {
       setLoading(false);
     }
   };
-
   const handleDeleteActivity = async () => {
     if (!deleteActivityModal.activity) return;
     await fetch(`/api/activities/${deleteActivityModal.activity.id}`, { method: 'DELETE' });
@@ -139,7 +141,7 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
+  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>; 
 
   if (!company) return (
     <div className="company-detail">
@@ -529,11 +531,12 @@ export default function CompanyDetailPage() {
               <h2 className="company-detail__activity-modal-title">Doküman Yükle</h2>
               <button className="company-detail__activity-modal-close" onClick={() => setShowUploadModal(false)}><X /></button>
             </div>
-            <div className="company-detail__activity-modal-content" style={{ padding: '24px' }}>
+            <div className="company-detail__activity-modal-content" style={{ padding: '24px', maxHeight: '80vh', overflowY: 'auto' }}>
               <FileUpload
                 onUploadSuccess={async (url, name) => {
                   setUploadingDoc(true);
                   try {
+                    // Dosya veritabanına kaydedilir
                     const res = await fetch(`/api/companies/${params.id}/documents`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -541,18 +544,23 @@ export default function CompanyDetailPage() {
                     });
                     
                     if (res.ok) {
-                      // Kısa bir bekleme (DB yansıması için)
-                      await new Promise(r => setTimeout(r, 500));
-                      await fetchData();
-                      setShowUploadModal(false);
-                      setUploadingDoc(false);
-                    } else {
                       const data = await res.json();
-                      alert(data.error || 'Doküman kaydedilirken hata oluştu.');
-                      setUploadingDoc(false);
+                      
+                      // 1. Yeni dökümanı anında mevcut listeye ekle (State Güncellemesi)
+                      // API'den dönen data.document objesini listeye dahil ediyoruz
+                      setDocuments(prevDocs => [...prevDocs, data.document]);
+                      
+                      // 2. Modalı kapat
+                      setShowUploadModal(false);
+                      
+                      // Not: fetchData() çağrısını kaldırdık. Böylece sayfa loading ekranına 
+                      // düşmeyecek ve yeni doküman anında listede belirecektir.
+                    } else {
+                      console.error("Doküman veritabanına kaydedilemedi.");
                     }
-                  } catch (err) {
-                    alert('Sistem hatası!');
+                  } catch (error) {
+                    console.error("Doküman yükleme hatası:", error);
+                  } finally {
                     setUploadingDoc(false);
                   }
                 }}
