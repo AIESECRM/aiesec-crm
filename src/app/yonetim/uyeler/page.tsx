@@ -169,13 +169,13 @@ export default function RoleManagementPage() {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <label style={{ fontSize: '12px', color: 'var(--text-light)' }}>Rol:</label>
                                 <select
-                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px' }}
+                                    style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px'backgroundColor: 'var(--neutral-light)',color: 'var(--text-regular)', outline: 'none'}}
                                     value={member.role}
                                     onChange={(e) => handleRoleChange(member.id, e.target.value as UserRole)}
                                     disabled={member.role === 'ADMIN'}
                                 >
                                     {assignableRoles.map(role => (
-                                        <option key={role} value={role}>{role}</option>
+                                        <option key={role} value={role} style={{ backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)' }}>{role}</option>
                                     ))}
                                 </select>
                             </div>
