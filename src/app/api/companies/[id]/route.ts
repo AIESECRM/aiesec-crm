@@ -22,7 +22,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     where: { id: parseInt(id) },
     include: {
       createdBy: { select: { id: true, name: true } },
-      managers: { select: { id: true, name: true, image: true } },
+      // Frontend'de lazım olan chapter, role gibi detayları da çektik
+      managers: { select: { id: true, name: true, image: true, role: true, chapter: true } },
       _count: { select: { contacts: true, activities: true, offers: true } },
       documents: { orderBy: { createdAt: "desc" } },
     },
@@ -43,36 +44,37 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const hasAccess = await verifyCompanyAccess(user.id, id);
   if (!hasAccess) return NextResponse.json({ error: "Bu şirketi düzenleme yetkiniz yok!" }, { status: 403 });
 
+  // managerIds dahil tüm verileri alıyoruz
   const { name, phone, email, status, notes, chapter, category, location, domain, taxId, website, managerIds } = await req.json();
 
-  const company = await prisma.company.update({
-    where: { id: parseInt(id) },
-    data: {
-      ...(name && { name }),
-      ...(phone !== undefined && { phone }),
-      ...(email !== undefined && { email }),
-      ...(status && { status }),
-      ...(notes !== undefined && { notes }),
-      ...(chapter !== undefined && { chapter }),
-      ...(category !== undefined && { category }),
-      ...(location !== undefined && { location }),
-      ...(domain !== undefined && { domain }),
-      ...(taxId !== undefined && { taxId }),
-      ...(website !== undefined && { website }),
-      updatedAt: Math.floor(Date.now() / 1000),
-    },
-    if (managerIds && Array.isArray(managerIds)) {
+  const updateData: any = {
+    ...(name && { name }),
+    ...(phone !== undefined && { phone }),
+    ...(email !== undefined && { email }),
+    ...(status && { status }),
+    ...(notes !== undefined && { notes }),
+    ...(chapter !== undefined && { chapter }),
+    ...(category !== undefined && { category }),
+    ...(location !== undefined && { location }),
+    ...(domain !== undefined && { domain }),
+    ...(taxId !== undefined && { taxId }),
+    ...(website !== undefined && { website }),
+    updatedAt: Math.floor(Date.now() / 1000),
+  };
+
+  // Menajer ataması varsa ilişkileri güncelliyoruz
+  if (managerIds && Array.isArray(managerIds)) {
     updateData.managers = {
-      set: managerIds.map((id: number | string) => ({ id: parseInt(String(id), 10) }))
+      set: managerIds.map((managerId: number | string) => ({ id: parseInt(String(managerId), 10) }))
     };
   }
 
   const company = await prisma.company.update({
     where: { id: parseInt(id) },
     data: updateData,
-    // Güncel menajerleri geri döndürmek için include ediyoruz
     include: {
-        managers: { select: { id: true, name: true, image: true, role: true, chapter: true } }
+      managers: { select: { id: true, name: true, image: true, role: true, chapter: true } }
+    }
   });
 
   await logAudit(user.id, "UPDATE_COMPANY", id, undefined, JSON.stringify(company));
