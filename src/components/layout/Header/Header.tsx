@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Search, Bell, User, ChevronDown, Building2, DollarSign,
-  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2
+  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2 
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
@@ -47,6 +47,7 @@ const notifColors: Record<string, string> = {
 export default function Header() {
   const { user, status } = useAuth();
   const { query, setQuery, results, isSearching, placeholder, clearSearch, navigateToResult } = useSearch();
+  
   const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -55,13 +56,12 @@ export default function Header() {
   const [unreadCount, setUnreadCount] = useState(0);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  
   const searchRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
-  
-  // Sonuçlar değiştiğinde seçimi sıfırla
   useEffect(() => { setSelectedIndex(-1); }, [results]);
 
   const fetchNotifications = useCallback(async () => {
@@ -158,13 +158,11 @@ export default function Header() {
     <header className="header">
       <div className="header__search" ref={searchRef}>
         <div className="header__search-wrapper">
-          {/* Fragment sarmalayıcısı eklendi */}
           {isSearching ? (
             <Loader2 className="header__search-icon header__search-icon--spin" />
           ) : (
             <Search className="header__search-icon" />
           )}
-          
           <input
             ref={inputRef}
             type="text"
@@ -175,7 +173,6 @@ export default function Header() {
             onFocus={() => query.length >= 2 && setShowResults(true)}
             onKeyDown={handleKeyDown}
           />
-          
           {query && (
             <button className="header__search-clear" onClick={() => { clearSearch(); setShowResults(false); }}>
               <X />
@@ -196,9 +193,7 @@ export default function Header() {
                   >
                     {typeIcons[result.type]}
                     <div className="header__result-content">
-                      <span className="header__result-title">
-                        {highlightText(result.title, query)}
-                      </span>
+                      <span className="header__result-title">{highlightText(result.title, query)}</span>
                       <span className="header__result-subtitle">{result.subtitle}</span>
                     </div>
                     <span className="header__result-type">{typeLabels[result.type]}</span>
@@ -216,20 +211,58 @@ export default function Header() {
 
       <div className="header__actions">
         {mounted && (
-          <button 
-            className="header__theme-toggle"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
+          <button className="header__theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
         )}
 
         <div className="header__notification-wrapper" ref={notificationRef}>
-          <button className="header__notification" onClick={() => setShowNotifications(!showNotifications)}>
+          <button className="header__notification" onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) fetchNotifications(); }}>
             <Bell className="header__notification-icon" />
             {unreadCount > 0 && <span className="header__notification-badge">{unreadCount}</span>}
           </button>
-          {/* Bildirim dropdown içeriği burada devam eder... */}
+
+          {showNotifications && (
+            <div className="header__notifications-dropdown">
+              <div className="header__notifications-header">
+                <div className="header__notifications-title">
+                  <Bell className="header__notifications-title-icon" />
+                  <span>Bildirimler</span>
+                  {unreadCount > 0 && <span className="header__notifications-count">{unreadCount}</span>}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <button onClick={fetchNotifications} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}>
+                    <RefreshCw size={14} />
+                  </button>
+                  {unreadCount > 0 && (
+                    <button className="header__notifications-mark-all" onClick={markAllAsRead}>
+                      <CheckCircle2 size={14} /> Tümünü Okundu
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="header__notifications-list">
+                {notifications.length === 0 ? (
+                  <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>Henüz bildirim yok.</div>
+                ) : notifications.map((n: any) => (
+                  <div key={n.id} className={`header__notification-item ${!n.read ? 'header__notification-item--unread' : ''}`} onClick={() => !n.read && markAsRead(n.id)}>
+                    <div className="header__notification-item-icon" style={{ backgroundColor: `${notifColors[n.type]}20`, color: notifColors[n.type] }}>
+                      {notifIcons[n.type] || <Bell size={16} />}
+                    </div>
+                    <div className="header__notification-item-content">
+                      <div className="header__notification-item-header">
+                        <span className="header__notification-item-title">{n.title}</span>
+                        {!n.read && <span className="header__notification-item-dot" />}
+                      </div>
+                      <p className="header__notification-item-message">{n.message}</p>
+                      <span className="header__notification-item-time">{formatTime(n.createdAt)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="header__divider" />
@@ -237,13 +270,11 @@ export default function Header() {
         {user && (
           <div className="header__user" onClick={() => setShowProfileModal(true)}>
             <div className="header__user-info">
-              <span className="header__user-greeting">
-                Merhaba, <span className="header__user-name">{user.name}</span>
-              </span>
+              <span className="header__user-greeting">Merhaba, <span className="header__user-name">{user.name}</span></span>
               <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
             </div>
             <Avatar src={user.image} alt={user.name} size={32} />
-            <ChevronDown size={16} />
+            <ChevronDown className="header__dropdown-icon" />
           </div>
         )}
       </div>
