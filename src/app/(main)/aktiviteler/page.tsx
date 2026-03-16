@@ -256,7 +256,7 @@ export default function ActivitiesPage() {
                   <th>Tür</th>
                   <th>Tarih</th>
                   <th>Not</th>
-                  <th></th>
+                  <th>İşlemler</th>
                 </tr>
               </thead>
               <tbody>
@@ -278,7 +278,7 @@ export default function ActivitiesPage() {
                     <td className="activity-log__date">
                       {activity.createdAt ? new Date(activity.createdAt).toLocaleDateString('tr-TR') : '—'}
                     </td>
-                    <td className="activity-log__note">{activity.notes || '—'}</td>
+                    <td className="activity-log__note">{activity.note || '—'}</td>
                     <td className="activity-log__actions">
                       <div className="activity-log__menu-wrapper" ref={openMenuId === String(activity.id) ? menuRef : null}>
                         <button className="activity-log__action-btn" onClick={() => setOpenMenuId(openMenuId === String(activity.id) ? null : String(activity.id))}>
