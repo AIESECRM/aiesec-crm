@@ -55,7 +55,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Tür ve şirket zorunludur!" }, { status: 400 });
   }
 
-  const targetUserId = (userId && NATIONAL_ROLES.includes(user.role)) ? parseInt(userId) : parseInt(user.id);
+  // DOĞRU TANIM: Eğer bir userId seçilmişse onu hedef al, yoksa işlemi yapanı.
+  const targetUserId = userId ? parseInt(userId) : parseInt(user.id);
 
   const activity = await prisma.activity.create({
     data: {
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // 1. Seçilen Menajere Bildirim (Eğer işlemi yapan kendisi değilse)
   if (targetUserId !== parseInt(user.id)) {
     const typeLabel = {
       COLD_CALL: 'Cold Call',
@@ -92,7 +94,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Şirket menajerlerini bilgilendir
+  // 2. Şirket menajerlerini genel olarak bilgilendir
   await notifyManagers(
     parseInt(companyId),
     'COMPANY_UPDATED',
