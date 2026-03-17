@@ -93,7 +93,7 @@ export default function DashboardPage() {
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh' }}>
-      <div style={{ color: '#6b7280' }}>Yükleniyor...</div>
+      <div style={{ color: 'var(--text-muted, #6b7280)' }}>Yükleniyor...</div>
     </div>
   );
 
@@ -105,8 +105,8 @@ export default function DashboardPage() {
           <h1 className="dashboard__title-text">Anasayfa</h1>
         </div>
         {user && (
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
-            Hoşgeldin, <strong>{user.name}</strong>
+          <div style={{ fontSize: '14px', color: 'var(--text-muted, #6b7280)' }}>
+            Hoşgeldin, <strong style={{ color: 'var(--text-regular)' }}>{user.name}</strong>
           </div>
         )}
       </div>
@@ -137,10 +137,17 @@ export default function DashboardPage() {
                 <div
                   key={company.id}
                   onClick={() => router.push(`/sirketler/${company.id}`)}
+                  className="dashboard__recent-card"
                   style={{
-                    padding: '12px 16px', backgroundColor: 'var(--neutral-light)', borderRadius: '8px',
-                    border: '1px solid var(--border-color)', cursor: 'pointer', marginBottom: '8px',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                    padding: '12px 16px', 
+                    backgroundColor: 'var(--bg-surface, var(--neutral-light))', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color-light, var(--border-color))', 
+                    cursor: 'pointer', 
+                    marginBottom: '8px',
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center'
                   }}
                 >
                   <div>
@@ -157,7 +164,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
               )) : (
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>Henüz şirket eklenmemiş.</p>
+                <p style={{ color: 'var(--text-muted, #6b7280)', fontSize: '14px' }}>Henüz şirket/aktivite eklenmemiş.</p>
               )}
             </div>
           </div>
