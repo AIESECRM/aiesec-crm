@@ -206,7 +206,7 @@ export default function ExecutiveDashboard() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color-light, #333)" vertical={false} />
                                 {/* fill renkleri temaya duyarlı hale getirildi */}
                                 <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'var(--text-muted, #858585)' }} tickLine={false} axisLine={false} />
-                                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted, #858585)' }} tickLine={false} axisLine={false} />/>
+                                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted, #858585)' }} tickLine={false} axisLine={false} />
                                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.03)' }} />
                                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--dashboard-bg, rgba(255,255,255,0.05))' }} />
                                 
