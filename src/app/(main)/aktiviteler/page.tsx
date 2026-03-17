@@ -157,7 +157,6 @@ export default function ActivitiesPage() {
     if (!selectedCompanyId) return;
     setSubmitting(true);
     try {
-      const unixTimestamp = Math.floor(Date.now() / 1000);
       const res = await fetch('/api/activities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -165,7 +164,7 @@ export default function ActivitiesPage() {
         type: selectedType,
         note: notes,
         companyId: selectedCompanyId,
-        date: unixTimestamp,
+        date: new Date().toISOString(),
         isPlanned: false
         }),
       });
