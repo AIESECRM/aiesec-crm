@@ -95,7 +95,8 @@ export async function POST(req: NextRequest) {
       targetUserId,
       'NEW_ACTIVITY',
       'Yeni Aktivite Planlandı 📅',
-      `${activity.company?.name || 'Bir şirket'} için ${dateStr} tarihine bir ${typeLabel} planlandı. Notlar: ${note || '-'}`
+      `${activity.company?.name || 'Bir şirket'} için ${dateStr} tarihine bir ${typeLabel} planlandı. Notlar: ${note || '-'}`,
+      parseInt(companyId)
     );
   } else if (targetUserId !== parseInt(user.id)) {
     await notifyUser(

@@ -3,7 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Search, Bell, User, ChevronDown, Building2, DollarSign,
-  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2
+  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2,
+  CalendarClock
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
@@ -35,6 +36,7 @@ const notifIcons: Record<string, React.ReactNode> = {
   NEW_USER: <UserPlus size={16} />,
   USER_APPROVED: <CheckCircle2 size={16} />,
   USER_REJECTED: <X size={16} />,
+  NEW_ACTIVITY: <CalendarClock size={16} />,
 };
 
 const notifColors: Record<string, string> = {
@@ -43,6 +45,7 @@ const notifColors: Record<string, string> = {
   NEW_USER: '#F59E0B',
   USER_APPROVED: '#22C55E',
   USER_REJECTED: '#EF4444',
+  NEW_ACTIVITY: '#0ea5e9',
 };
 
 export default function Header() {

@@ -504,6 +504,37 @@ export default function ActivitiesPage() {
         cancelText="İptal"
         type="danger"
       />
+      {/* Hızlı Şirket Ekleme Modalı */}
+      {showAddCompanyModal && (
+        <>
+          <div className="activity-modal__overlay" onClick={() => setShowAddCompanyModal(false)} />
+          <div className="activity-modal">
+            <div className="activity-modal__header">
+              <h2 className="activity-modal__title">Hızlı Şirket Ekle</h2>
+              <button className="activity-modal__close" onClick={() => setShowAddCompanyModal(false)}><X /></button>
+            </div>
+            <div className="activity-modal__content">
+              <div className="activity-modal__form-group">
+                <label className="activity-modal__form-label">Şirket Adı</label>
+                <input
+                  type="text"
+                  className="activity-form__textarea"
+                  style={{ minHeight: '40px', padding: '8px 12px' }}
+                  value={newCompanyName}
+                  onChange={(e) => setNewCompanyName(e.target.value)}
+                  placeholder="Örn: ABC A.Ş."
+                />
+              </div>
+            </div>
+            <div className="activity-modal__actions">
+              <button className="activity-modal__btn activity-modal__btn--secondary" onClick={() => setShowAddCompanyModal(false)}>İptal</button>
+              <button className="activity-modal__btn activity-modal__btn--primary" onClick={handleQuickAddCompany} disabled={creatingCompany}>
+                {creatingCompany ? 'Ekleniyor...' : 'Kaydet ve Seç'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Filter Modal */}
       {showFilter && (

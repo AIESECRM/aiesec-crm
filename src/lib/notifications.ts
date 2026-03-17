@@ -8,7 +8,8 @@ export async function notifyLeaders(
     type: NotificationType,
     title: string,
     message: string,
-    excludeUserId?: number
+    excludeUserId?: number,
+    companyId?: number
 ) {
     try {
         // MCP/MCVP/ADMIN - hepsine gönder
@@ -62,7 +63,8 @@ export async function notifyUser(
     userId: number,
     type: NotificationType,
     title: string,
-    message: string
+    message: string,
+    companyId?: number
 ) {
     try {
         await prisma.notification.create({

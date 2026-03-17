@@ -13,19 +13,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   const user = session.user as any;
 
-  const { note, type } = await req.json();
+  const { note, type, isPlanned, date } = await req.json();
 
-  const activity = await prisma.activity.update({
-    where: { id: parseInt(id) },
-    data: {
-      ...(note !== undefined && { note }),
-      ...(type && { type }),
-    },
-  });
+  try {
+    const activity = await prisma.activity.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...(note !== undefined && { note }),
+        ...(type && { type }),
+        // isPlanned bilgisi gelmişse (true veya false) güncelle
+        ...(isPlanned !== undefined && { isPlanned }),
+        // date bilgisi gelmişse güncelle (timestamp olarak beklenir)
+        ...(date !== undefined && { date: parseInt(date) }),
+      },
+    });
 
-  await logAudit(user.id, "UPDATE_ACTIVITY", id, undefined, JSON.stringify(activity));
+    await logAudit(user.id, "UPDATE_ACTIVITY", id, undefined, JSON.stringify(activity));
 
-  return NextResponse.json({ success: true, activity });
+    return NextResponse.json({ success: true, activity });
+  } catch (error) {
+    console.error("Aktivite güncellenirken hata oluştu:", error);
+    return NextResponse.json({ error: "Güncelleme başarısız oldu." }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
