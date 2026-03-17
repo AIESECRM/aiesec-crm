@@ -55,7 +55,7 @@ export async function createActivity(data: any, userId: string) {
         // 2. Aktiviteyi oluştur (isPlanned desteği eklendi)
         const newActivity = await prisma.activity.create({
             data: {
-                companyId: parseInt(data.companyId),
+                companyId: parseInt(data?.companyId),
                 userId: parseInt(userId),
                 type: data.type || 'COLD_CALL',
                 note: data.notes || data.note || '',

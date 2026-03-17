@@ -68,7 +68,9 @@ export default function DashboardPage() {
     
     // Kullanıcıya ait "Planlı" aktiviteleri filtrele
     if (user) {
-      const myPlanned = allActivities.filter((a: any) => a.isPlanned === true && a.userId === user.id);
+      const myPlanned = user?.id 
+  ? allActivities.filter((a: any) => a.isPlanned === true && a.userId === user.id)
+  : [];
       setPlannedActivities(myPlanned);
     }
     
@@ -114,6 +116,20 @@ export default function DashboardPage() {
   if (NATIONAL_ROLES.includes(user.role)) {
     return <ExecutiveDashboard />;
   }
+  // Kodun içindeki tarih kısmını şu şekilde güvenli hale getirelim:
+const formatActivityDate = (timestamp: any) => {
+  // Eğer timestamp sayı değilse veya yoksa güvenli bir varsayılan dön
+  if (!timestamp || isNaN(Number(timestamp))) return "Tarih Belirtilmedi";
+  
+  try {
+    return new Date(Number(timestamp) * 1000).toLocaleString('tr-TR', { 
+      dateStyle: 'short', 
+      timeStyle: 'short' 
+    });
+  } catch (e) {
+    return "Geçersiz Tarih";
+  }
+};
 
   // Sadece isPlanned: false olan tamamlanmış aktiviteleri istatistiklerde sayalım
   const completedActivities = activities.filter(a => !a.isPlanned);
@@ -146,6 +162,8 @@ export default function DashboardPage() {
       <div style={{ color: 'var(--text-muted, #6b7280)' }}>Yükleniyor...</div>
     </div>
   );
+  // Render kısmında liste uzunluğunu kullanırken:
+const displayCount = Number(plannedActivities?.length) || 0;
 
   return (
     <div className="dashboard">
