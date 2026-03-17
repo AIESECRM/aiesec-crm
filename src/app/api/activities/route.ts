@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
   }
 
   const targetUserId = userId ? parseInt(userId) : parseInt(user.id);
-  
-  // YENİ EKLENEN GÜVENLİK: Eğer gelen tarih bozuksa veya yoksa (NaN), o anki zamanı kullan
+
+  // Gelen tarih bozuksa veya yoksa (NaN), o anki zamanı kullan
   const parsedTime = date ? new Date(date).getTime() : NaN;
   const activityDate = !isNaN(parsedTime) ? Math.floor(parsedTime / 1000) : Math.floor(Date.now() / 1000);
 
@@ -107,48 +107,6 @@ export async function POST(req: NextRequest) {
   }
 
   // Şirket menajerlerine bildirim
-  await notifyManagers(
-    parseInt(companyId),
-    'COMPANY_UPDATED',
-    'Yeni Aktivite Kaydı',
-    `${user.name} tarafından yeni bir aktivite girildi.`,
-    parseInt(user.id)
-  );
-
-  return NextResponse.json({ success: true, activity });
-}
-  const typeLabel = {
-    COLD_CALL: 'Cold Call',
-    MEETING: 'Toplantı',
-    EMAIL: 'E-posta',
-    TASK: 'Görev',
-    PROPOSAL: 'Teklif İletimi',
-    POSTPONED: 'Ertelenmiş İşlem',
-    FOLLOW_UP: 'Takip'
-  }[type as string] || type;
-
-  // 3. Bildirim Mantığı
-  if (isPlanned && targetUserId) {
-    // EĞER AKTİVİTE PLANLIYSA: Yeni oluşturduğumuz NEW_ACTIVITY tipinde bildirim gönder
-    const dateStr = date ? new Date(date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : 'Belirtilmedi';
-    
-    await notifyUser(
-      targetUserId,
-      'NEW_ACTIVITY', // Yeni ikonumuz ve rengimiz çıkacak
-      'Yeni Aktivite Planlandı 📅',
-      `${activity.company?.name || 'Bir şirket'} için ${dateStr} tarihine bir ${typeLabel} planlandı. Notlar: ${note || '-'}`
-    );
-  } else if (targetUserId !== parseInt(user.id)) {
-    // EĞER PLANLI DEĞİL AMA BAŞKASINA ATANMIŞSA: Eski mantığın çalışsın
-    await notifyUser(
-      targetUserId,
-      'COMPANY_UPDATED',
-      'Yeni Aktivite Atandı',
-      `${user.name} size yeni bir aktivite atadı: ${typeLabel}`
-    );
-  }
-
-  // 4. Şirket menajerlerini genel olarak bilgilendir
   await notifyManagers(
     parseInt(companyId),
     'COMPANY_UPDATED',
