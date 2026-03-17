@@ -49,18 +49,19 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
 
   const user = session.user as any;
-  // 1. Gelen verilerden isPlanned alanını da alıyoruz
   const { type, note, date, companyId, userId, isPlanned } = await req.json();
 
   if (!type || !companyId) {
     return NextResponse.json({ error: "Tür ve şirket zorunludur!" }, { status: 400 });
   }
 
-  // DOĞRU TANIM: Eğer bir userId seçilmişse onu hedef al, yoksa işlemi yapanı.
   const targetUserId = userId ? parseInt(userId) : parseInt(user.id);
-  const activityDate = date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(Date.now() / 1000);
+  
+  // YENİ EKLENEN GÜVENLİK: Eğer gelen tarih bozuksa veya yoksa (NaN), o anki zamanı kullan
+  const parsedTime = date ? new Date(date).getTime() : NaN;
+  const activityDate = !isNaN(parsedTime) ? Math.floor(parsedTime / 1000) : Math.floor(Date.now() / 1000);
 
-  // 2. isPlanned bilgisini veritabanına kaydediyoruz
+  // Veritabanına Kayıt
   const activity = await prisma.activity.create({
     data: {
       type,
@@ -69,11 +70,53 @@ export async function POST(req: NextRequest) {
       userId: targetUserId,
       companyId: parseInt(companyId),
       createdAt: Math.floor(Date.now() / 1000),
-      isPlanned: isPlanned || false, // EĞER PLANLIYSA TRUE OLARAK KAYDET
+      isPlanned: isPlanned || false, 
     },
-    include: { company: true } // Bildirimde şirket adını kullanabilmek için şirketi dahil ediyoruz
+    include: { company: true } 
   });
 
+  const typeLabel = {
+    COLD_CALL: 'Cold Call',
+    MEETING: 'Toplantı',
+    EMAIL: 'E-posta',
+    TASK: 'Görev',
+    PROPOSAL: 'Teklif İletimi',
+    POSTPONED: 'Ertelenmiş İşlem',
+    FOLLOW_UP: 'Takip'
+  }[type as string] || type;
+
+  // Bildirim Mantığı
+  if (isPlanned && targetUserId) {
+    const dateStr = !isNaN(parsedTime) 
+      ? new Date(parsedTime).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) 
+      : 'Belirtilmedi';
+      
+    await notifyUser(
+      targetUserId,
+      'NEW_ACTIVITY',
+      'Yeni Aktivite Planlandı 📅',
+      `${activity.company?.name || 'Bir şirket'} için ${dateStr} tarihine bir ${typeLabel} planlandı. Notlar: ${note || '-'}`
+    );
+  } else if (targetUserId !== parseInt(user.id)) {
+    await notifyUser(
+      targetUserId,
+      'COMPANY_UPDATED',
+      'Yeni Aktivite Atandı',
+      `${user.name} size yeni bir aktivite atadı: ${typeLabel}`
+    );
+  }
+
+  // Şirket menajerlerine bildirim
+  await notifyManagers(
+    parseInt(companyId),
+    'COMPANY_UPDATED',
+    'Yeni Aktivite Kaydı',
+    `${user.name} tarafından yeni bir aktivite girildi.`,
+    parseInt(user.id)
+  );
+
+  return NextResponse.json({ success: true, activity });
+}
   const typeLabel = {
     COLD_CALL: 'Cold Call',
     MEETING: 'Toplantı',
