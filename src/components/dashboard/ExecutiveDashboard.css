@@ -10,6 +10,34 @@
     opacity: 0.5;
     pointer-events: none;
 }
+/* ============================================================
+   Koyu Tema (Dark Mode) Uyumluluk Düzeltmeleri
+   ============================================================ */
+.dark .exec__kpi,
+.dark .exec__card,
+.dark .exec__top-bar,
+.dark .exec-tooltip,
+.dark .exec__chapter-filter {
+    background: var(--bg-surface, #1e1e2d); /* Projendeki koyu kart arka plan değişkeni */
+    border-color: var(--border-color-light, #333);
+}
+
+.dark .exec__chapter-filter {
+    color: var(--text-regular);
+}
+
+.dark .exec-tooltip {
+    border-color: var(--border-color-light, #333);
+}
+
+.dark .exec-loading__spinner {
+    border-color: var(--border-color-light, #333);
+    border-top-color: var(--primary-400);
+}
+
+.dark .exec__table-row:hover {
+    background: rgba(255, 255, 255, 0.05); /* Koyu temada hover efekti */
+}
 
 /* Loading */
 .exec-loading {
