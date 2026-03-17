@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
 
   const user = session.user as any;
-  const { type, note, date, companyId, userId } = await req.json();
+  // 1. Gelen verilerden isPlanned alanını da alıyoruz
+  const { type, note, date, companyId, userId, isPlanned } = await req.json();
 
   if (!type || !companyId) {
     return NextResponse.json({ error: "Tür ve şirket zorunludur!" }, { status: 400 });
@@ -57,44 +58,54 @@ export async function POST(req: NextRequest) {
 
   // DOĞRU TANIM: Eğer bir userId seçilmişse onu hedef al, yoksa işlemi yapanı.
   const targetUserId = userId ? parseInt(userId) : parseInt(user.id);
+  const activityDate = date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(Date.now() / 1000);
 
+  // 2. isPlanned bilgisini veritabanına kaydediyoruz
   const activity = await prisma.activity.create({
     data: {
       type,
       note: note || null,
-      date: date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(Date.now() / 1000),
+      date: activityDate,
       userId: targetUserId,
       companyId: parseInt(companyId),
       createdAt: Math.floor(Date.now() / 1000),
+      isPlanned: isPlanned || false, // EĞER PLANLIYSA TRUE OLARAK KAYDET
     },
+    include: { company: true } // Bildirimde şirket adını kullanabilmek için şirketi dahil ediyoruz
   });
 
-  // 1. Seçilen Menajere Bildirim (Eğer işlemi yapan kendisi değilse)
-  if (targetUserId !== parseInt(user.id)) {
-    const typeLabel = {
-      COLD_CALL: 'Cold Call',
-      MEETING: 'Toplantı',
-      EMAIL: 'E-posta',
-      TASK: 'Görev',
-      PROPOSAL: 'Teklif İletimi',
-      POSTPONED: 'Ertelenmiş İşlem',
-      FOLLOW_UP: 'Takip'
-    }[type as string] || type;
+  const typeLabel = {
+    COLD_CALL: 'Cold Call',
+    MEETING: 'Toplantı',
+    EMAIL: 'E-posta',
+    TASK: 'Görev',
+    PROPOSAL: 'Teklif İletimi',
+    POSTPONED: 'Ertelenmiş İşlem',
+    FOLLOW_UP: 'Takip'
+  }[type as string] || type;
 
-    const dateStr = date ? new Date(date).toLocaleDateString('tr-TR') : 'Şimdi';
-    const isFuture = date && new Date(date).getTime() > Date.now();
-
+  // 3. Bildirim Mantığı
+  if (isPlanned && targetUserId) {
+    // EĞER AKTİVİTE PLANLIYSA: Yeni oluşturduğumuz NEW_ACTIVITY tipinde bildirim gönder
+    const dateStr = date ? new Date(date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : 'Belirtilmedi';
+    
+    await notifyUser(
+      targetUserId,
+      'NEW_ACTIVITY', // Yeni ikonumuz ve rengimiz çıkacak
+      'Yeni Aktivite Planlandı 📅',
+      `${activity.company?.name || 'Bir şirket'} için ${dateStr} tarihine bir ${typeLabel} planlandı. Notlar: ${note || '-'}`
+    );
+  } else if (targetUserId !== parseInt(user.id)) {
+    // EĞER PLANLI DEĞİL AMA BAŞKASINA ATANMIŞSA: Eski mantığın çalışsın
     await notifyUser(
       targetUserId,
       'COMPANY_UPDATED',
-      isFuture ? 'Yeni Görev Planlandı 📅' : 'Yeni Aktivite Atandı',
-      isFuture 
-        ? `${user.name} size ${dateStr} tarihinde bir ${typeLabel} planladı.`
-        : `${user.name} size yeni bir aktivite atadı: ${typeLabel}`
+      'Yeni Aktivite Atandı',
+      `${user.name} size yeni bir aktivite atadı: ${typeLabel}`
     );
   }
 
-  // 2. Şirket menajerlerini genel olarak bilgilendir
+  // 4. Şirket menajerlerini genel olarak bilgilendir
   await notifyManagers(
     parseInt(companyId),
     'COMPANY_UPDATED',

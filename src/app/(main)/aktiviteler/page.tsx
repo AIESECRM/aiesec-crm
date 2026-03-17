@@ -49,6 +49,9 @@ const CHAPTER_LABELS: Record<string, string> = {
 
 export default function ActivitiesPage() {
   const { user } = useAuth() as any;
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState('');
+  const [creatingCompany, setCreatingCompany] = useState(false);
   const [selectedType, setSelectedType] = useState<ActivityType>('COLD_CALL');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
   const [notes, setNotes] = useState('');
@@ -85,7 +88,7 @@ export default function ActivitiesPage() {
     if (openMenuId) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openMenuId]);
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
@@ -106,8 +109,28 @@ export default function ActivitiesPage() {
     setCompanies(data.companies || []);
     if (data.companies?.length > 0) {
       setSelectedCompanyId(String(data.companies[0].id));
-      setCompanySearch(data.companies[0].name); 
+      setCompanySearch(data.companies[0].name);
     };
+  };
+  const handleQuickAddCompany = async () => {
+    if (!newCompanyName.trim()) return;
+    setCreatingCompany(true);
+
+    // Şirket ekleme API çağrısı
+    const res = await fetch('/api/companies', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newCompanyName })
+    });
+
+    if (res.ok) {
+      const result = await res.json();
+      await fetchCompanies(); // Şirket listesini arka planda yenile
+      setSelectedCompanyId(String(result.data.id)); // Yeni eklenen şirketi seç
+      setCompanySearch(result.data.name); // Input alanına yeni adı yaz
+      setShowAddCompanyModal(false); // Modalı kapat
+    }
+    setCreatingCompany(false);
   };
 
   const fetchActivities = async () => {
@@ -208,6 +231,33 @@ export default function ActivitiesPage() {
                   overflowY: 'auto', backgroundColor: 'var(--dashboard-bg)', border: '1px solid var(--border-color)',
                   borderRadius: '8px', zIndex: 50, marginTop: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
                 }}>
+
+                  {/* 1. Kısım: YENİ EKLENEN BUTON (Artık en üstte!) */}
+                  <div
+                    style={{
+                      padding: '10px 12px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      borderBottom: '1px solid var(--border-color)', /* borderTop yerine borderBottom yaptık */
+                      color: '#037EF3',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setNewCompanyName(companySearch); // O an inputta ne yazıyorsa modal'a kopyala
+                      setShowCompanyDropdown(false);
+                      setShowAddCompanyModal(true); // Modalı aç
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <Building2 size={16} /> Yeni Şirket Ekle: "{companySearch || '...'}"
+                  </div>
+
+                  {/* 2. Kısım: Mevcut Şirketleri Listeleme */}
                   {companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).length > 0 ? (
                     companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).map(company => (
                       <div
@@ -228,6 +278,7 @@ export default function ActivitiesPage() {
                   ) : (
                     <div style={{ padding: '10px 12px', fontSize: '14px', color: 'var(--text-light)' }}>Şirket bulunamadı</div>
                   )}
+
                 </div>
               )}
             </div>

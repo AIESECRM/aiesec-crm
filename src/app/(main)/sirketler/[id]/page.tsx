@@ -77,7 +77,7 @@ export default function CompanyDetailPage() {
     setCurrentPage(1);
   }, [searchQuery]);
 
- const fetchData = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       // fetch isteklerine { cache: 'no-store' } ekliyoruz
@@ -106,6 +106,24 @@ export default function CompanyDetailPage() {
       setLoading(false);
     }
   };
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      const res = await fetch(`/api/companies/${params.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Sadece arayüzdeki state'i güncelliyoruz, sayfayı yenilemeden yeni durumu gösterir
+        setCompany({ ...company, status: newStatus });
+      }
+    } catch (error) {
+      console.error("Statü güncellenirken hata:", error);
+    }
+  };
+
   const handleDeleteActivity = async () => {
     if (!deleteActivityModal.activity) return;
     await fetch(`/api/activities/${deleteActivityModal.activity.id}`, { method: 'DELETE' });
@@ -188,7 +206,7 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>; 
+  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
 
   if (!company) return (
     <div className="company-detail">
@@ -219,9 +237,25 @@ export default function CompanyDetailPage() {
             <div className="company-detail__title">
               <h1 className="company-detail__name">{company.name}</h1>
               <div className="company-detail__meta">
-                <span className="company-detail__meta-item">
-                  {STATUS_LABELS[company.status] || company.status}
-                </span>
+                <select
+                  className="company-detail__meta-item"
+                  style={{
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    background: '#ffffff',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    fontSize: '14px',
+                    color: '#374151'
+                  }}
+                  value={company.status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                >
+                  {Object.entries(STATUS_LABELS).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
                 {company.chapter && (
                   <>
                     <span>•</span>
@@ -283,10 +317,10 @@ export default function CompanyDetailPage() {
                 <div className="company-detail__contact-left">
                   <div className="company-detail__contact-avatar">
                     {manager.image ? (
-                      <img 
-                        src={manager.image} 
-                        alt={manager.name} 
-                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+                      <img
+                        src={manager.image}
+                        alt={manager.name}
+                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                       />
                     ) : (
                       <User className="company-detail__contact-avatar-icon" />
@@ -389,7 +423,7 @@ export default function CompanyDetailPage() {
                 <FileText className="company-detail__card-count-icon" />
                 {documents.length}
               </div>
-              <button 
+              <button
                 onClick={() => setShowUploadModal(true)}
                 className="company-detail__add-doc-btn"
                 style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
@@ -412,9 +446,9 @@ export default function CompanyDetailPage() {
                     </div>
                   </div>
                 </div>
-                <a 
-                  href={doc.url} 
-                  target="_blank" 
+                <a
+                  href={doc.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   style={{ fontWeight: '500', fontSize: '12px', color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
@@ -674,17 +708,17 @@ export default function CompanyDetailPage() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ name, url })
                     });
-                    
+
                     if (res.ok) {
                       const data = await res.json();
-                      
+
                       // 1. Yeni dökümanı anında mevcut listeye ekle (State Güncellemesi)
                       // API'den dönen data.document objesini listeye dahil ediyoruz
                       setDocuments(prevDocs => [...prevDocs, data.document]);
-                      
+
                       // 2. Modalı kapat
                       setShowUploadModal(false);
-                      
+
                       // Not: fetchData() çağrısını kaldırdık. Böylece sayfa loading ekranına 
                       // düşmeyecek ve yeni doküman anında listede belirecektir.
                     } else {

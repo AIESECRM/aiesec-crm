@@ -3,11 +3,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Search, Bell, User, ChevronDown, Building2, DollarSign,
-  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2 
+  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 import ProfileModal from '@/components/common/ProfileModal/ProfileModal';
 import Avatar from '@/components/common/Avatar';
 import './Header.css';
@@ -45,9 +46,10 @@ const notifColors: Record<string, string> = {
 };
 
 export default function Header() {
+  const router = useRouter();
   const { user, status } = useAuth();
   const { query, setQuery, results, isSearching, placeholder, clearSearch, navigateToResult } = useSearch();
-  
+
   const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -56,7 +58,7 @@ export default function Header() {
   const [unreadCount, setUnreadCount] = useState(0);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   const searchRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +73,7 @@ export default function Header() {
       const data = await res.json();
       setNotifications(data.notifications || []);
       setUnreadCount(data.unreadCount || 0);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
@@ -117,9 +119,9 @@ export default function Header() {
   const highlightText = (text: string, highlight: string) => {
     if (!highlight.trim()) return text;
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-    return parts.map((part, i) => 
-      part.toLowerCase() === highlight.toLowerCase() 
-        ? <b key={i} className="header__highlight">{part}</b> 
+    return parts.map((part, i) =>
+      part.toLowerCase() === highlight.toLowerCase()
+        ? <b key={i} className="header__highlight">{part}</b>
         : part
     );
   };
@@ -132,6 +134,16 @@ export default function Header() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notificationId: id })
     });
+  };
+  const handleNotificationClick = async (n: any) => {
+    // Eğer bildirim okunmadıysa önce okundu olarak işaretle
+    if (!n.read) await markAsRead(n.id);
+
+    // Bildirim objesinde companyId dönüyorsa şirkete yönlendir
+    if (n.companyId) {
+      router.push(`/sirketler/${n.companyId}`);
+      setShowNotifications(false); // Menüyü kapat
+    }
   };
 
   const markAllAsRead = async () => {
@@ -185,8 +197,8 @@ export default function Header() {
             {results.length > 0 ? (
               <div className="header__results-list">
                 {results.map((result, index) => (
-                  <button 
-                    key={`${result.type}-${result.id}`} 
+                  <button
+                    key={`${result.type}-${result.id}`}
                     className={`header__result-item ${selectedIndex === index ? 'header__result-item--selected' : ''}`}
                     onClick={() => { navigateToResult(result); setShowResults(false); }}
                     onMouseEnter={() => setSelectedIndex(index)}
@@ -246,7 +258,7 @@ export default function Header() {
                 {notifications.length === 0 ? (
                   <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>Henüz bildirim yok.</div>
                 ) : notifications.map((n: any) => (
-                  <div key={n.id} className={`header__notification-item ${!n.read ? 'header__notification-item--unread' : ''}`} onClick={() => !n.read && markAsRead(n.id)}>
+                  <div key={n.id} className={`header__notification-item ${!n.read ? 'header__notification-item--unread' : ''}`} onClick={() => handleNotificationClick(n)}>
                     <div className="header__notification-item-icon" style={{ backgroundColor: `${notifColors[n.type]}20`, color: notifColors[n.type] }}>
                       {notifIcons[n.type] || <Bell size={16} />}
                     </div>

@@ -61,6 +61,7 @@ enum NotificationType {
   NEW_USER
   USER_APPROVED
   USER_REJECTED
+  NEW_ACTIVITY
 }
 
 enum Chapter {
@@ -148,6 +149,7 @@ model Activity {
   companyId Int
   userId    Int
   createdAt Int          @default(0)
+  isPlanned Boolean      @default(false)
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -172,6 +174,7 @@ model Offer {
 model Notification {
   id        Int              @id @default(autoincrement())
   userId    Int
+  companyId Int?
   type      NotificationType
   title     String
   message   String           @db.Text

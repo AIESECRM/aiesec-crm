@@ -7,8 +7,6 @@ import { ActivityType, Company, User } from '@/types';
 import TimeKeeper from 'react-timekeeper';
 import { Calendar, Clock } from 'lucide-react';
 
-
-
 export default function AktivitePlanlaPage() {
     const { user } = useAuth();
 
@@ -73,7 +71,8 @@ export default function AktivitePlanlaPage() {
                 userId: selectedManagerId,
                 type: type,
                 note: notes,
-                date: `${date}T${time}:00`
+                date: `${date}T${time}:00`,
+                isPlanned: true
             })
         });
 
@@ -96,6 +95,19 @@ export default function AktivitePlanlaPage() {
         return `${day}/${month}/${year}`;
     };
 
+    // Ortak input stili (Karanlık tema uyumlu)
+    const inputStyle = {
+        padding: '10px', 
+        borderRadius: '8px', 
+        border: '1px solid var(--border-color)', 
+        fontSize: '15px',
+        backgroundColor: 'var(--neutral-light)', // Tema değişince otomatik adapte olur
+        color: 'var(--foreground)',              // Yazı rengi
+        outline: 'none',
+        width: '100%',
+        boxSizing: 'border-box' as const
+    };
+
     return (
         <div style={{ maxWidth: '600px', padding: '24px' }}>
             <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
@@ -111,7 +123,7 @@ export default function AktivitePlanlaPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Şirket Seçimi</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
+                            style={inputStyle}
                             value={selectedCompanyId}
                             onChange={(e) => setSelectedCompanyId(e.target.value)}
                             required
@@ -126,7 +138,7 @@ export default function AktivitePlanlaPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Menajer / Yetkili</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
+                            style={inputStyle}
                             value={selectedManagerId}
                             onChange={(e) => setSelectedManagerId(e.target.value)}
                             required
@@ -138,7 +150,7 @@ export default function AktivitePlanlaPage() {
                         </select>
                     </div>
 
-                    {/* TARİH VE SAAT BÖLÜMÜ GÜNCELLENDİ */}
+                    {/* TARİH VE SAAT BÖLÜMÜ */}
                     <div style={{ display: 'flex', gap: '16px' }}>
                         {/* 1. Tarih Seçici */}
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -146,7 +158,7 @@ export default function AktivitePlanlaPage() {
                             <div style={{ position: 'relative' }}>
                                 <input
                                     type="date"
-                                    style={{ padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', width: '100%', boxSizing: 'border-box' }}
+                                    style={{ ...inputStyle, paddingLeft: '36px' }}
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
                                     required
@@ -170,14 +182,13 @@ export default function AktivitePlanlaPage() {
                             <div style={{ position: 'relative' }}>
                                 <input
                                     type="text"
-                                    style={{ padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', width: '100%', boxSizing: 'border-box', cursor: 'pointer' }}
+                                    style={{ ...inputStyle, paddingLeft: '36px', cursor: 'pointer' }}
                                     value={time}
                                     readOnly
                                     onClick={() => setShowClock(true)}
                                     placeholder="Saat seçin"
                                     required
                                 />
-                                {/* Not: 'lucide-react'tan 'Clock' ikonunu import etmeyi unutma */}
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                                     style={{ position: 'absolute', left: '12px', top: '12px', color: '#6b7280', pointerEvents: 'none' }}
@@ -192,17 +203,18 @@ export default function AktivitePlanlaPage() {
                                             style={{ position: 'fixed', inset: 0 }}
                                             onClick={() => setShowClock(false)}
                                         />
-                                        <div style={{ position: 'relative', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
+                                        {/* Karanlık temaya uygun saat popup çerçevesi */}
+                                        <div style={{ position: 'relative', backgroundColor: 'var(--card)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.25)', overflow: 'hidden' }}>
                                             <TimeKeeper
                                                 time={time || '09:00'}
                                                 onChange={(newTime: any) => setTime(newTime.formatted24)}
                                                 onDoneClick={() => setShowClock(false)}
                                                 switchToMinuteOnHourSelect={true}
                                             />
-                                            {/* Özel Tamam Butonu */}
+                                            {/* Özel Tamam Butonu (Tema Uyumlu) */}
                                             <div
                                                 onClick={() => setShowClock(false)}
-                                                style={{ textAlign: 'center', padding: '12px 0', color: '#2563eb', cursor: 'pointer', fontWeight: '600', borderTop: '1px solid #e5e7eb', backgroundColor: '#f8fafc' }}
+                                                style={{ textAlign: 'center', padding: '12px 0', color: 'var(--primary)', cursor: 'pointer', fontWeight: '600', borderTop: '1px solid var(--border-color)', backgroundColor: 'var(--neutral-light)' }}
                                             >
                                                 Tamam
                                             </div>
@@ -216,7 +228,7 @@ export default function AktivitePlanlaPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Aktivite Tipi</label>
                         <select
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px' }}
+                            style={inputStyle}
                             value={type}
                             onChange={(e) => setType(e.target.value as ActivityType)}
                         >
@@ -233,7 +245,7 @@ export default function AktivitePlanlaPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-regular)' }}>Notlar</label>
                         <textarea
-                            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '15px', minHeight: '100px' }}
+                            style={{ ...inputStyle, minHeight: '100px' }}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             placeholder="Aktivite detayları..."
@@ -255,7 +267,8 @@ export default function AktivitePlanlaPage() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px'
+                            gap: '8px',
+                            marginTop: '8px'
                         }}
                     >
                         <Save size={18} /> Planla ve Bildir

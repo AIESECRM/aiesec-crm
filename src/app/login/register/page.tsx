@@ -218,7 +218,7 @@ export default function RegisterPage() {
             </div>
 
             <button onClick={handleSubmit} disabled={loading}
-              style={{ width: "100%", backgroundColor: "var(--primary)", color: "gray", padding: "12px", borderRadius: "8px", fontWeight: "600", fontSize: "15px", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "8px" }}>
+              style={{ width: "100%", backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", fontWeight: "600", fontSize: "15px", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, marginTop: "8px", transition: "all 0.2s ease-in-out" }}>
               {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
             </button>
 

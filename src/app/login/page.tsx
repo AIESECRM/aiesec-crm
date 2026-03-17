@@ -109,24 +109,24 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email</label>
-                <input 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
-                  placeholder="ornek@aiesec.net" 
-                  required 
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
+                  placeholder="ornek@aiesec.net"
+                  required
                 />
               </div>
               <div>
                 <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şifre</label>
-                <input 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
-                  placeholder="••••••••" 
-                  required 
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
+                  placeholder="••••••••"
+                  required
                 />
               </div>
               <div style={{ textAlign: "right", marginTop: "-4px" }}>
@@ -135,7 +135,7 @@ export default function LoginPage() {
                   Şifremi unuttum
                 </button>
               </div>
-              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "gray", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
+              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px", opacity: loading ? 0.6 : 1, transition: "all 0.2s ease-in-out" }}>
                 {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
               </button>
             </form>
@@ -151,12 +151,12 @@ export default function LoginPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email Adresiniz</label>
-              <input 
-                type="email" 
-                value={resetEmail} 
-                onChange={e => setResetEmail(e.target.value)} 
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
-                placeholder="ornek@aiesec.net" 
+              <input
+                type="email"
+                value={resetEmail}
+                onChange={e => setResetEmail(e.target.value)}
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
+                placeholder="ornek@aiesec.net"
               />
             </div>
             <button onClick={handleSendCode} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
@@ -177,33 +177,33 @@ export default function LoginPage() {
             </p>
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Doğrulama Kodu</label>
-              <input 
-                type="text" 
-                value={resetCode} 
-                onChange={e => setResetCode(e.target.value)} 
+              <input
+                type="text"
+                value={resetCode}
+                onChange={e => setResetCode(e.target.value)}
                 maxLength={6}
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--primary)", border: "1px solid var(--border-color)", padding: "12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "28px", fontWeight: "bold", textAlign: "center", letterSpacing: "12px" }} 
-                placeholder="000000" 
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--primary)", border: "1px solid var(--border-color)", padding: "12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "28px", fontWeight: "bold", textAlign: "center", letterSpacing: "12px" }}
+                placeholder="000000"
               />
             </div>
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre</label>
-              <input 
-                type="password" 
-                value={newPassword} 
-                onChange={e => setNewPassword(e.target.value)} 
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
-                placeholder="En az 8 karakter" 
+              <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
+                placeholder="En az 8 karakter"
               />
             </div>
             <div>
               <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre Tekrar</label>
-              <input 
-                type="password" 
-                value={newPasswordConfirm} 
-                onChange={e => setNewPasswordConfirm(e.target.value)} 
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }} 
-                placeholder="Şifrenizi tekrar girin" 
+              <input
+                type="password"
+                value={newPasswordConfirm}
+                onChange={e => setNewPasswordConfirm(e.target.value)}
+                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
+                placeholder="Şifrenizi tekrar girin"
               />
             </div>
             <button onClick={handleResetPassword} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
