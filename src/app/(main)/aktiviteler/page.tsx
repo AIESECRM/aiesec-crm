@@ -116,21 +116,32 @@ export default function ActivitiesPage() {
     if (!newCompanyName.trim()) return;
     setCreatingCompany(true);
 
-    // Şirket ekleme API çağrısı
-    const res = await fetch('/api/companies', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newCompanyName })
-    });
-
-    if (res.ok) {
+    try {// Şirket ekleme API çağrısı
+      const res = await fetch('/api/companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCompanyName })
+      });
       const result = await res.json();
-      await fetchCompanies(); // Şirket listesini arka planda yenile
-      setSelectedCompanyId(String(result.data.id)); // Yeni eklenen şirketi seç
-      setCompanySearch(result.data.name); // Input alanına yeni adı yaz
-      setShowAddCompanyModal(false); // Modalı kapat
+
+
+      if (res.ok) {
+        await fetchCompanies(); // Şirket listesini arka planda yenile
+        setSelectedCompanyId(String(result.data?.id)); // Yeni eklenen şirketi seç
+        setCompanySearch(result.data?.name); // Input alanına yeni adı yaz
+        setShowAddCompanyModal(false); // Modalı kapat
+      }else {
+      // Sunucu hata dönerse kullanıcıyı bilgilendir
+      alert(result.error || "Şirket eklenemedi.");
     }
-    setCreatingCompany(false);
+    } catch (error) {
+    // Ağ hatası veya kod çökmesi durumunda burası çalışır
+      console.error("Şirket ekleme hatası:", error);
+    alert("Bir bağlantı hatası oluştu.");
+    } finally {
+      // HATA ALSA DA ALMASA DA: Buton kilidini kaldır
+      setCreatingCompany(false);
+    }
   };
 
   const fetchActivities = async () => {
@@ -145,23 +156,32 @@ export default function ActivitiesPage() {
     e.preventDefault();
     if (!selectedCompanyId) return;
     setSubmitting(true);
-
-    const res = await fetch('/api/activities', {
+    try {
+      const unixTimestamp = Math.floor(Date.now() / 1000);
+      const res = await fetch('/api/activities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: selectedType,
         note: notes,
         companyId: selectedCompanyId,
-        date: new Date().toISOString(),
-      }),
-    });
+        date: unixTimestamp,
+        isPlanned: false
+        }),
+      });
 
-    if (res.ok) {
-      setNotes('');
-      fetchActivities();
+      if (res.ok) {
+        setNotes('');
+        fetchActivities();
+      } else {
+      const errorData = await res.json();
+      alert(errorData.error || "Aktivite kaydedilemedi.");
     }
-    setSubmitting(false);
+    } catch (error) {
+      console.error("Gönderim hatası:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
