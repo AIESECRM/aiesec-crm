@@ -87,7 +87,7 @@ export default function DashboardPage() {
     const combinedNote = `${completeModal.activity.note || ''}\n\n[Tamamlandı - Sonuç]: ${completionNote}`.trim();
 
     try {
-      await fetch(`/api/activities/${completeModal.activity.id}`, {
+      const response = await fetch(`/api/activities/${completeModal.activity.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -96,7 +96,9 @@ export default function DashboardPage() {
           date: Math.floor(Date.now() / 1000) 
         }),
       });
-      
+      if (!response.ok) {
+        throw new Error(`Sunucu Hatası: Veritabanına ulaşılamadı. (Kod: ${response.status})`);
+      }
       setCompleteModal({ isOpen: false, activity: null });
       setCompletionNote('');
       await fetchData(); // Listeyi yenile

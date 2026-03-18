@@ -146,6 +146,8 @@ export default function Header() {
     if (n.companyId) {
       router.push(`/sirketler/${n.companyId}`);
       setShowNotifications(false); // Menüyü kapat
+    } else {
+      console.warn("HATA: Yönlendirme yapılamadı çünkü n.companyId bulunamadı!");
     }
   };
 

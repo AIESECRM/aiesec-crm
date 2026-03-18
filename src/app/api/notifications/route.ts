@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
         where: { userId },
         orderBy: { createdAt: 'desc' },
         take: 20,
+
     });
 
     const unreadCount = await prisma.notification.count({
