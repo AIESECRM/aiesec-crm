@@ -69,8 +69,10 @@ export default function DashboardPage() {
     // Kullanıcıya ait "Planlı" aktiviteleri filtrele
     if (user) {
       const myPlanned = user?.id 
-  ? allActivities.filter((a: any) => a.isPlanned === true && a.userId === user.id)
-  : [];
+        ? allActivities.filter((a: any) => 
+            a.isPlanned && String(a.userId) === String(user.id)
+          )
+        : [];
       setPlannedActivities(myPlanned);
     }
     
