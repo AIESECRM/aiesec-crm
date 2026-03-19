@@ -163,7 +163,7 @@ export default function CompanySidebar({
                         src={manager.image} 
                         alt={manager.name} 
                         size={22} 
-                        fallbackIcon={<span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{manager.name.charAt(0).toUpperCase()}</span>}
+                        fallbackIcon={<span style={{ fontSize: '10px', color: 'white', fontWeight: 'bold' }}>{(manager.name || 'M').charAt(0).toUpperCase()}</span>}
                         className="company-sidebar__manager-avatar"
                         style={{ backgroundColor: 'var(--primary-400)' }}
                       />
