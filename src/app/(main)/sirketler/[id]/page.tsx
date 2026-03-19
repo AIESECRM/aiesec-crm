@@ -467,7 +467,13 @@ export default function CompanyDetailPage() {
       <div className="company-detail__activities">
         <div className="company-detail__activities-header">
           <h2 className="company-detail__activities-title">Aktiviteler</h2>
-          <div className="company-detail__activities-actions">
+          <div className="company-detail__activities-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => router.push(`/aktiviteler?newActivity=true&companyId=${company.id}`)}
+              style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+            >
+              <Plus size={16} /> Aktivite Ekle
+            </button>
             <div className="company-detail__activities-search">
               <Search className="company-detail__activities-search-icon" />
               <input

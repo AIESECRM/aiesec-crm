@@ -116,5 +116,11 @@ export async function POST(req: NextRequest) {
     parseInt(user.id)
   );
 
+  // Şirketin güncellenme tarihini (updatedAt) değiştir
+  await prisma.company.update({
+    where: { id: parseInt(companyId) },
+    data: { updatedAt: Math.floor(Date.now() / 1000) }
+  });
+
   return NextResponse.json({ success: true, activity });
 }

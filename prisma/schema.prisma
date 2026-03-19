@@ -42,6 +42,7 @@ enum OfferProduct {
   GTA
   GV
   GTE
+  EWA
 }
 
 enum OfferDuration {

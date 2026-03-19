@@ -30,6 +30,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     await logAudit(user.id, "UPDATE_ACTIVITY", id, undefined, JSON.stringify(activity));
 
+    // Şirketin güncellenme tarihini de güncelle
+    await prisma.company.update({
+      where: { id: activity.companyId },
+      data: { updatedAt: Math.floor(Date.now() / 1000) }
+    });
+
     return NextResponse.json({ success: true, activity });
   } catch (error) {
     console.error("Aktivite güncellenirken hata oluştu:", error);
@@ -44,9 +50,15 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params;
   const user = session.user as any;
 
-  await prisma.activity.delete({ where: { id: parseInt(id) } });
+  const activity = await prisma.activity.delete({ where: { id: parseInt(id) } });
 
   await logAudit(user.id, "DELETE_ACTIVITY", id);
+
+  // Şirketin güncellenme tarihini de güncelle
+  await prisma.company.update({
+    where: { id: activity.companyId },
+    data: { updatedAt: Math.floor(Date.now() / 1000) }
+  });
 
   return NextResponse.json({ success: true });
 }

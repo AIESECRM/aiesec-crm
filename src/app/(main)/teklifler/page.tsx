@@ -7,15 +7,15 @@ import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import Avatar from '@/components/common/Avatar';
 import './page.css';
 
-type OfferProduct = 'GTA' | 'GV' | 'GTE';
+type OfferProduct = 'GTA' | 'GV' | 'GTE' | 'EWA';
 type OfferDuration = 'SHORT' | 'MEDIUM' | 'LONG';
 type OfferOpenStatus = 'NEW_OPEN' | 'RE_OPEN';
 
-const PRODUCT_LABELS: Record<OfferProduct, string> = { GTA: 'GTa', GV: 'GV', GTE: 'GTe' };
+const PRODUCT_LABELS: Record<OfferProduct, string> = { GTA: 'GTa', GV: 'GV', GTE: 'GTe', EWA: 'EwA' };
 const DURATION_LABELS: Record<OfferDuration, string> = { SHORT: 'Kısa Dönem', MEDIUM: 'Orta Dönem', LONG: 'Uzun Dönem' };
 const OPEN_STATUS_LABELS: Record<OfferOpenStatus, string> = { NEW_OPEN: 'New Open', RE_OPEN: 'Re Open' };
 
-const PRODUCT_OPTIONS: OfferProduct[] = ['GTA', 'GV', 'GTE'];
+const PRODUCT_OPTIONS: OfferProduct[] = ['GTA', 'GV', 'GTE', 'EWA'];
 const DURATION_OPTIONS: OfferDuration[] = ['SHORT', 'MEDIUM', 'LONG'];
 
 export default function DealsPage() {
