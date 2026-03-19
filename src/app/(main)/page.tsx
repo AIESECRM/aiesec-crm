@@ -138,6 +138,14 @@ const formatActivityDate = (timestamp: any) => {
   // Sadece isPlanned: false olan tamamlanmış aktiviteleri istatistiklerde sayalım
   const completedActivities = activities.filter(a => !a.isPlanned);
 
+  // İşlemsiz (Unattended) Şirketleri Filtreleme (3 Gün)
+  const threeDaysAgo = Math.floor(Date.now() / 1000) - 3 * 24 * 60 * 60;
+  const unattendedCompanies = companies.filter(c => {
+    const isManager = c.managers?.some((m: any) => String(m.id) === String(user.id));
+    const isInactive = c.updatedAt < threeDaysAgo; // Son işlem 3 günden eskiyse
+    return isManager && isInactive;
+  });
+
   const todayColdCalls = completedActivities.filter(a => {
     const today = new Date();
     const actDate = new Date(a.date * 1000);
@@ -196,6 +204,39 @@ const displayCount = Number(plannedActivities?.length) || 0;
           </div>
         ))}
       </div>
+
+      {/* İŞLEMSİZ ŞİRKETLER BÖLÜMÜ (UNATTENDED COMPANIES) */}
+      {unattendedCompanies.length > 0 && (
+        <div style={{ backgroundColor: '#fef2f2', borderRadius: '12px', padding: '20px', border: '1px solid #fecaca', marginBottom: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: '#b91c1c' }}>
+            <Building2 color="#dc2626" size={22} />
+            Dikkat Bekleyen Şirketler ({unattendedCompanies.length})
+            <span style={{ fontSize: '13px', fontWeight: 'normal', color: '#dc2626', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              Son 3 gündür işlem yapılmadı
+            </span>
+          </h2>
+
+          <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+            {unattendedCompanies.map(company => (
+              <div 
+                key={company.id} 
+                onClick={() => router.push(`/sirketler/${company.id}`)} 
+                className="hover-card-effect"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #fecaca', cursor: 'pointer', transition: 'all 0.2s ease-in-out' }} 
+              >
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#1f2937', marginBottom: '4px' }}>
+                    {company.name}
+                  </h3>
+                  <p style={{ fontSize: '12px', color: '#6b7280' }}>
+                    Son İşlem: {new Date(company.updatedAt * 1000).toLocaleDateString('tr-TR')}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* YENİ: PLANLI AKTİVİTELERİM BÖLÜMÜ */}
       {plannedActivities.length > 0 && (

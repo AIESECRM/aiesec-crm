@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     include: {
       createdBy: { select: { id: true, name: true } },
       _count: { select: { contacts: true, activities: true, offers: true } },
+      managers: { select: { id: true } },
     },
     orderBy: { createdAt: "desc" },
   });

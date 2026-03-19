@@ -95,6 +95,25 @@ export default function ActivitiesPage() {
     fetchActivities();
   }, []);
 
+  // URL'den gelen `?newActivity=true&companyId=123` parametrelerini okuyup formu otomatik doldurma
+  useEffect(() => {
+    if (typeof window !== 'undefined' && companies.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const companyIdParam = params.get('companyId');
+      const newActivityParam = params.get('newActivity');
+      
+      if (newActivityParam === 'true' && companyIdParam) {
+        const company = companies.find((c: any) => String(c.id) === companyIdParam);
+        if (company && !selectedCompanyId) {
+          setSelectedCompanyId(companyIdParam);
+          setCompanySearch(company.name);
+          // Parametreleri temizle ki sayfayı yenileyince tekrar çalışmasın
+          window.history.replaceState({}, '', '/aktiviteler');
+        }
+      }
+    }
+  }, [companies, selectedCompanyId]);
+
   useEffect(() => {
     if (user && !isNationalRole && !newCompany.chapter) {
       setNewCompany(prev => ({ ...prev, chapter: user.chapter || '' }));
