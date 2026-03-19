@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -13,7 +13,8 @@ export async function PATCH(
     const body = await request.json();
     const { title, value, product, duration, openStatus } = body;
 
-    const offerId = parseInt(params.id);
+    const { id } = await params;
+    const offerId = parseInt(id);
 
     const updatedOffer = await prisma.offer.update({
       where: { id: offerId },
@@ -35,13 +36,14 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const offerId = parseInt(params.id);
+    const { id } = await params;
+    const offerId = parseInt(id);
 
     await prisma.offer.delete({
       where: { id: offerId }
