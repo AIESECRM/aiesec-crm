@@ -1,6 +1,5 @@
 import prisma from '@/lib/prisma';
 import { NotificationType } from '@prisma/client';
-// DİKKAT: Yanlışlıkla eklenen "import { title } from 'process';" satırını sildik!
 
 // Belirli bir şubedeki LCP/LCVP + tüm MCP/MCVP/ADMIN'lere bildirim gönder
 export async function notifyLeaders(
@@ -46,6 +45,7 @@ export async function notifyLeaders(
         await prisma.notification.createMany({
             data: uniqueRecipients.map(userId => ({
                 userId,
+                companyId: companyId || null,
                 type,
                 title,
                 message,
@@ -70,6 +70,7 @@ export async function notifyUser(
         await prisma.notification.create({
             data: {
                 userId,
+                companyId: companyId || null,
                 type,
                 title,
                 message,
@@ -86,7 +87,7 @@ export async function notifyUser(
 export async function notifyManagers(
     companyId: number,
     type: NotificationType,
-    title: string, // <-- İŞTE BURASI EKSİKTİ, EKLEDİK! (3. parametre)
+    title: string,
     message: string,
     excludeUserId?: number
 ) {
@@ -110,8 +111,9 @@ export async function notifyManagers(
         await prisma.notification.createMany({
             data: company.managers.map(m => ({
                 userId: m.id,
+                companyId: companyId,
                 type,
-                title: `${company.name}: ${title}`, // Artık doğru title'ı kullanacak
+                title: `${company.name}: ${title}`,
                 message,
                 read: false,
                 createdAt: Math.floor(Date.now() / 1000),

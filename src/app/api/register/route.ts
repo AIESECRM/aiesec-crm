@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
           role: role || "TM",
           chapter: chapter || null,
           status: "PENDING",
+          createdAt: Math.floor(Date.now() / 1000),
         },
       });
 

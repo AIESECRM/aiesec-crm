@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { Building2, Filter, Plus, X, Save } from 'lucide-react';
 import { CompanyCard, CompanySidebar } from '@/components/companies';
 import Modal from '@/components/common/Modal';
@@ -40,6 +41,9 @@ const CHAPTER_OPTIONS = [
 
 export default function CompaniesPage() {
   const router = useRouter();
+  const { user } = useAuth() as any;
+  const isNationalRole = user && ['MCP', 'MCVP', 'ADMIN'].includes(user.role);
+
   const [companies, setCompanies] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +60,12 @@ export default function CompaniesPage() {
   const [newCompany, setNewCompany] = useState({
     name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: ''
   });
+
+  useEffect(() => {
+    if (user && !isNationalRole && !newCompany.chapter) {
+      setNewCompany(prev => ({ ...prev, chapter: user.chapter || '' }));
+    }
+  }, [user, isNationalRole]);
 
   useEffect(() => {
     fetchData();
@@ -100,7 +110,7 @@ export default function CompaniesPage() {
     });
     if (res.ok) {
       setShowAddModal(false);
-      setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '' });
+      setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: isNationalRole ? '' : (user?.chapter || ''), documentUrl: '', documentName: '' });
       fetchData();
     }
     setSubmitting(false);
@@ -226,6 +236,7 @@ export default function CompaniesPage() {
                   className="modal__select"
                   value={newCompany.chapter}
                   onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
+                  disabled={!isNationalRole}
                 >
                   <option value="">Şube seçin</option>
                   {CHAPTER_OPTIONS.filter(c => c.value).map(c => (

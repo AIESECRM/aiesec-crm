@@ -34,11 +34,12 @@ const statusIcons: Record<string, React.ReactNode> = {
 };
 
 export default function StatusBadge({ status, showIcon = false }: StatusBadgeProps) {
-  const label = statusLabels[status] || status;
-  const icon = showIcon ? statusIcons[status] : null;
+  const normStatus = typeof status === 'string' ? status.toUpperCase() : String(status);
+  const label = statusLabels[normStatus] || status;
+  const icon = showIcon ? statusIcons[normStatus] : null;
 
   return (
-    <span className={`status-badge status-badge--${status.toLowerCase()}`}>
+    <span className={`status-badge status-badge--${normStatus.toLowerCase()}`}>
       {icon}
       {label}
     </span>
