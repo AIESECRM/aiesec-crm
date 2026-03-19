@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
         // Şemada default(0) olduğu için şu anki zamanı manuel atamakta fayda var
         createdAt: Math.floor(Date.now() / 1000),
         updatedAt: Math.floor(Date.now() / 1000),
+        managers: {
+          connect: { id: parseInt(user.id, 10) }
+        },
         documents: documentUrl ? {
           create: {
             name: documentName || 'Belge',

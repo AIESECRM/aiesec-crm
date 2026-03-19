@@ -30,6 +30,23 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                 data: { createdById: toId }
             });
 
+            // 3.5 Menajerlikleri (managers) aktar (Many-to-Many olduğu için tek tek)
+            const managedCompanies = await tx.company.findMany({
+                where: { managers: { some: { id: fromId } } },
+                select: { id: true }
+            });
+            for (const company of managedCompanies) {
+                await tx.company.update({
+                    where: { id: company.id },
+                    data: {
+                        managers: {
+                            disconnect: { id: fromId },
+                            connect: { id: toId }
+                        }
+                    }
+                });
+            }
+
             // 4. HandoverHistory kaydı
             await tx.handoverHistory.create({
                 data: {
