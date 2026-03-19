@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityType } from '@/types';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import './page.css';
 
 const activityTypes: { type: ActivityType; label: string; icon: React.ReactNode }[] = [
@@ -141,7 +142,7 @@ export default function ActivitiesPage() {
       const res = await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCompany)
+        body: JSON.stringify({ ...newCompany, chapter: user?.chapter || '' })
       });
       const result = await res.json();
 
@@ -550,7 +551,7 @@ export default function ActivitiesPage() {
               <h2 className="activity-modal__title">Yeni Şirket Ekle</h2>
               <button className="activity-modal__close" onClick={() => setShowAddCompanyModal(false)}><X /></button>
             </div>
-            <div className="activity-modal__content" style={{ padding: '0 24px 24px 24px' }}>
+            <div className="activity-modal__content" style={{ padding: '0 24px 24px 24px', maxHeight: '70vh', overflowY: 'auto' }}>
               <div style={{ display: 'grid', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Şirket Adı *</label>
@@ -563,6 +564,7 @@ export default function ActivitiesPage() {
                     required
                   />
                 </div>
+                
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Durum</label>
@@ -577,19 +579,44 @@ export default function ActivitiesPage() {
                     </select>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Şube</label>
-                    <select
+                    <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Telefon</label>
+                    <input
+                      type="tel"
                       style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
-                      value={newCompany.chapter}
-                      onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
-                      disabled={!isNationalRole}
-                    >
-                      <option value="" style={{ backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)' }}>Şube seçin</option>
-                      {CHAPTER_OPTIONS.map(c => (
-                        <option key={c.value} value={c.value} style={{ backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)' }}>{c.label}</option>
-                      ))}
-                    </select>
+                      placeholder="+90 XXX XXX XX XX"
+                      value={newCompany.phone}
+                      onChange={(e) => setNewCompany(prev => ({ ...prev, phone: e.target.value }))}
+                    />
                   </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>E-posta</label>
+                  <input
+                    type="email"
+                    style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                    placeholder="info@sirket.com"
+                    value={newCompany.email}
+                    onChange={(e) => setNewCompany(prev => ({ ...prev, email: e.target.value }))}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Notlar</label>
+                  <textarea
+                    style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none', resize: 'vertical' }}
+                    placeholder="Şirket hakkında notlar..."
+                    value={newCompany.notes}
+                    onChange={(e) => setNewCompany(prev => ({ ...prev, notes: e.target.value }))}
+                    rows={3}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Doküman (Opsiyonel)</label>
+                  <FileUpload
+                    onUploadSuccess={(url, name) => setNewCompany(prev => ({ ...prev, documentUrl: url, documentName: name }))}
+                  />
                 </div>
               </div>
             </div>
