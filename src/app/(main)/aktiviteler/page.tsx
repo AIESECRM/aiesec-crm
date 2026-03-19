@@ -15,7 +15,8 @@ import {
   Eye,
   Edit3,
   Trash2,
-  Search
+  Search,
+  Save
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ActivityType } from '@/types';
@@ -47,10 +48,24 @@ const CHAPTER_LABELS: Record<string, string> = {
   KONYA: 'Konya', KUTAHYA: 'Kütahya', SAKARYA: 'Sakarya', TRABZON: 'Trabzon',
 };
 
+const CHAPTER_OPTIONS = Object.entries(CHAPTER_LABELS).map(([value, label]) => ({ value, label }));
+
+const STATUS_OPTIONS = [
+  { value: 'POSITIVE', label: 'Pozitif' },
+  { value: 'NEGATIVE', label: 'Negatif' },
+  { value: 'NO_ANSWER', label: 'Cevap Yok' },
+  { value: 'CALL_AGAIN', label: 'Tekrar Ara' },
+  { value: 'MEETING_PLANNED', label: 'Toplantı Planlandı' },
+];
+
 export default function ActivitiesPage() {
   const { user } = useAuth() as any;
+  const isNationalRole = user && ['MCP', 'MCVP', 'ADMIN'].includes(user.role);
+
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
-  const [newCompanyName, setNewCompanyName] = useState('');
+  const [newCompany, setNewCompany] = useState({
+    name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: ''
+  });
   const [creatingCompany, setCreatingCompany] = useState(false);
   const [selectedType, setSelectedType] = useState<ActivityType>('COLD_CALL');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
@@ -78,6 +93,12 @@ export default function ActivitiesPage() {
     fetchCompanies();
     fetchActivities();
   }, []);
+
+  useEffect(() => {
+    if (user && !isNationalRole && !newCompany.chapter) {
+      setNewCompany(prev => ({ ...prev, chapter: user.chapter || '' }));
+    }
+  }, [user, isNationalRole]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -113,33 +134,30 @@ export default function ActivitiesPage() {
     };
   };
   const handleQuickAddCompany = async () => {
-    if (!newCompanyName.trim()) return;
+    if (!newCompany.name.trim()) return;
     setCreatingCompany(true);
 
-    try {// Şirket ekleme API çağrısı
+    try {
       const res = await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCompanyName })
+        body: JSON.stringify(newCompany)
       });
       const result = await res.json();
 
-
       if (res.ok) {
-        await fetchCompanies(); // Şirket listesini arka planda yenile
-        setSelectedCompanyId(String(result.data?.id)); // Yeni eklenen şirketi seç
-        setCompanySearch(result.data?.name); // Input alanına yeni adı yaz
-        setShowAddCompanyModal(false); // Modalı kapat
-      }else {
-      // Sunucu hata dönerse kullanıcıyı bilgilendir
-      alert(result.error || "Şirket eklenemedi.");
-    }
+        await fetchCompanies();
+        setSelectedCompanyId(String(result.company?.id || result.data?.id));
+        setCompanySearch(result.company?.name || result.data?.name);
+        setShowAddCompanyModal(false);
+        setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: isNationalRole ? '' : (user?.chapter || ''), documentUrl: '', documentName: '' });
+      } else {
+        alert(result.error || "Şirket eklenemedi.");
+      }
     } catch (error) {
-    // Ağ hatası veya kod çökmesi durumunda burası çalışır
       console.error("Şirket ekleme hatası:", error);
-    alert("Bir bağlantı hatası oluştu.");
+      alert("Bir bağlantı hatası oluştu.");
     } finally {
-      // HATA ALSA DA ALMASA DA: Buton kilidini kaldır
       setCreatingCompany(false);
     }
   };
@@ -266,9 +284,9 @@ export default function ActivitiesPage() {
                     }}
                     onMouseDown={(e) => {
                       e.preventDefault();
-                      setNewCompanyName(companySearch); // O an inputta ne yazıyorsa modal'a kopyala
+                      setNewCompany(prev => ({ ...prev, name: companySearch }));
                       setShowCompanyDropdown(false);
-                      setShowAddCompanyModal(true); // Modalı aç
+                      setShowAddCompanyModal(true);
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -394,7 +412,7 @@ export default function ActivitiesPage() {
                       </span>
                     </td>
                     <td className="activity-log__date">
-                      {activity.createdAt ? new Date(activity.createdAt).toLocaleDateString('tr-TR') : '—'}
+                      {activity.createdAt ? new Date(activity.createdAt * 1000).toLocaleDateString('tr-TR') : '—'}
                     </td>
                     <td className="activity-log__note">{activity.note || '—'}</td>
                     <td className="activity-log__actions">
@@ -527,27 +545,58 @@ export default function ActivitiesPage() {
       {showAddCompanyModal && (
         <>
           <div className="activity-modal__overlay" onClick={() => setShowAddCompanyModal(false)} />
-          <div className="activity-modal">
+          <div className="activity-modal" style={{ maxWidth: '600px', width: '90%' }}>
             <div className="activity-modal__header">
-              <h2 className="activity-modal__title">Hızlı Şirket Ekle</h2>
+              <h2 className="activity-modal__title">Yeni Şirket Ekle</h2>
               <button className="activity-modal__close" onClick={() => setShowAddCompanyModal(false)}><X /></button>
             </div>
-            <div className="activity-modal__content">
-              <div className="activity-modal__form-group">
-                <label className="activity-modal__form-label">Şirket Adı</label>
-                <input
-                  type="text"
-                  className="activity-form__textarea"
-                  style={{ minHeight: '40px', padding: '8px 12px' }}
-                  value={newCompanyName}
-                  onChange={(e) => setNewCompanyName(e.target.value)}
-                  placeholder="Örn: ABC A.Ş."
-                />
+            <div className="activity-modal__content" style={{ padding: '0 24px 24px 24px' }}>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Şirket Adı *</label>
+                  <input
+                    type="text"
+                    style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                    value={newCompany.name}
+                    onChange={(e) => setNewCompany(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Şirket adı girin"
+                    required
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Durum</label>
+                    <select
+                      style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                      value={newCompany.status}
+                      onChange={(e) => setNewCompany(prev => ({ ...prev, status: e.target.value }))}
+                    >
+                      {STATUS_OPTIONS.map(s => (
+                        <option key={s.value} value={s.value} style={{ backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)' }}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Şube</label>
+                    <select
+                      style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                      value={newCompany.chapter}
+                      onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
+                      disabled={!isNationalRole}
+                    >
+                      <option value="" style={{ backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)' }}>Şube seçin</option>
+                      {CHAPTER_OPTIONS.map(c => (
+                        <option key={c.value} value={c.value} style={{ backgroundColor: 'var(--dashboard-bg)', color: 'var(--text-regular)' }}>{c.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="activity-modal__actions">
+            <div className="activity-modal__actions" style={{ padding: '16px 24px', borderTop: '1px solid var(--border-color)' }}>
               <button className="activity-modal__btn activity-modal__btn--secondary" onClick={() => setShowAddCompanyModal(false)}>İptal</button>
-              <button className="activity-modal__btn activity-modal__btn--primary" onClick={handleQuickAddCompany} disabled={creatingCompany}>
+              <button className="activity-modal__btn activity-modal__btn--primary" onClick={handleQuickAddCompany} disabled={creatingCompany} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Save size={16} />
                 {creatingCompany ? 'Ekleniyor...' : 'Kaydet ve Seç'}
               </button>
             </div>

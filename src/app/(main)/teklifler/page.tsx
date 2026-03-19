@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { DollarSign, Filter, Plus, User, Building2, X, Save } from 'lucide-react';
+import { DollarSign, Filter, Plus, User, Building2, X, Save, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import Avatar from '@/components/common/Avatar';
@@ -46,6 +46,13 @@ export default function DealsPage() {
     documentUrl: '',
     documentName: ''
   });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
+  const [editOffer, setEditOffer] = useState({
+    id: '', title: '', product: 'GTA' as OfferProduct, duration: 'SHORT' as OfferDuration, openStatus: 'NEW_OPEN' as OfferOpenStatus, value: '', companyId: '', documentUrl: '', documentName: ''
+  });
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
 
   useEffect(() => {
     fetchData('', '');
@@ -55,6 +62,9 @@ export default function DealsPage() {
     const handleClickOutside = (event: MouseEvent) => {
       if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
         setShowCompanyDropdown(false);
+      }
+      if (!event.target || !(event.target as Element).closest('.deal-card__dropdown')) {
+        setActiveDropdown(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -133,6 +143,41 @@ export default function DealsPage() {
     if (res.ok) {
       setShowAddModal(false);
       setNewOffer({ companyId: '', title: '', product: 'GTA', duration: 'SHORT', openStatus: 'NEW_OPEN', value: '', documentUrl: '', documentName: '' });
+      fetchData(filterProduct, filterOpenStatus);
+    }
+    setSubmitting(false);
+  };
+
+  const handleEditOfferSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const res = await fetch(`/api/offers/${editOffer.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: editOffer.title,
+        product: editOffer.product,
+        duration: editOffer.duration,
+        openStatus: editOffer.openStatus,
+        value: editOffer.value ? Number(editOffer.value) : null,
+      }),
+    });
+    if (res.ok) {
+      setShowEditModal(false);
+      fetchData(filterProduct, filterOpenStatus);
+    }
+    setSubmitting(false);
+  };
+
+  const handleDeleteOffer = async () => {
+    if (!selectedOffer) return;
+    setSubmitting(true);
+    const res = await fetch(`/api/offers/${selectedOffer.id}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      setShowDeleteModal(false);
+      setSelectedOffer(null);
       fetchData(filterProduct, filterOpenStatus);
     }
     setSubmitting(false);
@@ -263,9 +308,62 @@ export default function DealsPage() {
                     <div key={offer.id} className="deal-card">
                       <div className="deal-card__header">
                         <span className="deal-card__company">{offer.company?.name || '—'}</span>
-                        {offer.value && (
-                          <span className="deal-card__value">{offer.value.toLocaleString('tr-TR')} TL</span>
-                        )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {offer.value ? <span className="deal-card__value">{offer.value.toLocaleString('tr-TR')} TL</span> : <span />}
+                          <div className="deal-card__dropdown" style={{ position: 'relative' }}>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === offer.id ? null : offer.id); }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-light)', borderRadius: '4px' }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                            {activeDropdown === offer.id && (
+                              <div style={{
+                                position: 'absolute', right: 0, top: '100%', backgroundColor: 'var(--dashboard-bg)',
+                                border: '1px solid var(--border-color)', borderRadius: '8px', zIndex: 10,
+                                minWidth: '150px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                              }}>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(null);
+                                    setEditOffer({
+                                      id: offer.id, title: offer.title, product: offer.product, duration: offer.duration, openStatus: offer.openStatus,
+                                      value: offer.value || '', companyId: String(offer.companyId), documentUrl: offer.documentUrl || '', documentName: ''
+                                    });
+                                    setShowEditModal(true);
+                                  }}
+                                  style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 16px',
+                                    border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: 'var(--text-regular)'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                  <Edit2 size={14} /> Düzenle
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(null);
+                                    setSelectedOffer(offer);
+                                    setShowDeleteModal(true);
+                                  }}
+                                  style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 16px',
+                                    border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#ef4444'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                  <Trash2 size={14} /> Sil
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                       <div className="deal-card__title">{offer.title}</div>
                       <div className="deal-card__meta">
@@ -415,6 +513,45 @@ export default function DealsPage() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Edit Offer Modal */}
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Teklif Düzenle" maxWidth="600px">
+        <form className="modal__form" onSubmit={handleEditOfferSubmit}>
+          <div className="modal__section">
+            <h4 className="modal__section-title">Teklif Bilgileri</h4>
+            <div className="modal__field">
+              <label className="modal__label modal__label--required">Teklif Başlığı</label>
+              <input type="text" className="modal__input" placeholder="Proje adı girin" value={editOffer.title} onChange={(e) => setEditOffer(prev => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="modal__field">
+              <label className="modal__label">Değer (TL)</label>
+              <input type="number" className="modal__input" placeholder="0" value={editOffer.value} onChange={(e) => setEditOffer(prev => ({ ...prev, value: e.target.value }))} min="0" />
+            </div>
+          </div>
+          <div className="modal__actions">
+            <button type="button" className="modal__btn modal__btn--secondary" onClick={() => setShowEditModal(false)}>İptal</button>
+            <button type="submit" className="modal__btn modal__btn--primary" disabled={submitting}>
+              <Save />
+              {submitting ? 'Kaydediliyor...' : 'Kaydet'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Teklifi Sil" maxWidth="400px">
+        <div style={{ padding: '24px' }}>
+          <p style={{ fontSize: '15px', color: 'var(--text-regular)', marginBottom: '24px' }}>
+            Bu teklifi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+          </p>
+          <div className="modal__actions">
+            <button type="button" className="modal__btn modal__btn--secondary" onClick={() => setShowDeleteModal(false)}>İptal</button>
+            <button type="button" className="modal__btn" style={{ backgroundColor: '#ef4444', color: 'white' }} onClick={handleDeleteOffer} disabled={submitting}>
+              {submitting ? 'Siliniyor...' : 'Evet, Sil'}
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
