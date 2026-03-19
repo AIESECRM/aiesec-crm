@@ -277,3 +277,32 @@
     height: 18px;
   }
 }
+/* ============================================================
+   Koyu Tema (Dark Mode) Uyumluluk Düzeltmeleri
+   ============================================================ */
+
+.dark .stat-card,
+.dark .dashboard__activity-item,
+.dark .dashboard__recent-card {
+    background-color: var(--bg-surface, #1e1e2d);
+    border-color: var(--border-color-light, #333);
+}
+
+.dark .stat-card:hover,
+.dark .dashboard__activity-item:hover,
+.dark .dashboard__recent-card:hover {
+    background-color: rgba(255, 255, 255, 0.03); /* Koyu temada hafif hover efekti */
+}
+
+/* Yazı Renkleri */
+.dark .stat-card__value,
+.dark .dashboard__section-title,
+.dark .dashboard__activity-company {
+    color: var(--text-regular, #f3f4f6);
+}
+
+.dark .stat-card__label,
+.dark .dashboard__activity-meta,
+.dark .dashboard__activity-date {
+    color: var(--text-muted, #9ca3af);
+}

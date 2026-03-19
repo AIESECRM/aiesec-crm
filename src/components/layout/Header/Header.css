@@ -19,6 +19,29 @@
   max-width: 400px;
   position: relative;
 }
+/* Spinner döngü animasyonu */
+.header__search-icon--spin {
+  animation: spin 1s linear infinite;
+  color: var(--primary-color) !important;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Klavye ile seçilen öğe */
+.header__result-item--selected {
+  background-color: var(--bg-hover) !important;
+  border-left: 3px solid var(--primary-color) !important;
+}
+
+/* Vurgulanan metin */
+.header__highlight {
+  color: var(--primary-color);
+  font-weight: 700;
+  text-decoration: underline;
+}
 
 .header__search-wrapper {
   position: relative;

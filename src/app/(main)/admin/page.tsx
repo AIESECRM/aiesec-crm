@@ -90,16 +90,16 @@ export default function AdminPage() {
   if (user?.role !== "ADMIN") return null;
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto", color: "var(--foreground)" }}>
       <div style={{ marginBottom: "24px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#111827", marginBottom: "4px" }}>
+        <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "var(--foreground)", marginBottom: "4px" }}>
           Admin Paneli
         </h1>
-        <p style={{ color: "#6b7280", fontSize: "14px" }}>Kullanıcı onay ve yönetim ekranı</p>
+        <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>Kullanıcı onay ve yönetim ekranı</p>
       </div>
 
       {message && (
-        <div style={{ backgroundColor: "#f0fdf4", color: "#16a34a", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px" }}>
+        <div style={{ backgroundColor: "rgba(22, 163, 74, 0.1)", color: "#16a34a", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", border: "1px solid rgba(22, 163, 74, 0.2)" }}>
           {message}
         </div>
       )}
@@ -109,27 +109,29 @@ export default function AdminPage() {
         <select
           value={filterChapter}
           onChange={(e) => setFilterChapter(e.target.value)}
-          style={{ border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "white" }}
+          style={{ border: "1px solid var(--border-color)", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "var(--card)", color: "var(--foreground)", outline: "none" }}
         >
           {CHAPTERS.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
+            <option key={c.value} value={c.value} style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>{c.label}</option>
           ))}
         </select>
 
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          style={{ border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "white" }}
+          style={{ border: "1px solid var(--border-color)", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "var(--card)", color: "var(--foreground)", outline: "none" }}
         >
-          <option value="">Tüm Durumlar</option>
-          <option value="PENDING">Bekleyenler</option>
-          <option value="ACTIVE">Aktifler</option>
-          <option value="REJECTED">Reddedilenler</option>
+          <option value="" style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>Tüm Durumlar</option>
+          <option value="PENDING" style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>Bekleyenler</option>
+          <option value="ACTIVE" style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>Aktifler</option>
+          <option value="REJECTED" style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>Reddedilenler</option>
         </select>
 
         <button
           onClick={fetchUsers}
-          style={{ display: "flex", alignItems: "center", gap: "6px", border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "white", cursor: "pointer" }}
+          style={{ display: "flex", alignItems: "center", gap: "6px", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", backgroundColor: "var(--card)", color: "var(--foreground)", cursor: "pointer", transition: "background-color 0.2s" }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--dashboard-bg)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--card)"}
         >
           <RefreshCw size={14} />
           Yenile
@@ -138,18 +140,18 @@ export default function AdminPage() {
 
       {/* Kullanıcı Tablosu */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "48px", color: "#6b7280" }}>Yükleniyor...</div>
+        <div style={{ textAlign: "center", padding: "48px", color: "var(--muted-foreground)" }}>Yükleniyor...</div>
       ) : users.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "48px", color: "#6b7280", backgroundColor: "white", borderRadius: "12px" }}>
+        <div style={{ textAlign: "center", padding: "48px", color: "var(--muted-foreground)", backgroundColor: "var(--card)", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
           Bu filtreye uygun kullanıcı bulunamadı.
         </div>
       ) : (
-        <div style={{ backgroundColor: "white", borderRadius: "12px", boxShadow: "0 1px 4px rgba(0,0,0,0.08)", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "12px", boxShadow: "0 1px 4px rgba(0,0,0,0.08)", overflow: "hidden", border: "1px solid var(--border-color)" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+              <tr style={{ backgroundColor: "var(--dashboard-bg)", borderBottom: "1px solid var(--border-color)" }}>
                 {["Ad Soyad", "Email", "Rol", "Şube", "Durum", "Kayıt Tarihi", "İşlemler"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "#6b7280", textTransform: "uppercase" }}>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", fontWeight: "600", color: "var(--muted-foreground)", textTransform: "uppercase" }}>
                     {h}
                   </th>
                 ))}
@@ -157,29 +159,29 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {users.map((u, i) => (
-                <tr key={u.id} style={{ borderBottom: i < users.length - 1 ? "1px solid #f3f4f6" : "none" }}>
-                  <td style={{ padding: "12px 16px", fontSize: "14px", fontWeight: "500", color: "#111827" }}>{u.name}</td>
-                  <td style={{ padding: "12px 16px", fontSize: "14px", color: "#6b7280" }}>{u.email}</td>
+                <tr key={u.id} style={{ borderBottom: i < users.length - 1 ? "1px solid var(--border-color)" : "none" }}>
+                  <td style={{ padding: "12px 16px", fontSize: "14px", fontWeight: "500", color: "var(--foreground)" }}>{u.name}</td>
+                  <td style={{ padding: "12px 16px", fontSize: "14px", color: "var(--muted-foreground)" }}>{u.email}</td>
                   <td style={{ padding: "12px 16px" }}>
                     <select
                       value={u.role}
                       onChange={(e) => handleAction(u.id, "change-role", e.target.value)}
-                      style={{ border: "1px solid #d1d5db", borderRadius: "6px", padding: "4px 8px", fontSize: "13px", backgroundColor: "white" }}
+                      style={{ border: "1px solid var(--border-color)", borderRadius: "6px", padding: "4px 8px", fontSize: "13px", backgroundColor: "var(--card)", color: "var(--foreground)", outline: "none" }}
                     >
                       {ROLES.map((r) => (
-                        <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+                        <option key={r} value={r} style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>{ROLE_LABELS[r]}</option>
                       ))}
                     </select>
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "14px", color: "#6b7280" }}>
+                  <td style={{ padding: "12px 16px", fontSize: "14px", color: "var(--muted-foreground)" }}>
                     {u.chapter ? CHAPTERS.find(c => c.value === u.chapter)?.label || u.chapter : "—"}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
-                    <span style={{ backgroundColor: STATUS_COLORS[u.status] + "20", color: STATUS_COLORS[u.status], padding: "4px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>
+                    <span style={{ backgroundColor: `${STATUS_COLORS[u.status]}20`, color: STATUS_COLORS[u.status], padding: "4px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "600" }}>
                       {STATUS_LABELS[u.status]}
                     </span>
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "13px", color: "#6b7280" }}>
+                  <td style={{ padding: "12px 16px", fontSize: "13px", color: "var(--muted-foreground)" }}>
                     {new Date(u.createdAt * 1000).toLocaleDateString("tr-TR")}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
@@ -188,7 +190,7 @@ export default function AdminPage() {
                         <button
                           onClick={() => handleAction(u.id, "approve")}
                           disabled={actionLoading === u.id}
-                          style={{ display: "flex", alignItems: "center", gap: "4px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", cursor: "pointer" }}
+                          style={{ display: "flex", alignItems: "center", gap: "4px", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", cursor: "pointer", opacity: actionLoading === u.id ? 0.6 : 1 }}
                         >
                           <Check size={14} />
                           Onayla
@@ -198,7 +200,7 @@ export default function AdminPage() {
                         <button
                           onClick={() => handleAction(u.id, "reject")}
                           disabled={actionLoading === u.id}
-                          style={{ display: "flex", alignItems: "center", gap: "4px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", cursor: "pointer" }}
+                          style={{ display: "flex", alignItems: "center", gap: "4px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", cursor: "pointer", opacity: actionLoading === u.id ? 0.6 : 1 }}
                         >
                           <X size={14} />
                           Reddet

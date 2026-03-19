@@ -32,6 +32,9 @@ export default function DealsPage() {
   const [tempFilterOpenStatus, setTempFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
   const [submitting, setSubmitting] = useState(false);
   const filterWrapperRef = useRef<HTMLDivElement>(null);
+  const [companySearch, setCompanySearch] = useState('');
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
 
   const [newOffer, setNewOffer] = useState({
     companyId: '',
@@ -47,6 +50,15 @@ export default function DealsPage() {
   useEffect(() => {
     fetchData('', '');
     fetchCompanies();
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
+        setShowCompanyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -301,18 +313,61 @@ export default function DealsPage() {
       )}
 
       {/* Add Offer Modal */}
+     {/* Add Offer Modal */}
       <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Yeni Teklif Ekle" maxWidth="600px">
         <form className="modal__form" onSubmit={handleAddOffer}>
           <div className="modal__section">
             <h4 className="modal__section-title">Teklif Bilgileri</h4>
             <div className="modal__row">
-              <div className="modal__field">
+              
+              {/* Arama özellikli şirket seçimi bloğu */}
+              <div className="modal__field" ref={companyDropdownRef}>
                 <label className="modal__label modal__label--required">Şirket</label>
-                <select className="modal__select" value={newOffer.companyId} onChange={(e) => setNewOffer(prev => ({ ...prev, companyId: e.target.value }))} required>
-                  <option value="">Şirket seçin</option>
-                  {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="modal__input"
+                    placeholder="Şirket ara..."
+                    value={companySearch}
+                    onChange={(e) => {
+                      setCompanySearch(e.target.value);
+                      setNewOffer(prev => ({ ...prev, companyId: '' }));
+                      setShowCompanyDropdown(true);
+                    }}
+                    onFocus={() => setShowCompanyDropdown(true)}
+                    required={!newOffer.companyId}
+                  />
+                  {showCompanyDropdown && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0, maxHeight: '200px',
+                      overflowY: 'auto', backgroundColor: 'var(--dashboard-bg)', border: '1px solid var(--border-color)',
+                      borderRadius: '8px', zIndex: 50, marginTop: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                    }}>
+                      {companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).length > 0 ? (
+                        companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).map(company => (
+                          <div
+                            key={company.id}
+                            style={{ padding: '10px 12px', cursor: 'pointer', fontSize: '14px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-regular)' }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setNewOffer(prev => ({ ...prev, companyId: String(company.id) }));
+                              setCompanySearch(company.name);
+                              setShowCompanyDropdown(false);
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          >
+                            {company.name}
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ padding: '10px 12px', fontSize: '14px', color: 'var(--text-light)' }}>Şirket bulunamadı</div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+
               <div className="modal__field">
                 <label className="modal__label modal__label--required">Ürün</label>
                 <select className="modal__select" value={newOffer.product} onChange={(e) => setNewOffer(prev => ({ ...prev, product: e.target.value as OfferProduct }))}>
@@ -320,6 +375,7 @@ export default function DealsPage() {
                 </select>
               </div>
             </div>
+            
             <div className="modal__field">
               <label className="modal__label modal__label--required">Teklif Başlığı</label>
               <input type="text" className="modal__input" placeholder="Proje adı girin" value={newOffer.title} onChange={(e) => setNewOffer(prev => ({ ...prev, title: e.target.value }))} required />

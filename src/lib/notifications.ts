@@ -1,12 +1,15 @@
 import prisma from '@/lib/prisma';
+import { NotificationType } from '@prisma/client';
+// DİKKAT: Yanlışlıkla eklenen "import { title } from 'process';" satırını sildik!
 
 // Belirli bir şubedeki LCP/LCVP + tüm MCP/MCVP/ADMIN'lere bildirim gönder
 export async function notifyLeaders(
     chapter: string | null,
-    type: 'NEW_OFFER' | 'COMPANY_UPDATED' | 'NEW_USER' | 'USER_APPROVED' | 'USER_REJECTED',
+    type: NotificationType,
     title: string,
     message: string,
-    excludeUserId?: number
+    excludeUserId?: number,
+    companyId?: number
 ) {
     try {
         // MCP/MCVP/ADMIN - hepsine gönder
@@ -58,9 +61,10 @@ export async function notifyLeaders(
 // Tek bir kullanıcıya bildirim gönder
 export async function notifyUser(
     userId: number,
-    type: 'NEW_OFFER' | 'COMPANY_UPDATED' | 'NEW_USER' | 'USER_APPROVED' | 'USER_REJECTED',
+    type: NotificationType,
     title: string,
-    message: string
+    message: string,
+    companyId?: number
 ) {
     try {
         await prisma.notification.create({
@@ -81,8 +85,8 @@ export async function notifyUser(
 // Bir şirketin tüm menajerlerine bildirim gönder
 export async function notifyManagers(
     companyId: number,
-    type: 'NEW_OFFER' | 'COMPANY_UPDATED',
-    title: string,
+    type: NotificationType,
+    title: string, // <-- İŞTE BURASI EKSİKTİ, EKLEDİK! (3. parametre)
     message: string,
     excludeUserId?: number
 ) {
@@ -107,7 +111,7 @@ export async function notifyManagers(
             data: company.managers.map(m => ({
                 userId: m.id,
                 type,
-                title: `${company.name}: ${title}`,
+                title: `${company.name}: ${title}`, // Artık doğru title'ı kullanacak
                 message,
                 read: false,
                 createdAt: Math.floor(Date.now() / 1000),

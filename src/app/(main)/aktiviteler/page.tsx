@@ -49,6 +49,9 @@ const CHAPTER_LABELS: Record<string, string> = {
 
 export default function ActivitiesPage() {
   const { user } = useAuth() as any;
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState('');
+  const [creatingCompany, setCreatingCompany] = useState(false);
   const [selectedType, setSelectedType] = useState<ActivityType>('COLD_CALL');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
   const [notes, setNotes] = useState('');
@@ -67,6 +70,9 @@ export default function ActivitiesPage() {
   const [editNote, setEditNote] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const ITEMS_PER_PAGE = 6;
+  const [companySearch, setCompanySearch] = useState('');
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchCompanies();
@@ -84,6 +90,16 @@ export default function ActivitiesPage() {
   }, [openMenuId]);
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
+        setShowCompanyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     setCurrentPage(1);
   }, [filterType, searchQuery]);
 
@@ -91,7 +107,41 @@ export default function ActivitiesPage() {
     const res = await fetch('/api/companies');
     const data = await res.json();
     setCompanies(data.companies || []);
-    if (data.companies?.length > 0) setSelectedCompanyId(String(data.companies[0].id));
+    if (data.companies?.length > 0) {
+      setSelectedCompanyId(String(data.companies[0].id));
+      setCompanySearch(data.companies[0].name);
+    };
+  };
+  const handleQuickAddCompany = async () => {
+    if (!newCompanyName.trim()) return;
+    setCreatingCompany(true);
+
+    try {// Şirket ekleme API çağrısı
+      const res = await fetch('/api/companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCompanyName })
+      });
+      const result = await res.json();
+
+
+      if (res.ok) {
+        await fetchCompanies(); // Şirket listesini arka planda yenile
+        setSelectedCompanyId(String(result.data?.id)); // Yeni eklenen şirketi seç
+        setCompanySearch(result.data?.name); // Input alanına yeni adı yaz
+        setShowAddCompanyModal(false); // Modalı kapat
+      }else {
+      // Sunucu hata dönerse kullanıcıyı bilgilendir
+      alert(result.error || "Şirket eklenemedi.");
+    }
+    } catch (error) {
+    // Ağ hatası veya kod çökmesi durumunda burası çalışır
+      console.error("Şirket ekleme hatası:", error);
+    alert("Bir bağlantı hatası oluştu.");
+    } finally {
+      // HATA ALSA DA ALMASA DA: Buton kilidini kaldır
+      setCreatingCompany(false);
+    }
   };
 
   const fetchActivities = async () => {
@@ -106,8 +156,8 @@ export default function ActivitiesPage() {
     e.preventDefault();
     if (!selectedCompanyId) return;
     setSubmitting(true);
-
-    const res = await fetch('/api/activities', {
+    try {
+      const res = await fetch('/api/activities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -115,14 +165,22 @@ export default function ActivitiesPage() {
         note: notes,
         companyId: selectedCompanyId,
         date: new Date().toISOString(),
-      }),
-    });
+        isPlanned: false
+        }),
+      });
 
-    if (res.ok) {
-      setNotes('');
-      fetchActivities();
+      if (res.ok) {
+        setNotes('');
+        fetchActivities();
+      } else {
+      const errorData = await res.json();
+      alert(errorData.error || "Aktivite kaydedilemedi.");
     }
-    setSubmitting(false);
+    } catch (error) {
+      console.error("Gönderim hatası:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -172,17 +230,77 @@ export default function ActivitiesPage() {
 
           <div className="activity-form__group">
             <label className="activity-form__label">Şirket Seçimi</label>
-            <select
-              className="activity-form__select"
-              value={selectedCompanyId}
-              onChange={(e) => setSelectedCompanyId(e.target.value)}
-              required
-            >
-              <option value="">Şirket seçin...</option>
-              {companies.map(company => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                className="activity-form__select" // input olmasına rağmen aynı stili alması için
+                placeholder="Şirket ara veya seçin..."
+                value={companySearch}
+                onChange={(e) => {
+                  setCompanySearch(e.target.value);
+                  setSelectedCompanyId(''); // Yazı değiştiğinde seçili id'yi sıfırla
+                  setShowCompanyDropdown(true);
+                }}
+                onFocus={() => setShowCompanyDropdown(true)}
+                required={!selectedCompanyId} // ID seçilmemişse formu göndermeyi engelle
+              />
+              {showCompanyDropdown && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: 0, right: 0, maxHeight: '200px',
+                  overflowY: 'auto', backgroundColor: 'var(--dashboard-bg)', border: '1px solid var(--border-color)',
+                  borderRadius: '8px', zIndex: 50, marginTop: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                }}>
+
+                  {/* 1. Kısım: YENİ EKLENEN BUTON (Artık en üstte!) */}
+                  <div
+                    style={{
+                      padding: '10px 12px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      borderBottom: '1px solid var(--border-color)', /* borderTop yerine borderBottom yaptık */
+                      color: '#037EF3',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setNewCompanyName(companySearch); // O an inputta ne yazıyorsa modal'a kopyala
+                      setShowCompanyDropdown(false);
+                      setShowAddCompanyModal(true); // Modalı aç
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <Building2 size={16} /> Yeni Şirket Ekle: "{companySearch || '...'}"
+                  </div>
+
+                  {/* 2. Kısım: Mevcut Şirketleri Listeleme */}
+                  {companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).length > 0 ? (
+                    companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).map(company => (
+                      <div
+                        key={company.id}
+                        style={{ padding: '10px 12px', cursor: 'pointer', fontSize: '14px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-regular)' }}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Inputun focusunu kaybetmesini engeller
+                          setSelectedCompanyId(String(company.id));
+                          setCompanySearch(company.name);
+                          setShowCompanyDropdown(false);
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        {company.name}
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '10px 12px', fontSize: '14px', color: 'var(--text-light)' }}>Şirket bulunamadı</div>
+                  )}
+
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="activity-form__group">
@@ -256,7 +374,7 @@ export default function ActivitiesPage() {
                   <th>Tür</th>
                   <th>Tarih</th>
                   <th>Not</th>
-                  <th></th>
+                  <th>İşlemler</th>
                 </tr>
               </thead>
               <tbody>
@@ -278,7 +396,7 @@ export default function ActivitiesPage() {
                     <td className="activity-log__date">
                       {activity.createdAt ? new Date(activity.createdAt).toLocaleDateString('tr-TR') : '—'}
                     </td>
-                    <td className="activity-log__note">{activity.notes || '—'}</td>
+                    <td className="activity-log__note">{activity.note || '—'}</td>
                     <td className="activity-log__actions">
                       <div className="activity-log__menu-wrapper" ref={openMenuId === String(activity.id) ? menuRef : null}>
                         <button className="activity-log__action-btn" onClick={() => setOpenMenuId(openMenuId === String(activity.id) ? null : String(activity.id))}>
@@ -405,6 +523,37 @@ export default function ActivitiesPage() {
         cancelText="İptal"
         type="danger"
       />
+      {/* Hızlı Şirket Ekleme Modalı */}
+      {showAddCompanyModal && (
+        <>
+          <div className="activity-modal__overlay" onClick={() => setShowAddCompanyModal(false)} />
+          <div className="activity-modal">
+            <div className="activity-modal__header">
+              <h2 className="activity-modal__title">Hızlı Şirket Ekle</h2>
+              <button className="activity-modal__close" onClick={() => setShowAddCompanyModal(false)}><X /></button>
+            </div>
+            <div className="activity-modal__content">
+              <div className="activity-modal__form-group">
+                <label className="activity-modal__form-label">Şirket Adı</label>
+                <input
+                  type="text"
+                  className="activity-form__textarea"
+                  style={{ minHeight: '40px', padding: '8px 12px' }}
+                  value={newCompanyName}
+                  onChange={(e) => setNewCompanyName(e.target.value)}
+                  placeholder="Örn: ABC A.Ş."
+                />
+              </div>
+            </div>
+            <div className="activity-modal__actions">
+              <button className="activity-modal__btn activity-modal__btn--secondary" onClick={() => setShowAddCompanyModal(false)}>İptal</button>
+              <button className="activity-modal__btn activity-modal__btn--primary" onClick={handleQuickAddCompany} disabled={creatingCompany}>
+                {creatingCompany ? 'Ekleniyor...' : 'Kaydet ve Seç'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Filter Modal */}
       {showFilter && (

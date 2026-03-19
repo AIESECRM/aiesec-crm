@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const where: any = {};
 
   if (companyId) {
-    where.companyId = companyId;
+    where.companyId = parseInt(companyId, 10);
   } else if (!NATIONAL_ROLES.includes(user.role)) {
     where.company = { chapter: user.chapter };
   }

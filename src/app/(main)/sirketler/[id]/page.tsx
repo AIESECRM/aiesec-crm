@@ -1,5 +1,5 @@
 'use client';
-
+import { useAuth } from '@/contexts/AuthContext';
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
@@ -33,6 +33,10 @@ const DURATION_LABELS: Record<string, string> = { SHORT: 'Kısa Dönem', MEDIUM:
 const OPEN_STATUS_LABELS: Record<string, string> = { NEW_OPEN: 'New Open', RE_OPEN: 'Re Open' };
 
 export default function CompanyDetailPage() {
+  const { user } = useAuth() as any;
+  const [showAddManagerModal, setShowAddManagerModal] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [selectedNewManagerId, setSelectedNewManagerId] = useState('');
   const router = useRouter();
   const params = useParams();
   const [company, setCompany] = useState<any>(null);
@@ -73,7 +77,7 @@ export default function CompanyDetailPage() {
     setCurrentPage(1);
   }, [searchQuery]);
 
- const fetchData = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       // fetch isteklerine { cache: 'no-store' } ekliyoruz
@@ -102,6 +106,24 @@ export default function CompanyDetailPage() {
       setLoading(false);
     }
   };
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      const res = await fetch(`/api/companies/${params.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Sadece arayüzdeki state'i güncelliyoruz, sayfayı yenilemeden yeni durumu gösterir
+        setCompany({ ...company, status: newStatus });
+      }
+    } catch (error) {
+      console.error("Statü güncellenirken hata:", error);
+    }
+  };
+
   const handleDeleteActivity = async () => {
     if (!deleteActivityModal.activity) return;
     await fetch(`/api/activities/${deleteActivityModal.activity.id}`, { method: 'DELETE' });
@@ -124,6 +146,49 @@ export default function CompanyDetailPage() {
     await fetch(`/api/companies/${params.id}`, { method: 'DELETE' });
     router.push('/sirketler');
   };
+  const currentUserRole = user?.role || 'TM';
+  const canAddManager = ['ADMIN', 'MCP', 'MCVP', 'LCP', 'LCVP', 'TL'].includes(currentUserRole);
+
+  const handleOpenAddManager = async () => {
+    setShowAddManagerModal(true);
+    const res = await fetch('/api/admin/users');
+    const data = await res.json();
+
+    const filtered = (data.users || []).filter((u: any) => {
+      // 1. Zaten menajerse listeden çıkar
+      if (company?.managers?.find((m: any) => m.id === u.id)) return false;
+
+      // 2. Ulusal yetkili (ADMIN, MCP) değilse, sadece kendi şubesini görsün
+      if (!['ADMIN', 'MCP', 'MCVP'].includes(currentUserRole) && u.chapter !== user?.chapter) return false;
+
+      // 3. Rol Hiyerarşisi Kontrolü
+      if (['ADMIN', 'MCP', 'MCVP'].includes(currentUserRole)) return true; // Ulusal herkesi atayabilir
+      if (['LCP', 'LCVP'].includes(currentUserRole) && ['TL', 'TM'].includes(u.role)) return true; // LCP/LCVP -> TL/TM atayabilir
+      if (currentUserRole === 'TL' && u.role === 'TM') return true; // TL -> Sadece TM atayabilir
+
+      return false;
+    });
+    setAvailableUsers(filtered);
+  };
+
+  const handleAddManagerSubmit = async () => {
+    if (!selectedNewManagerId) return;
+    const currentManagerIds = company.managers?.map((m: any) => m.id) || [];
+    const newManagerIds = [...currentManagerIds, parseInt(selectedNewManagerId)];
+
+    const res = await fetch(`/api/companies/${company.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ managerIds: newManagerIds })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setCompany(data.company); // Sayfayı yenilemeden menajerleri göster
+      setShowAddManagerModal(false);
+      setSelectedNewManagerId('');
+    }
+  };
 
   const filteredActivities = activities.filter(activity => {
     if (!searchQuery.trim()) return true;
@@ -141,7 +206,7 @@ export default function CompanyDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>; 
+  if (loading) return <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>;
 
   if (!company) return (
     <div className="company-detail">
@@ -172,9 +237,25 @@ export default function CompanyDetailPage() {
             <div className="company-detail__title">
               <h1 className="company-detail__name">{company.name}</h1>
               <div className="company-detail__meta">
-                <span className="company-detail__meta-item">
-                  {STATUS_LABELS[company.status] || company.status}
-                </span>
+                <select
+                  className="company-detail__meta-item"
+                  style={{
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    background: '#ffffff',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    fontSize: '14px',
+                    color: '#374151'
+                  }}
+                  value={company.status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                >
+                  {Object.entries(STATUS_LABELS).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
                 {company.chapter && (
                   <>
                     <span>•</span>
@@ -210,6 +291,62 @@ export default function CompanyDetailPage() {
             </div>
           )}
         </div>
+
+        {/* YENİ EKLENEN KISIM: Menajerler */}
+        <div className="company-detail__card">
+          <div className="company-detail__card-header">
+            <h3 className="company-detail__card-title">Menajerler</h3>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div className="company-detail__card-count">
+                <Shield className="company-detail__card-count-icon" size={16} />
+                {company.managers?.length || 0}
+              </div>
+              {canAddManager && (
+                <button
+                  onClick={handleOpenAddManager}
+                  style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <Plus size={14} /> Ekle
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="company-detail__contact-list">
+            {company.managers && company.managers.length > 0 ? company.managers.map((manager: any) => (
+              <div key={manager.id} className="company-detail__contact-item">
+                <div className="company-detail__contact-left">
+                  <div className="company-detail__contact-avatar">
+                    {manager.image ? (
+                      <img
+                        src={manager.image}
+                        alt={manager.name}
+                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <User className="company-detail__contact-avatar-icon" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="company-detail__contact-name">{manager.name}</div>
+                    <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                      {manager.role || 'Menajer'} {manager.chapter ? `• ${manager.chapter}` : ''}
+                    </div>
+                  </div>
+                </div>
+                <div className="company-detail__contact-actions">
+                  {manager.email && (
+                    <a href={`mailto:${manager.email}`} className="company-detail__contact-action" title="E-posta Gönder">
+                      <Mail className="company-detail__contact-action-icon" size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )) : (
+              <p style={{ color: '#6b7280', fontSize: '14px', padding: '8px' }}>Bu şirkete atanmış menajer bulunmuyor.</p>
+            )}
+          </div>
+        </div>
+        {/* YENİ EKLENEN KISIM SONU */}
 
         {/* Contacts */}
         <div className="company-detail__card">
@@ -286,12 +423,12 @@ export default function CompanyDetailPage() {
                 <FileText className="company-detail__card-count-icon" />
                 {documents.length}
               </div>
-              <button 
+              <button
                 onClick={() => setShowUploadModal(true)}
                 className="company-detail__add-doc-btn"
-                style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
+                style={{ background: '#037EF3', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s shadow-sm hover:bg-[#0266c8] active:scale-95' }}
               >
-                <Plus size={16} /> Yeni Doküman Ekle
+                <Plus size={16} /> Ekle
               </button>
             </div>
           </div>
@@ -309,9 +446,9 @@ export default function CompanyDetailPage() {
                     </div>
                   </div>
                 </div>
-                <a 
-                  href={doc.url} 
-                  target="_blank" 
+                <a
+                  href={doc.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   style={{ fontWeight: '500', fontSize: '12px', color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
@@ -521,6 +658,35 @@ export default function CompanyDetailPage() {
         cancelText="İptal"
         type="danger"
       />
+      {/* Menajer Ekle Modalı */}
+      {showAddManagerModal && (
+        <>
+          <div className="company-detail__modal-overlay" onClick={() => setShowAddManagerModal(false)} />
+          <div className="company-detail__activity-modal">
+            <div className="company-detail__activity-modal-header">
+              <h2 className="company-detail__activity-modal-title">Menajer Ata</h2>
+              <button className="company-detail__activity-modal-close" onClick={() => setShowAddManagerModal(false)}><X /></button>
+            </div>
+            <div className="company-detail__activity-modal-content" style={{ padding: '24px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-regular)' }}>Üye Seçin</label>
+              <select
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--neutral-light)', color: 'var(--text-regular)', fontSize: '14px', outline: 'none' }}
+                value={selectedNewManagerId}
+                onChange={(e) => setSelectedNewManagerId(e.target.value)}
+              >
+                <option value="">Atanacak üyeyi seçin...</option>
+                {availableUsers.map(u => (
+                  <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
+                ))}
+              </select>
+            </div>
+            <div className="company-detail__activity-modal-actions">
+              <button className="company-detail__activity-modal-btn company-detail__activity-modal-btn--secondary" onClick={() => setShowAddManagerModal(false)}>İptal</button>
+              <button className="company-detail__activity-modal-btn company-detail__activity-modal-btn--primary" onClick={handleAddManagerSubmit}>Kaydet</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Upload Document Modal */}
       {showUploadModal && (
@@ -542,17 +708,17 @@ export default function CompanyDetailPage() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ name, url })
                     });
-                    
+
                     if (res.ok) {
                       const data = await res.json();
-                      
+
                       // 1. Yeni dökümanı anında mevcut listeye ekle (State Güncellemesi)
                       // API'den dönen data.document objesini listeye dahil ediyoruz
                       setDocuments(prevDocs => [...prevDocs, data.document]);
-                      
+
                       // 2. Modalı kapat
                       setShowUploadModal(false);
-                      
+
                       // Not: fetchData() çağrısını kaldırdık. Böylece sayfa loading ekranına 
                       // düşmeyecek ve yeni doküman anında listede belirecektir.
                     } else {

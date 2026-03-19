@@ -3,11 +3,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Search, Bell, User, ChevronDown, Building2, DollarSign,
-  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon
+  X, UserPlus, CheckCircle2, RefreshCw, Sun, Moon, Loader2,
+  CalendarClock
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearch } from '@/contexts/SearchContext';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 import ProfileModal from '@/components/common/ProfileModal/ProfileModal';
 import Avatar from '@/components/common/Avatar';
 import './Header.css';
@@ -34,6 +36,7 @@ const notifIcons: Record<string, React.ReactNode> = {
   NEW_USER: <UserPlus size={16} />,
   USER_APPROVED: <CheckCircle2 size={16} />,
   USER_REJECTED: <X size={16} />,
+  NEW_ACTIVITY: <CalendarClock size={16} />,
 };
 
 const notifColors: Record<string, string> = {
@@ -42,25 +45,29 @@ const notifColors: Record<string, string> = {
   NEW_USER: '#F59E0B',
   USER_APPROVED: '#22C55E',
   USER_REJECTED: '#EF4444',
+  NEW_ACTIVITY: '#0ea5e9',
 };
 
 export default function Header() {
+  const router = useRouter();
   const { user, status } = useAuth();
-  const { query, setQuery, results, placeholder, clearSearch, navigateToResult } = useSearch();
+  const { query, setQuery, results, isSearching, placeholder, clearSearch, navigateToResult } = useSearch();
+
   const [showResults, setShowResults] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
   const searchRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { setSelectedIndex(-1); }, [results]);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -69,13 +76,13 @@ export default function Header() {
       const data = await res.json();
       setNotifications(data.notifications || []);
       setUnreadCount(data.unreadCount || 0);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 30000); // 30 saniyede bir
+      const interval = setInterval(fetchNotifications, 30000);
       return () => clearInterval(interval);
     }
   }, [user, fetchNotifications]);
@@ -95,7 +102,31 @@ export default function Header() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') { setShowResults(false); inputRef.current?.blur(); }
-    if (e.key === 'Enter' && results.length > 0) { navigateToResult(results[0]); setShowResults(false); }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev < results.length - 1 ? prev + 1 : prev));
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev > 0 ? prev - 1 : prev));
+    }
+    if (e.key === 'Enter') {
+      const target = selectedIndex >= 0 ? results[selectedIndex] : results[0];
+      if (target) {
+        navigateToResult(target);
+        setShowResults(false);
+      }
+    }
+  };
+
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim()) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return parts.map((part, i) =>
+      part.toLowerCase() === highlight.toLowerCase()
+        ? <b key={i} className="header__highlight">{part}</b>
+        : part
+    );
   };
 
   const markAsRead = async (id: number) => {
@@ -106,6 +137,18 @@ export default function Header() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notificationId: id })
     });
+  };
+  const handleNotificationClick = async (n: any) => {
+    // Eğer bildirim okunmadıysa önce okundu olarak işaretle
+    if (!n.read) await markAsRead(n.id);
+
+    // Bildirim objesinde companyId dönüyorsa şirkete yönlendir
+    if (n.companyId) {
+      router.push(`/sirketler/${n.companyId}`);
+      setShowNotifications(false); // Menüyü kapat
+    } else {
+      console.warn("HATA: Yönlendirme yapılamadı çünkü n.companyId bulunamadı!");
+    }
   };
 
   const markAllAsRead = async () => {
@@ -132,7 +175,11 @@ export default function Header() {
     <header className="header">
       <div className="header__search" ref={searchRef}>
         <div className="header__search-wrapper">
-          <Search className="header__search-icon" />
+          {isSearching ? (
+            <Loader2 className="header__search-icon header__search-icon--spin" />
+          ) : (
+            <Search className="header__search-icon" />
+          )}
           <input
             ref={inputRef}
             type="text"
@@ -153,25 +200,25 @@ export default function Header() {
         {showResults && query.length >= 2 && (
           <div className="header__search-results">
             {results.length > 0 ? (
-              <>
-                <div className="header__results-header"><span>{results.length} sonuç bulundu</span></div>
-                <div className="header__results-list">
-                  {results.map((result) => (
-                    <button key={`${result.type}-${result.id}`} className="header__result-item"
-                      onClick={() => { navigateToResult(result); setShowResults(false); }}>
-                      {typeIcons[result.type]}
-                      <div className="header__result-content">
-                        <span className="header__result-title">{result.title}</span>
-                        <span className="header__result-subtitle">{result.subtitle}</span>
-                      </div>
-                      <span className="header__result-type">{typeLabels[result.type]}</span>
-                    </button>
-                  ))}
-                </div>
-              </>
-            ) : (
+              <div className="header__results-list">
+                {results.map((result, index) => (
+                  <button
+                    key={`${result.type}-${result.id}`}
+                    className={`header__result-item ${selectedIndex === index ? 'header__result-item--selected' : ''}`}
+                    onClick={() => { navigateToResult(result); setShowResults(false); }}
+                    onMouseEnter={() => setSelectedIndex(index)}
+                  >
+                    {typeIcons[result.type]}
+                    <div className="header__result-content">
+                      <span className="header__result-title">{highlightText(result.title, query)}</span>
+                      <span className="header__result-subtitle">{result.subtitle}</span>
+                    </div>
+                    <span className="header__result-type">{typeLabels[result.type]}</span>
+                  </button>
+                ))}
+              </div>
+            ) : !isSearching && (
               <div className="header__results-empty">
-                <Search className="header__results-empty-icon" />
                 <span>Sonuç bulunamadı</span>
               </div>
             )}
@@ -181,11 +228,7 @@ export default function Header() {
 
       <div className="header__actions">
         {mounted && (
-          <button 
-            className="header__theme-toggle"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title="Temayı Değiştir"
-          >
+          <button className="header__theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
         )}
@@ -194,7 +237,6 @@ export default function Header() {
           <button className="header__notification" onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) fetchNotifications(); }}>
             <Bell className="header__notification-icon" />
             {unreadCount > 0 && <span className="header__notification-badge">{unreadCount}</span>}
-            <span className="header__notification-text">{unreadCount > 0 ? `${unreadCount} Yeni Bildirim` : 'Bildirimler'}</span>
           </button>
 
           {showNotifications && (
@@ -219,16 +261,10 @@ export default function Header() {
 
               <div className="header__notifications-list">
                 {notifications.length === 0 ? (
-                  <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
-                    Henüz bildirim yok.
-                  </div>
+                  <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>Henüz bildirim yok.</div>
                 ) : notifications.map((n: any) => (
-                  <div key={n.id}
-                    className={`header__notification-item ${!n.read ? 'header__notification-item--unread' : ''}`}
-                    onClick={() => !n.read && markAsRead(n.id)}
-                  >
-                    <div className="header__notification-item-icon"
-                      style={{ backgroundColor: `${notifColors[n.type]}20`, color: notifColors[n.type] }}>
+                  <div key={n.id} className={`header__notification-item ${!n.read ? 'header__notification-item--unread' : ''}`} onClick={() => handleNotificationClick(n)}>
+                    <div className="header__notification-item-icon" style={{ backgroundColor: `${notifColors[n.type]}20`, color: notifColors[n.type] }}>
                       {notifIcons[n.type] || <Bell size={16} />}
                     </div>
                     <div className="header__notification-item-content">
@@ -242,10 +278,6 @@ export default function Header() {
                   </div>
                 ))}
               </div>
-
-              <div className="header__notifications-footer">
-                <button className="header__notifications-view-all">Tüm Bildirimleri Gör</button>
-              </div>
             </div>
           )}
         </div>
@@ -255,22 +287,14 @@ export default function Header() {
         {user && (
           <div className="header__user" onClick={() => setShowProfileModal(true)}>
             <div className="header__user-info">
-              <span className="header__user-greeting">
-                Merhaba, <span className="header__user-name">{user.name}</span>
-              </span>
+              <span className="header__user-greeting">Merhaba, <span className="header__user-name">{user.name}</span></span>
               <span className="header__user-role">{roleLabels[user.role] || user.role}</span>
             </div>
-            <Avatar 
-              src={user.image} 
-              alt={user.name} 
-              size={32} 
-              className="header__user-avatar" 
-            />
+            <Avatar src={user.image} alt={user.name} size={32} />
             <ChevronDown className="header__dropdown-icon" />
           </div>
         )}
       </div>
-
       <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </header>
   );

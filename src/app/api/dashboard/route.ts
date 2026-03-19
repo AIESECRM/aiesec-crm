@@ -117,7 +117,20 @@ export async function GET(req: NextRequest) {
             offerValue: chOfferValue,
             activeUsers: chUsers.length,
         };
-    }).sort((a, b) => b.totalActivities - a.totalActivities);
+    }).sort((a, b) => {
+        // 1. Kriter: Toplam Teklif Değeri (En yüksekten en düşüğe)
+        if (b.offerValue !== a.offerValue) {
+            return b.offerValue - a.offerValue; // b - a ifadesi büyükten küçüğe sıralama yapar
+        }
+        
+        // 2. Kriter: Eşitlik durumunda Dönüşüm Oranı (En yüksekten en düşüğe)
+        if (b.conversionRate !== a.conversionRate) {
+            return b.conversionRate - a.conversionRate;
+        }
+        
+        // 3. Kriter: Her ikisi de eşitse Toplam Aktivite Sayısı (En yüksekten en düşüğe)
+        return b.totalActivities - a.totalActivities;
+    });
 
     const pipeline = [
         { status: "POSITIVE", label: "Pozitif", count: positiveCompanies, color: "#22C55E" },

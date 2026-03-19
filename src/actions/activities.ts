@@ -1,6 +1,7 @@
 ﻿'use server'
 
 import prisma from '@/lib/prisma'
+import { notifyUser, notifyManagers } from "@/lib/notifications";
 
 export async function getActivitiesByCompany(companyId: string, userId: string) {
     try {
@@ -47,16 +48,53 @@ export async function getAllActivities(userId: string) {
 export async function createActivity(data: any, userId: string) {
     try {
         if (!userId || !data.companyId) return null;
+
+        // 1. Tarihi ayarla: Gelen bir tarih varsa onu, yoksa şu anki zamanı kullan
+        const activityDate = data.date ? Math.floor(new Date(data.date).getTime() / 1000) : Math.floor(Date.now() / 1000);
+
+        // 2. Aktiviteyi oluştur (isPlanned desteği eklendi)
         const newActivity = await prisma.activity.create({
             data: {
-                companyId: parseInt(data.companyId),
+                companyId: parseInt(data?.companyId),
                 userId: parseInt(userId),
                 type: data.type || 'COLD_CALL',
                 note: data.notes || data.note || '',
-                date: Math.floor(Date.now() / 1000),
+                date: activityDate,
+                isPlanned: data.isPlanned || false, // EĞER PLANLIYSA TRUE KAYDEDER
                 createdAt: Math.floor(Date.now() / 1000),
             }
         });
+
+        // 3. Menajerlere genel bildirim
+        await notifyManagers(
+            parseInt(data.companyId),
+            'COMPANY_UPDATED',
+            'Yeni Aktivite Kaydı',
+            'Yeni bir aktivite girildi.',
+            parseInt(userId)
+        );
+
+        // 4. Hedef Kullanıcıyı Belirle ve Bildirim Gönder
+        const targetUserId = data.assignedUserId ? parseInt(data.assignedUserId) : parseInt(userId);
+
+        if (data.isPlanned && targetUserId) {
+            // Planlı aktiviteyse yeni bildirim türümüzü kullan
+            await notifyUser(
+                targetUserId,
+                'NEW_ACTIVITY',
+                'Yeni Aktivite Planlandı 📅',
+                `Size ileri tarihli yeni bir aktivite atandı.`
+            );
+        } else if (targetUserId !== parseInt(userId)) {
+            // Planlı değil ama başkasına atanmışsa
+            await notifyUser(
+                targetUserId,
+                'COMPANY_UPDATED',
+                'Yeni Görev Atandı',
+                `Size yeni bir aktivite atandı.`
+            );
+        }
+
         return newActivity;
     } catch (error) {
         console.error('Failed to create activity:', error);
@@ -71,6 +109,8 @@ export async function updateActivity(id: string, data: any, userId: string) {
             data: {
                 type: data.type,
                 note: data.notes || data.note,
+                isPlanned: data.isPlanned, // Anasayfadan tamamlandığında 'false' yapabilmek için eklendi
+                date: data.date,           // Tamamlanma tarihini güncelleyebilmek için eklendi
             }
         });
         return updated;

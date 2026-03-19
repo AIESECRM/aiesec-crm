@@ -203,10 +203,13 @@ export default function ExecutiveDashboard() {
                     <div className="exec__chart" style={{ height: 200 }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={weeklyTrend} margin={{ top: 5, right: 5, left: -20, bottom: 0 }} barSize={16} barGap={2}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
-                                <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#858585' }} tickLine={false} axisLine={false} />
-                                <YAxis tick={{ fontSize: 11, fill: '#858585' }} tickLine={false} axisLine={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color-light, #333)" vertical={false} />
+                                {/* fill renkleri temaya duyarlı hale getirildi */}
+                                <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'var(--text-muted, #858585)' }} tickLine={false} axisLine={false} />
+                                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted, #858585)' }} tickLine={false} axisLine={false} />
                                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.03)' }} />
+                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--dashboard-bg, rgba(255,255,255,0.05))' }} />
+                                
                                 <Bar dataKey="coldCalls" name="Arama" fill="#037EF3" radius={[3, 3, 0, 0]} />
                                 <Bar dataKey="meetings" name="Toplantı" fill="#22C55E" radius={[3, 3, 0, 0]} />
                                 <Bar dataKey="emails" name="Email" fill="#F59E0B" radius={[3, 3, 0, 0]} />
