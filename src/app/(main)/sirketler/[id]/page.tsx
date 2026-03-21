@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import { EditCompanyModal } from '@/components/companies';
 import './page.css';
 
 const ACTIVITY_LABELS: Record<string, string> = {
@@ -33,7 +34,7 @@ const DURATION_LABELS: Record<string, string> = { SHORT: 'Kısa Dönem', MEDIUM:
 const OPEN_STATUS_LABELS: Record<string, string> = { NEW_OPEN: 'New Open', RE_OPEN: 'Re Open' };
 
 export default function CompanyDetailPage() {
-  const { user } = useAuth() as any;
+  const { user, permissions } = useAuth() as any;
   const [showAddManagerModal, setShowAddManagerModal] = useState(false);
   const [availableUsers, setAvailableUsers] = useState<any[]>([]);
   const [selectedNewManagerId, setSelectedNewManagerId] = useState('');
@@ -46,6 +47,7 @@ export default function CompanyDetailPage() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [detailModal, setDetailModal] = useState<{ isOpen: boolean; activity: any }>({ isOpen: false, activity: null });
   const [editModal, setEditModal] = useState<{ isOpen: boolean; activity: any }>({ isOpen: false, activity: null });
@@ -222,6 +224,12 @@ export default function CompanyDetailPage() {
           Geri Dön
         </button>
         <div className="company-detail__actions">
+          {(permissions?.canEditCompany !== false) && (
+            <button className="company-detail__action-btn company-detail__action-btn--primary" onClick={() => setShowEditModal(true)} style={{ marginRight: '8px', background: '#037EF3', color: 'white', border: 'none' }}>
+              <Edit3 className="company-detail__action-icon" size={16} />
+              Düzenle
+            </button>
+          )}
           <button className="company-detail__action-btn company-detail__action-btn--outline" onClick={() => setShowSettingsModal(true)}>
             <Settings className="company-detail__action-icon" />
             Şirket Ayarları
@@ -747,6 +755,19 @@ export default function CompanyDetailPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Edit Company Modal */}
+      {showEditModal && company && (
+        <EditCompanyModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          company={company}
+          onSuccess={() => {
+            setShowEditModal(false);
+            fetchData();
+          }}
+        />
       )}
     </div>
   );

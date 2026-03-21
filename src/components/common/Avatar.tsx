@@ -61,7 +61,9 @@ export default function Avatar({ src, alt, size = 40, className, style, fallback
     ...style
   };
 
-  const imageSrc = src || '';
+  const imageSrc = src 
+    ? (src.includes('cdn.aiesecrm.com') ? `/api/image-proxy?url=${encodeURIComponent(src)}` : src) 
+    : '';
 
   if (!src || error) {
     return (

@@ -21,6 +21,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import Avatar from '@/components/common/Avatar';
 import './CompanySidebar.css';
 import { generateEmailContent, summarizeMeetingNotes } from '@/actions/ai';
+import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 
 const ACTIVITY_LABELS: Record<string, string> = {
   COLD_CALL: 'Cold Call',
@@ -37,6 +38,7 @@ interface CompanySidebarProps {
   recentActivities?: Activity[];
   onViewProfile?: () => void;
   onManageActivities?: () => void;
+  onUpdate?: () => void;
 }
 
 function formatRelativeTime(date: Date | number): string {
@@ -56,10 +58,12 @@ export default function CompanySidebar({
   company,
   recentActivities = [],
   onViewProfile,
-  onManageActivities
+  onManageActivities,
+  onUpdate
 }: CompanySidebarProps) {
   const { permissions } = useAuth();
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [showEditModal, setShowEditModal] = React.useState(false);
 
   const handleGenerateEmail = async () => {
     setIsGenerating(true);
@@ -117,7 +121,7 @@ export default function CompanySidebar({
         <div className="company-sidebar__section-header">
           <h3 className="company-sidebar__section-title">İletişim Bilgileri</h3>
           {permissions.canEditCompany && (
-            <button className="company-sidebar__section-edit">
+            <button className="company-sidebar__section-edit" onClick={() => setShowEditModal(true)}>
               <Edit3 className="company-sidebar__section-edit-icon" />
             </button>
           )}
@@ -254,6 +258,19 @@ export default function CompanySidebar({
           {isGenerating ? 'Hazırlanıyor...' : 'AI Toplantı Özeti Çıkart'}
         </button>
       </div>
+
+      {showEditModal && (
+        <EditCompanyModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          company={company}
+          onSuccess={() => {
+            setShowEditModal(false);
+            if (onUpdate) onUpdate();
+            else window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }
