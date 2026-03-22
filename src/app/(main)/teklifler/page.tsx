@@ -212,56 +212,13 @@ export default function DealsPage() {
           <h1 className="deals-page__title-text">Satışlar</h1>
         </div>
         <div className="deals-page__actions">
-          <div className="deals-page__filter-wrapper" ref={filterWrapperRef}>
-            <button
-              className={`deals-page__filter-btn ${filterProduct || filterOpenStatus ? 'deals-page__filter-btn--active' : ''}`}
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <Filter className="deals-page__filter-btn-icon" />
-              Filtrele {filterProduct || filterOpenStatus ? '●' : ''}
-            </button>
-            {showFilter && (
-              <div className="deals-page__filter-dropdown">
-                <div className="filter-panel">
-                  <div className="filter-panel__header">
-                    <h3 className="filter-panel__title">Filtrele</h3>
-                    <button className="filter-panel__close" onClick={() => setShowFilter(false)}><X /></button>
-                  </div>
-                  <div className="filter-panel__group">
-                    <label className="filter-panel__label">Ürün</label>
-                    <select
-                      className="filter-panel__select"
-                      value={tempFilterProduct}
-                      onChange={(e) => setTempFilterProduct(e.target.value as OfferProduct | '')}
-                    >
-                      <option value="">Tümü</option>
-                      {PRODUCT_OPTIONS.map(p => <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>)}
-                    </select>
-                  </div>
-                  <div className="filter-panel__group">
-                    <label className="filter-panel__label">Durum</label>
-                    <select
-                      className="filter-panel__select"
-                      value={tempFilterOpenStatus}
-                      onChange={(e) => setTempFilterOpenStatus(e.target.value as OfferOpenStatus | '')}
-                    >
-                      <option value="">Tümü</option>
-                      <option value="NEW_OPEN">New Open</option>
-                      <option value="RE_OPEN">Re Open</option>
-                    </select>
-                  </div>
-                  <div className="filter-panel__actions">
-                    <button className="filter-panel__btn filter-panel__btn--primary" onClick={handleApplyFilter}>
-                      Uygula
-                    </button>
-                    <button className="filter-panel__btn filter-panel__btn--secondary" onClick={handleResetFilter}>
-                      Temizle
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          <button
+            className={`deals-page__filter-btn ${filterProduct || filterOpenStatus ? 'deals-page__filter-btn--active' : ''}`}
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <Filter className="deals-page__filter-btn-icon" />
+            Filtrele {filterProduct || filterOpenStatus ? '●' : ''}
+          </button>
           <button className="deals-page__add-btn" onClick={() => setShowAddModal(true)}>
             <Plus className="deals-page__add-btn-icon" />
             Yeni Teklif
@@ -553,6 +510,56 @@ export default function DealsPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Modern Filter Modal */}
+      {showFilter && (
+        <>
+          <div className="filter-modal__overlay" onClick={() => setShowFilter(false)} />
+          <div className="filter-modal">
+            <div className="filter-modal__header">
+              <div className="filter-modal__icon"><Filter /></div>
+              <button className="filter-modal__close" onClick={() => setShowFilter(false)}><X /></button>
+            </div>
+            <div className="filter-modal__content">
+              <h2 className="filter-modal__title">Detaylı Filtreleme</h2>
+              <p className="filter-modal__message">Aşağıdaki kriterlere göre teklifleri daraltın.</p>
+            </div>
+            <div className="filter-modal__form">
+              <div className="filter-modal__group">
+                <label className="filter-modal__label">Ürün</label>
+                <select
+                  className="filter-modal__select"
+                  value={tempFilterProduct}
+                  onChange={(e) => setTempFilterProduct(e.target.value as OfferProduct | '')}
+                >
+                  <option value="">Tümü</option>
+                  {PRODUCT_OPTIONS.map(p => <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>)}
+                </select>
+              </div>
+              <div className="filter-modal__group">
+                <label className="filter-modal__label">Durum</label>
+                <select
+                  className="filter-modal__select"
+                  value={tempFilterOpenStatus}
+                  onChange={(e) => setTempFilterOpenStatus(e.target.value as OfferOpenStatus | '')}
+                >
+                  <option value="">Tümü</option>
+                  <option value="NEW_OPEN">New Open</option>
+                  <option value="RE_OPEN">Re Open</option>
+                </select>
+              </div>
+            </div>
+            <div className="filter-modal__actions">
+              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={handleResetFilter}>
+                Sıfırla
+              </button>
+              <button className="filter-modal__btn filter-modal__btn--primary" onClick={handleApplyFilter}>
+                Uygula
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
