@@ -62,6 +62,7 @@ const STATUS_OPTIONS = [
 export default function ActivitiesPage() {
   const { user } = useAuth() as any;
   const isNationalRole = user && ['MCP', 'MCVP', 'ADMIN'].includes(user.role);
+  const isManagerRole = user && ['LCP', 'LCVP', 'TL'].includes(user.role);
 
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [newCompany, setNewCompany] = useState({
@@ -73,6 +74,8 @@ export default function ActivitiesPage() {
   const [notes, setNotes] = useState('');
   const [showFilter, setShowFilter] = useState(false);
   const [filterType, setFilterType] = useState<ActivityType | ''>('');
+  const [filterMemberId, setFilterMemberId] = useState('');
+  const [usersStore, setUsersStore] = useState<any[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,6 +97,30 @@ export default function ActivitiesPage() {
     fetchCompanies();
     fetchActivities();
   }, []);
+
+  useEffect(() => {
+    // Sadece LCP, LCVP ve TL rolleri için alt üyeleri getir
+    if (user && isManagerRole && user.chapter) {
+      const fetchUsers = async () => {
+        try {
+          const res = await fetch(`/api/admin/users?chapter=${user.chapter}`);
+          const data = await res.json();
+          if (data.users) {
+            let subordinateRoles: string[] = [];
+            if (user.role === 'LCP') subordinateRoles = ['LCVP', 'TL', 'TM'];
+            if (user.role === 'LCVP') subordinateRoles = ['TL', 'TM'];
+            if (user.role === 'TL') subordinateRoles = ['TM'];
+            
+            const allowedUsers = data.users.filter((u: any) => subordinateRoles.includes(u.role));
+            setUsersStore(allowedUsers);
+          }
+        } catch (e) {
+          console.error("Alt üyeler getirilemedi", e);
+        }
+      };
+      fetchUsers();
+    }
+  }, [user, isManagerRole]);
 
   // URL'den gelen `?newActivity=true&companyId=123` parametrelerini okuyup formu otomatik doldurma
   useEffect(() => {
@@ -142,7 +169,7 @@ export default function ActivitiesPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterType, searchQuery]);
+  }, [filterType, searchQuery, filterMemberId]);
 
   const fetchCompanies = async () => {
     const res = await fetch('/api/companies');
@@ -241,6 +268,7 @@ export default function ActivitiesPage() {
 
   const filteredActivities = activities.filter(a => {
     if (filterType && a.type !== filterType) return false;
+    if (filterMemberId && String(a.user?.id) !== String(filterMemberId)) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       return (
@@ -662,7 +690,18 @@ export default function ActivitiesPage() {
             <div className="filter-modal__content">
               <h2 className="filter-modal__title">Aktivite Türü</h2>
             </div>
-            <div className="filter-modal__options">
+            
+            {isManagerRole && (
+              <div className="filter-modal__group" style={{ padding: '0 24px 16px 24px', borderBottom: '1px solid var(--border-color)', marginBottom: '16px' }}>
+                <label className="filter-modal__label">Üyeye Göre</label>
+                <select className="filter-modal__select" value={filterMemberId} onChange={(e) => setFilterMemberId(e.target.value)}>
+                  <option value="">Tüm Üyeler (Veya Kendi Aktivitelerim)</option>
+                  {usersStore.map(u => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
+                </select>
+              </div>
+            )}
+
+            <div className="filter-modal__options" style={{ paddingTop: isManagerRole ? '0' : '16px' }}>
               <label className="filter-modal__option">
                 <input type="radio" name="filterType" checked={filterType === ''} onChange={() => setFilterType('')} />
                 <span className="filter-modal__radio"></span>
@@ -677,7 +716,7 @@ export default function ActivitiesPage() {
               ))}
             </div>
             <div className="filter-modal__actions">
-              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={() => { setFilterType(''); setShowFilter(false); }}>Sıfırla</button>
+              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={() => { setFilterType(''); setFilterMemberId(''); setShowFilter(false); }}>Sıfırla</button>
               <button className="filter-modal__btn filter-modal__btn--primary" onClick={() => setShowFilter(false)}>Uygula</button>
             </div>
           </div>

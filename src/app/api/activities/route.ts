@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const NATIONAL_ROLES = ["MCP", "MCVP", "ADMIN"];
-const CHAPTER_ROLES = ["LCVP", "LCP"];
+const CHAPTER_ROLES = ["LCVP", "LCP", "TL"];
 
 export async function GET(req: NextRequest) {
   const session = await auth();
