@@ -7,11 +7,12 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const APPROVER_ROLES = ["ADMIN", "MCP", "MCVP", "LCP", "LCVP"];
+const VIEW_ROLES = ["ADMIN", "MCP", "MCVP", "LCP", "LCVP", "TL"];
 
 export async function GET(req: NextRequest) {
   const session = await auth();
   const sessionUser = session?.user as any;
-  if (!session?.user || !APPROVER_ROLES.includes(sessionUser.role)) {
+  if (!session?.user || !VIEW_ROLES.includes(sessionUser.role)) {
     return NextResponse.json({ error: "Yetkisiz erişim!" }, { status: 403 });
   }
 
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
 
   const where: any = {};
 
-  if (sessionUser.role === "LCP" || sessionUser.role === "LCVP") {
+  if (sessionUser.role === "LCP" || sessionUser.role === "LCVP" || sessionUser.role === "TL") {
     where.chapter = sessionUser.chapter;
   } else if (chapter) {
     where.chapter = chapter;

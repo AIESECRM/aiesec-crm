@@ -43,6 +43,7 @@ export default function CompaniesPage() {
   const router = useRouter();
   const { user } = useAuth() as any;
   const isNationalRole = user && ['MCP', 'MCVP', 'ADMIN'].includes(user.role);
+  const isManagerRole = user && ['LCP', 'LCVP', 'TL'].includes(user.role);
 
   const [companies, setCompanies] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
@@ -54,6 +55,8 @@ export default function CompaniesPage() {
   const [showMobileModal, setShowMobileModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterChapter, setFilterChapter] = useState('');
+  const [filterManagerId, setFilterManagerId] = useState('');
+  const [usersStore, setUsersStore] = useState<any[]>([]);
   const [visibleCount, setVisibleCount] = useState(12);
   const [submitting, setSubmitting] = useState(false);
 
@@ -89,14 +92,31 @@ export default function CompaniesPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [companiesRes, activitiesRes] = await Promise.all([
-      fetch('/api/companies'),
-      fetch('/api/activities'),
-    ]);
-    const companiesData = await companiesRes.json();
-    const activitiesData = await activitiesRes.json();
-    setCompanies(companiesData.companies || []);
-    setActivities(activitiesData.activities || []);
+    
+    const promises: any[] = [
+      fetch('/api/companies').then(r => r.json()),
+      fetch('/api/activities').then(r => r.json()),
+    ];
+
+    if (isManagerRole && user?.chapter) {
+      promises.push(fetch(`/api/admin/users?chapter=${user.chapter}`).then(r => r.json()).catch(() => null));
+    }
+
+    const results = await Promise.all(promises);
+    setCompanies(results[0].companies || []);
+    setActivities(results[1].activities || []);
+
+    if (isManagerRole && results[2]?.users) {
+      const allUsers = results[2].users;
+      let subordinateRoles: string[] = [];
+      if (user.role === 'LCP') subordinateRoles = ['LCVP', 'TL', 'TM'];
+      if (user.role === 'LCVP') subordinateRoles = ['TL', 'TM'];
+      if (user.role === 'TL') subordinateRoles = ['TM'];
+      
+      const allowedUsers = allUsers.filter((u: any) => subordinateRoles.includes(u.role));
+      setUsersStore(allowedUsers);
+    }
+
     setLoading(false);
   };
 
@@ -119,6 +139,10 @@ export default function CompaniesPage() {
   const filteredCompanies = companies.filter(c => {
     if (filterStatus && c.status !== filterStatus) return false;
     if (filterChapter && c.chapter !== filterChapter) return false;
+    if (filterManagerId) {
+      const isManager = c.managers?.some((m: any) => String(m.id) === String(filterManagerId));
+      if (!isManager) return false;
+    }
     return true;
   });
 
@@ -230,20 +254,21 @@ export default function CompaniesPage() {
                   ))}
                 </select>
               </div>
-              <div className="modal__field">
-                <label className="modal__label">Şube</label>
-                <select
-                  className="modal__select"
-                  value={newCompany.chapter}
-                  onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
-                  disabled={!isNationalRole}
-                >
-                  <option value="">Şube seçin</option>
-                  {CHAPTER_OPTIONS.filter(c => c.value).map(c => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
+              {isNationalRole && (
+                <div className="modal__field">
+                  <label className="modal__label">Şube</label>
+                  <select
+                    className="modal__select"
+                    value={newCompany.chapter}
+                    onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
+                  >
+                    <option value="">Şube seçin</option>
+                    {CHAPTER_OPTIONS.filter(c => c.value).map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
@@ -324,15 +349,26 @@ export default function CompaniesPage() {
                   {STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
-              <div className="filter-modal__group">
-                <label className="filter-modal__label">Şube</label>
-                <select className="filter-modal__select" value={filterChapter} onChange={(e) => setFilterChapter(e.target.value)}>
-                  {CHAPTER_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                </select>
-              </div>
+              {isNationalRole && (
+                <div className="filter-modal__group">
+                  <label className="filter-modal__label">Şube</label>
+                  <select className="filter-modal__select" value={filterChapter} onChange={(e) => setFilterChapter(e.target.value)}>
+                    {CHAPTER_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
+              )}
+              {isManagerRole && (
+                <div className="filter-modal__group">
+                  <label className="filter-modal__label">Menajer (Üye)</label>
+                  <select className="filter-modal__select" value={filterManagerId} onChange={(e) => setFilterManagerId(e.target.value)}>
+                    <option value="">Tüm Üyeler</option>
+                    {usersStore.map(u => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
+                  </select>
+                </div>
+              )}
             </div>
             <div className="filter-modal__actions">
-              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={() => { setFilterStatus(''); setFilterChapter(''); setShowFilter(false); }}>Sıfırla</button>
+              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={() => { setFilterStatus(''); setFilterChapter(''); setFilterManagerId(''); setShowFilter(false); }}>Sıfırla</button>
               <button className="filter-modal__btn filter-modal__btn--primary" onClick={() => setShowFilter(false)}>Uygula</button>
             </div>
           </div>

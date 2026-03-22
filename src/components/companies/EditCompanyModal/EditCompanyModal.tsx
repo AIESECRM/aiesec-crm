@@ -132,20 +132,21 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
               />
             </div>
           </div>
-          <div className="modal__field" style={{ marginTop: '16px' }}>
-            <label className="modal__label">Şube</label>
-            <select
-              className="modal__select"
-              value={formData.chapter}
-              onChange={(e) => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
-              disabled={!isNationalRole}
-            >
-              <option value="">Şube seçin</option>
-              {CHAPTER_OPTIONS.map(c => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </div>
+          {isNationalRole && (
+            <div className="modal__field" style={{ marginTop: '16px' }}>
+              <label className="modal__label">Şube</label>
+              <select
+                className="modal__select"
+                value={formData.chapter}
+                onChange={(e) => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
+              >
+                <option value="">Şube seçin</option>
+                {CHAPTER_OPTIONS.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="modal__section">
