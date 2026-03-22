@@ -103,21 +103,32 @@ export default function ChatWidget() {
     const userRole = currentUser?.role;
     const userChapter = currentUser?.chapter;
 
-    // Sadece kendi şubesini görebilecek roller
-    const restrictedRoles = ['TM', 'TL'];
-
-    // Kullanıcıları filtrele
     const filteredUsers = users.filter((u: User) => {
-      // 1. Kullanıcının kendisini sohbet listesinden çıkar
       if (u.id === parseInt(currentUser.id, 10)) return false;
 
-      // 2. Eğer kullanıcının rolü TM veya TL ise, SADECE aynı şubedekileri göster
-      if (restrictedRoles.includes(userRole)) {
-        return u.chapter === userChapter;
+      // 1. MCP, MCVP ve ADMIN sistemdeki herkesi görebilir ve mesajlaşabilir
+      if (['MCP', 'MCVP', 'ADMIN'].includes(userRole)) {
+        return true;
       }
 
-      // 3. Eğer rol kısıtlı değilse (LCVP, LCP, MCVP, MCP, ADMIN), herkesi göster
-      return true;
+      // 2. LCP ve LCVP istisnası:
+      // Kendi şubesindeki HERKESLE yazışabilir, diğer şubelerin SADECE LCP ve LCVP'leriyle yazışabilir.
+      // (Bütün alt roller Ulusal Kurul'a da mesaj atabilmelidir)
+      if (['LCP', 'LCVP'].includes(userRole)) {
+        if (u.chapter === userChapter) return true;
+        if (['LCP', 'LCVP', 'MCP', 'MCVP', 'ADMIN'].includes(u.role)) return true;
+        return false;
+      }
+
+      // 3. TL ve TM'ler SADECE kendi şubesindeki üyeleri ve sadece ADMIN'i görebilir
+      // (MCP ve MCVP'lere mesaj atamazlar)
+      if (['TL', 'TM'].includes(userRole)) {
+        if (u.chapter === userChapter) return true;
+        if (u.role === 'ADMIN') return true;
+        return false;
+      }
+
+      return false;
     });
 
     // Filtrelenmiş listeyi ekrana basılmak üzere state'e kaydet

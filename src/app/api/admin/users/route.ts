@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
   const where: any = {};
 
-  if (sessionUser.role === "LCP" || sessionUser.role === "LCVP") {
+  if (sessionUser.role === "LCP" || sessionUser.role === "LCVP" || sessionUser.role === "TL") {
     where.chapter = sessionUser.chapter;
   } else if (chapter) {
     where.chapter = chapter;

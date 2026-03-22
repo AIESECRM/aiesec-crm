@@ -254,20 +254,21 @@ export default function CompaniesPage() {
                   ))}
                 </select>
               </div>
-              <div className="modal__field">
-                <label className="modal__label">Şube</label>
-                <select
-                  className="modal__select"
-                  value={newCompany.chapter}
-                  onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
-                  disabled={!isNationalRole}
-                >
-                  <option value="">Şube seçin</option>
-                  {CHAPTER_OPTIONS.filter(c => c.value).map(c => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
+              {isNationalRole && (
+                <div className="modal__field">
+                  <label className="modal__label">Şube</label>
+                  <select
+                    className="modal__select"
+                    value={newCompany.chapter}
+                    onChange={(e) => setNewCompany(prev => ({ ...prev, chapter: e.target.value }))}
+                  >
+                    <option value="">Şube seçin</option>
+                    {CHAPTER_OPTIONS.filter(c => c.value).map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
