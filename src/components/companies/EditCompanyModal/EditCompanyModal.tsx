@@ -2,8 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Modal from '@/components/common/Modal';
-import { Save } from 'lucide-react';
+import { Save, Linkedin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+
+const PRODUCT_OPTIONS = [
+  { value: 'GTE', label: 'GTe', color: '#037EF3' },
+  { value: 'GTA', label: 'GTa', color: '#F85A40' },
+  { value: 'EWA', label: 'EwA', color: '#00A651' },
+  { value: 'GV', label: 'GV', color: '#FAB432' },
+];
 
 const STATUS_OPTIONS = [
   { value: 'NO_ANSWER', label: 'Cevap Yok' },
@@ -53,6 +60,8 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
     chapter: '',
     category: '',
     location: '',
+    linkedinUrl: '',
+    products: [] as string[],
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -67,9 +76,20 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
         chapter: company.chapter || '',
         category: company.category || '',
         location: company.location || '',
+        linkedinUrl: company.linkedinUrl || '',
+        products: company.products ? company.products.split(',').filter(Boolean) : [],
       });
     }
   }, [company]);
+
+  const toggleProduct = (product: string) => {
+    setFormData(prev => ({
+      ...prev,
+      products: prev.products.includes(product)
+        ? prev.products.filter(p => p !== product)
+        : [...prev.products, product]
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +98,7 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
       const res = await fetch(`/api/companies/${company.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, products: formData.products.join(',') }),
       });
       if (res.ok) {
         onSuccess();
@@ -149,6 +169,33 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
           )}
         </div>
 
+        {/* Products multi-select */}
+        <div className="modal__section">
+          <h4 className="modal__section-title">Hedef Ürün(ler)</h4>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {PRODUCT_OPTIONS.map(opt => (
+              <label
+                key={opt.value}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  padding: '6px 14px', borderRadius: '999px', cursor: 'pointer',
+                  fontSize: '13px', fontWeight: '600', userSelect: 'none',
+                  border: `1.5px solid ${formData.products.includes(opt.value) ? opt.color : 'var(--border-color)'}`,
+                  background: formData.products.includes(opt.value) ? `${opt.color}18` : 'transparent',
+                  color: formData.products.includes(opt.value) ? opt.color : 'var(--text-regular)',
+                  transition: 'all 0.15s'
+                }}
+              >
+                <input type="checkbox" style={{ display: 'none' }}
+                  checked={formData.products.includes(opt.value)}
+                  onChange={() => toggleProduct(opt.value)}
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div className="modal__section">
           <h4 className="modal__section-title">İletişim Bilgileri</h4>
           <div className="modal__row">
@@ -178,6 +225,18 @@ export default function EditCompanyModal({ isOpen, onClose, company, onSuccess }
               className="modal__input"
               value={formData.location}
               onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+            />
+          </div>
+          <div className="modal__field" style={{ marginTop: '16px' }}>
+            <label className="modal__label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Linkedin size={14} color="#0a66c2" /> LinkedIn URL
+            </label>
+            <input
+              type="url"
+              className="modal__input"
+              placeholder="https://linkedin.com/company/..."
+              value={formData.linkedinUrl}
+              onChange={(e) => setFormData(prev => ({ ...prev, linkedinUrl: e.target.value }))}
             />
           </div>
         </div>

@@ -427,3 +427,324 @@
     display: none;
   }
 }
+
+/* ─── VIEW TOGGLE ─── */
+.view-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: all 0.15s;
+}
+
+.view-toggle__btn--active {
+  background: var(--primary-400);
+  color: white;
+}
+
+.view-toggle__btn:not(.view-toggle__btn--active):hover {
+  background: var(--dashboard-bg);
+  color: var(--text-regular);
+}
+
+/* ─── PRODUCT PILL TABS ─── */
+.product-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.product-tab {
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--border-color);
+  background: var(--neutral-light);
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.product-tab:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+.product-tab--active {
+  background: var(--foreground);
+  color: var(--neutral-light);
+  border-color: var(--foreground);
+}
+
+.companies-page__status-select {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--neutral-light);
+  color: var(--text-regular);
+  cursor: pointer;
+}
+
+/* ─── LIST TABLE ─── */
+.companies-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.companies-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.companies-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--dashboard-bg);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.companies-table__row {
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid var(--border-color-light, var(--border-color));
+}
+
+.companies-table__row:last-child {
+  border-bottom: none;
+}
+
+.companies-table__row:hover {
+  background: var(--dashboard-bg);
+}
+
+.companies-table td {
+  padding: 11px 16px;
+  vertical-align: middle;
+  color: var(--text-regular);
+}
+
+.companies-table__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.companies-table__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--dashboard-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.companies-table__muted {
+  color: var(--text-light);
+}
+
+.companies-table__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: none;
+  font-size: 12px;
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.companies-table__edit-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+/* ─── KANBAN BOARD ─── */
+.kanban-board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: flex-start;
+}
+
+.kanban-col {
+  flex: 0 0 230px;
+  min-width: 230px;
+  background: var(--dashboard-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.kanban-col--drag-over {
+  background: color-mix(in srgb, var(--primary-400) 6%, var(--dashboard-bg));
+  box-shadow: 0 0 0 2px var(--primary-400);
+}
+
+.kanban-col__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px 14px;
+  border-top: 3px solid transparent;
+  border-radius: 11px 11px 0 0;
+}
+
+.kanban-col__title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kanban-col__count {
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--neutral-light);
+  border-radius: 20px;
+  padding: 1px 8px;
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+.kanban-col__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px 10px 10px;
+  min-height: 80px;
+}
+
+.kanban-col__empty {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 12px;
+  padding: 16px 0;
+}
+
+.kanban-card {
+  background: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  transition: box-shadow 0.15s, transform 0.1s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: rotate(1deg) scale(1.02);
+}
+
+.kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.kanban-card__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+.kanban-card__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-regular);
+  line-height: 1.3;
+}
+
+.kanban-card__meta {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.kanban-card__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.kanban-card__info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* ─── PRODUCT MULTI-CHECKBOX IN FORM ─── */
+.product-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.product-checkbox input {
+  display: none;
+}
+
+.product-checkbox--checked {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 10%, white);
+}
+
+.product-checkbox:hover {
+  border-color: var(--primary-400);
+}
+

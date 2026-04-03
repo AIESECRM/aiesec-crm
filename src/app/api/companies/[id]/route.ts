@@ -45,7 +45,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!hasAccess) return NextResponse.json({ error: "Bu şirketi düzenleme yetkiniz yok!" }, { status: 403 });
 
   // managerIds dahil tüm verileri alıyoruz
-  const { name, phone, email, status, notes, chapter, category, location, domain, taxId, website, managerIds } = await req.json();
+  const { name, phone, email, status, notes, chapter, category, location, domain, taxId, website, managerIds, products, linkedinUrl } = await req.json();
 
   const updateData: any = {
     ...(name && { name }),
@@ -59,6 +59,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     ...(domain !== undefined && { domain }),
     ...(taxId !== undefined && { taxId }),
     ...(website !== undefined && { website }),
+    ...(products !== undefined && { products }),
+    ...(linkedinUrl !== undefined && { linkedinUrl }),
     updatedAt: Math.floor(Date.now() / 1000),
   };
 

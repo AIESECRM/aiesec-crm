@@ -226,7 +226,33 @@ export default function DealsPage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Product Pill Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+        {[{ value: '', label: 'Tümü' }, { value: 'GTE', label: 'GTe' }, { value: 'GTA', label: 'GTa' }, { value: 'EWA', label: 'EwA' }, { value: 'GV', label: 'GV' }].map(tab => (
+          <button
+            key={tab.value}
+            onClick={() => { setFilterProduct(tab.value as any); fetchData(tab.value, filterOpenStatus); }}
+            style={{
+              padding: '6px 18px', borderRadius: '999px', fontSize: '13px', fontWeight: '600',
+              border: `1.5px solid ${filterProduct === tab.value ? 'var(--foreground)' : 'var(--border-color)'}`,
+              background: filterProduct === tab.value ? 'var(--foreground)' : 'var(--neutral-light)',
+              color: filterProduct === tab.value ? 'var(--neutral-light)' : 'var(--text-regular)',
+              cursor: 'pointer', transition: 'all 0.15s'
+            }}
+          >{tab.label}</button>
+        ))}
+        <select
+          style={{ marginLeft: 'auto', padding: '6px 12px', border: '1.5px solid var(--border-color)', borderRadius: '8px', fontSize: '13px', background: 'var(--neutral-light)', color: 'var(--text-regular)', cursor: 'pointer' }}
+          value={filterOpenStatus}
+          onChange={e => { const v = e.target.value as any; setFilterOpenStatus(v); fetchData(filterProduct, v); }}
+        >
+          <option value="">Tüm Durumlar</option>
+          <option value="NEW_OPEN">New Open</option>
+          <option value="RE_OPEN">Re Open</option>
+        </select>
+      </div>
+
+
       <div className="deals-page__stats">
         <div className="deals-page__stat">
           <div className="deals-page__stat-label">New Open</div>

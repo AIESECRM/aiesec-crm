@@ -116,6 +116,8 @@ model Company {
   email       String?
   website     String?
   notes       String?       @db.Text
+  products    String?
+  linkedinUrl String?
   chapter     Chapter?
   status      CompanyStatus @default(NO_ANSWER)
   createdAt   Int           @default(0)

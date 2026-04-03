@@ -30,6 +30,8 @@ export interface Company {
   taxId?: string | null;
   logoUrl?: string;
   chapter?: string;
+  products?: string; // virgülle ayrılmış: "GTA,EWA"
+  linkedinUrl?: string;
   status: CompanyStatus;
   activeProposals: number;
   contactCount: number;

@@ -13,7 +13,8 @@ import {
   User as UserIcon,
   Users,
   Sparkles,
-  MessageSquare
+  MessageSquare,
+  Linkedin
 } from 'lucide-react';
 import { Company, Activity, User } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -127,6 +128,24 @@ export default function CompanySidebar({
           )}
         </div>
 
+        {/* Products */}
+        {company.products && (
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
+            {company.products.split(',').filter(Boolean).map((p: string) => {
+              const colors: Record<string, string> = { GTE: '#037EF3', GTA: '#F85A40', EWA: '#00A651', GV: '#FAB432' };
+              const label: Record<string, string> = { GTE: 'GTe', GTA: 'GTa', EWA: 'EwA', GV: 'GV' };
+              return (
+                <span key={p} style={{
+                  backgroundColor: `${colors[p] || '#6b7280'}18`,
+                  color: colors[p] || '#6b7280',
+                  fontSize: '11px', fontWeight: '700', padding: '3px 10px',
+                  borderRadius: '20px', border: `1px solid ${colors[p] || '#6b7280'}40`
+                }}>{label[p] || p}</span>
+              );
+            })}
+          </div>
+        )}
+
         <div className="company-sidebar__info-item">
           <Phone className="company-sidebar__info-icon" />
           <div className="company-sidebar__info-content">
@@ -149,6 +168,26 @@ export default function CompanySidebar({
             <div className="company-sidebar__info-content">
               <div className="company-sidebar__info-label">Lokasyon</div>
               <div className="company-sidebar__info-value">{company.location}</div>
+            </div>
+          </div>
+        )}
+
+        {/* LinkedIn */}
+        {company.linkedinUrl && (
+          <div className="company-sidebar__info-item">
+            <Linkedin className="company-sidebar__info-icon" style={{ color: '#0a66c2' }} />
+            <div className="company-sidebar__info-content">
+              <div className="company-sidebar__info-label">LinkedIn</div>
+              <div className="company-sidebar__info-value">
+                <a
+                  href={company.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#0a66c2', textDecoration: 'none', fontSize: '13px', fontWeight: '500' }}
+                >
+                  Profili Görüntüle →
+                </a>
+              </div>
             </div>
           </div>
         )}

@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
 
     const user = session.user as any;
-    const { name, phone, email, status, notes, chapter, documentUrl, documentName } = await req.json();
+    const { name, phone, email, status, notes, chapter, documentUrl, documentName, products, linkedinUrl } = await req.json();
 
     if (!name) return NextResponse.json({ error: "Şirket adı zorunludur!" }, { status: 400 });
 
@@ -59,6 +59,8 @@ export async function POST(req: NextRequest) {
         status: status || "NO_ANSWER",
         notes: notes || null,
         chapter: companyChapter || null,
+        products: products || null,
+        linkedinUrl: linkedinUrl || null,
         // HATA BURADAYDI: user.id string olduğu için integer'a çevirmemiz gerekiyor
         createdById: parseInt(user.id, 10), 
         // Şemada default(0) olduğu için şu anki zamanı manuel atamakta fayda var
