@@ -22,6 +22,24 @@ const STATUS_OPTIONS = [
   { value: 'MEETING_PLANNED', label: 'Toplantı Planlandı' },
 ];
 
+// Durum → Türkçe etiket
+const STATUS_LABELS: Record<string, string> = {
+  POSITIVE: 'Pozitif',
+  NEGATIVE: 'Negatif',
+  NO_ANSWER: 'Cevap Yok',
+  CALL_AGAIN: 'Tekrar Ara',
+  MEETING_PLANNED: 'Toplantı Planlandı',
+};
+
+// Durum rengi
+const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
+  POSITIVE:        { bg: '#dcfce7', color: '#16a34a' },
+  NEGATIVE:        { bg: '#fee2e2', color: '#dc2626' },
+  NO_ANSWER:       { bg: '#f3f4f6', color: '#6b7280' },
+  CALL_AGAIN:      { bg: '#fef9c3', color: '#ca8a04' },
+  MEETING_PLANNED: { bg: '#dbeafe', color: '#1d4ed8' },
+};
+
 const PRODUCT_TABS = [
   { value: '', label: 'Tümü' },
   { value: 'GTE', label: 'GTe' },
@@ -333,7 +351,26 @@ export default function CompaniesPage() {
                         </td>
                         <td><ProductBadges products={company.products} /></td>
                         <td><span className="companies-table__muted">{company.category || '—'}</span></td>
-                        <td><StatusBadge status={company.status} /></td>
+                        <td>
+                          {(() => {
+                            const s = (company.status || '').toUpperCase();
+                            const sc = STATUS_COLORS[s] || { bg: '#f3f4f6', color: '#6b7280' };
+                            return (
+                              <span style={{
+                                display: 'inline-block',
+                                padding: '3px 10px',
+                                borderRadius: '999px',
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                backgroundColor: sc.bg,
+                                color: sc.color,
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {STATUS_LABELS[s] || company.status}
+                              </span>
+                            );
+                          })()}
+                        </td>
                         <td>
                           <span className="companies-table__muted">
                             {company.managers?.[0]?.name || '—'}
