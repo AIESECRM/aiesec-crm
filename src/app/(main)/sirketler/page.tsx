@@ -65,6 +65,11 @@ const CHAPTER_OPTIONS = [
   { value: 'TRABZON', label: 'Trabzon' },
 ];
 
+// Chapter → okunabilir etiket
+const CHAPTER_LABELS: Record<string, string> = Object.fromEntries(
+  CHAPTER_OPTIONS.map(c => [c.value, c.label])
+);
+
 const EMPTY_FORM = {
   name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '',
   chapter: '', documentUrl: '', documentName: '', products: [] as string[], linkedinUrl: ''
@@ -107,6 +112,7 @@ export default function CompaniesPage() {
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   const [bulkCount, setBulkCount] = useState(0);
   const [dragOverStatus, setDragOverStatus] = useState<string | null>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const [newCompany, setNewCompany] = useState({ ...EMPTY_FORM });
 
@@ -129,6 +135,18 @@ export default function CompaniesPage() {
     document.body.style.overflow = showMobileModal ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [showMobileModal]);
+
+  // Sidebar'ı dışına tıklayınca kapat
+  useEffect(() => {
+    if (!selectedCompany || isMobile) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+        setSelectedCompany(null);
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => document.removeEventListener('mousedown', handleMouseDown);
+  }, [selectedCompany, isMobile]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -322,7 +340,7 @@ export default function CompaniesPage() {
                             {company.managers?.length > 1 ? ` +${company.managers.length - 1}` : ''}
                           </span>
                         </td>
-                        <td><span className="companies-table__muted">{company.chapter || '—'}</span></td>
+                        <td><span className="companies-table__muted">{company.chapter ? (CHAPTER_LABELS[company.chapter] || company.chapter) : '—'}</span></td>
                         <td onClick={e => e.stopPropagation()}>
                           <button
                             className="companies-table__edit-btn"
@@ -416,13 +434,15 @@ export default function CompaniesPage() {
 
       {/* ─── DESKTOP SIDEBAR ─── */}
       {selectedCompany && !isMobile && (
-        <CompanySidebar
-          company={selectedCompany}
-          recentActivities={recentActivities}
-          onViewProfile={() => router.push(`/sirketler/${selectedCompany.id}`)}
-          onManageActivities={() => router.push('/aktiviteler')}
-          onUpdate={fetchData}
-        />
+        <div ref={sidebarRef}>
+          <CompanySidebar
+            company={selectedCompany}
+            recentActivities={recentActivities}
+            onViewProfile={() => router.push(`/sirketler/${selectedCompany.id}`)}
+            onManageActivities={() => router.push('/aktiviteler')}
+            onUpdate={fetchData}
+          />
+        </div>
       )}
 
       {/* ─── MOBILE MODAL ─── */}

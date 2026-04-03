@@ -489,9 +489,9 @@
 }
 
 .product-tab--active {
-  background: var(--foreground);
-  color: var(--neutral-light);
-  border-color: var(--foreground);
+  background: var(--primary-400);
+  color: white;
+  border-color: var(--primary-400);
 }
 
 .companies-page__status-select {
@@ -601,7 +601,7 @@
   gap: 14px;
   overflow-x: auto;
   padding-bottom: 16px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .kanban-col {
@@ -611,6 +611,8 @@
   border-radius: 12px;
   border: 1px solid var(--border-color);
   transition: background 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
 }
 
 .kanban-col--drag-over {
@@ -650,6 +652,7 @@
   gap: 8px;
   padding: 8px 10px 10px 10px;
   min-height: 80px;
+  flex: 1;
 }
 
 .kanban-col__empty {
