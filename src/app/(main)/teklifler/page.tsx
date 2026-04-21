@@ -1,0 +1,663 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { DollarSign, Filter, Plus, User, Building2, X, Save, MoreVertical, Edit2, Trash2, Calendar } from 'lucide-react';
+import Modal from '@/components/common/Modal';
+import { FileUpload } from '@/components/common/FileUpload/FileUpload';
+import Avatar from '@/components/common/Avatar';
+import './page.css';
+
+type OfferProduct = 'GTA' | 'GV' | 'GTE' | 'EWA';
+type OfferDuration = 'SHORT' | 'MEDIUM' | 'LONG';
+type OfferOpenStatus = 'NEW_OPEN' | 'RE_OPEN';
+
+const PRODUCT_LABELS: Record<OfferProduct, string> = { GTA: 'GTa', GV: 'GV', GTE: 'GTe', EWA: 'EwA' };
+const DURATION_LABELS: Record<OfferDuration, string> = { SHORT: 'Kısa Dönem', MEDIUM: 'Orta Dönem', LONG: 'Uzun Dönem' };
+const OPEN_STATUS_LABELS: Record<OfferOpenStatus, string> = { NEW_OPEN: 'New Open', RE_OPEN: 'Re Open' };
+
+const PRODUCT_OPTIONS: OfferProduct[] = ['GTA', 'GV', 'GTE', 'EWA'];
+const DURATION_OPTIONS: OfferDuration[] = ['SHORT', 'MEDIUM', 'LONG'];
+
+function unixToDateInput(unix: number | null | undefined): string {
+  if (!unix) return '';
+  return new Date(unix * 1000).toISOString().split('T')[0];
+}
+
+function dateInputToUnix(dateStr: string): string {
+  if (!dateStr) return '';
+  return String(Math.floor(new Date(dateStr).getTime() / 1000));
+}
+
+function dateInputToUnixEndOfDay(dateStr: string): string {
+  if (!dateStr) return '';
+  return String(Math.floor(new Date(dateStr + 'T23:59:59').getTime() / 1000));
+}
+
+export default function DealsPage() {
+  const [offers, setOffers] = useState<any[]>([]);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [stats, setStats] = useState({ newOpen: 0, reOpen: 0, totalOpen: 0 });
+  const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterProduct, setFilterProduct] = useState<OfferProduct | ''>('');
+  const [filterOpenStatus, setFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
+  const [tempFilterProduct, setTempFilterProduct] = useState<OfferProduct | ''>('');
+  const [tempFilterOpenStatus, setTempFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
+  const [tempFilterDateFrom, setTempFilterDateFrom] = useState('');
+  const [tempFilterDateTo, setTempFilterDateTo] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const filterWrapperRef = useRef<HTMLDivElement>(null);
+  const [companySearch, setCompanySearch] = useState('');
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [newOffer, setNewOffer] = useState({
+    companyId: '',
+    title: '',
+    product: 'GTA' as OfferProduct,
+    duration: 'SHORT' as OfferDuration,
+    openStatus: 'NEW_OPEN' as OfferOpenStatus,
+    value: '',
+    documentUrl: '',
+    documentName: '',
+    offerDate: ''
+  });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
+  const [editOffer, setEditOffer] = useState({
+    id: '', title: '', product: 'GTA' as OfferProduct, duration: 'SHORT' as OfferDuration,
+    openStatus: 'NEW_OPEN' as OfferOpenStatus, value: '', companyId: '',
+    documentUrl: '', documentName: '', offerDate: ''
+  });
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchData('', '', '', '');
+    fetchCompanies();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
+        setShowCompanyDropdown(false);
+      }
+      if (!event.target || !(event.target as Element).closest('.deal-card__dropdown')) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (showFilter) {
+      setTempFilterProduct(filterProduct);
+      setTempFilterOpenStatus(filterOpenStatus);
+      setTempFilterDateFrom(filterDateFrom);
+      setTempFilterDateTo(filterDateTo);
+    }
+  }, [showFilter]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterWrapperRef.current && !filterWrapperRef.current.contains(event.target as Node)) {
+        setShowFilter(false);
+      }
+    };
+    if (showFilter) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showFilter]);
+
+  const fetchData = async (product: string, openStatus: string, dateFrom: string = '', dateTo: string = '') => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (product) params.set('product', product);
+    if (openStatus) params.set('openStatus', openStatus);
+    if (dateFrom) params.set('dateFrom', dateInputToUnix(dateFrom));
+    if (dateTo) params.set('dateTo', dateInputToUnixEndOfDay(dateTo));
+
+    const res = await fetch(`/api/offers?${params.toString()}`);
+    if (res.status === 403) { setUnauthorized(true); setLoading(false); return; }
+    const data = await res.json();
+    setOffers(data.offers || []);
+    setStats(data.stats || { newOpen: 0, reOpen: 0, totalOpen: 0 });
+    setLoading(false);
+  };
+
+  const fetchCompanies = async () => {
+    const res = await fetch('/api/companies');
+    const data = await res.json();
+    setCompanies(data.companies || []);
+  };
+
+  const handleApplyFilter = () => {
+    setFilterProduct(tempFilterProduct);
+    setFilterOpenStatus(tempFilterOpenStatus);
+    setFilterDateFrom(tempFilterDateFrom);
+    setFilterDateTo(tempFilterDateTo);
+    fetchData(tempFilterProduct, tempFilterOpenStatus, tempFilterDateFrom, tempFilterDateTo);
+    setShowFilter(false);
+  };
+
+  const handleResetFilter = () => {
+    setTempFilterProduct('');
+    setTempFilterOpenStatus('');
+    setTempFilterDateFrom('');
+    setTempFilterDateTo('');
+    setFilterProduct('');
+    setFilterOpenStatus('');
+    setFilterDateFrom('');
+    setFilterDateTo('');
+    fetchData('', '', '', '');
+    setShowFilter(false);
+  };
+
+  const handleAddOffer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const res = await fetch('/api/offers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: newOffer.title,
+        product: newOffer.product,
+        duration: newOffer.duration,
+        openStatus: newOffer.openStatus,
+        value: newOffer.value ? Number(newOffer.value) : null,
+        companyId: Number(newOffer.companyId),
+        documentUrl: newOffer.documentUrl,
+        offerDate: newOffer.offerDate ? dateInputToUnix(newOffer.offerDate) : null,
+      }),
+    });
+    if (res.ok) {
+      setShowAddModal(false);
+      setNewOffer({ companyId: '', title: '', product: 'GTA', duration: 'SHORT', openStatus: 'NEW_OPEN', value: '', documentUrl: '', documentName: '', offerDate: '' });
+      setCompanySearch('');
+      fetchData(filterProduct, filterOpenStatus, filterDateFrom, filterDateTo);
+    }
+    setSubmitting(false);
+  };
+
+  const handleEditOfferSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const res = await fetch(`/api/offers/${editOffer.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: editOffer.title,
+        product: editOffer.product,
+        duration: editOffer.duration,
+        openStatus: editOffer.openStatus,
+        value: editOffer.value ? Number(editOffer.value) : null,
+        offerDate: editOffer.offerDate ? dateInputToUnix(editOffer.offerDate) : null,
+      }),
+    });
+    if (res.ok) {
+      setShowEditModal(false);
+      fetchData(filterProduct, filterOpenStatus, filterDateFrom, filterDateTo);
+    }
+    setSubmitting(false);
+  };
+
+  const handleDeleteOffer = async () => {
+    if (!selectedOffer) return;
+    setSubmitting(true);
+    const res = await fetch(`/api/offers/${selectedOffer.id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setShowDeleteModal(false);
+      setSelectedOffer(null);
+      fetchData(filterProduct, filterOpenStatus, filterDateFrom, filterDateTo);
+    }
+    setSubmitting(false);
+  };
+
+  const offersByProduct = PRODUCT_OPTIONS.reduce((acc, product) => {
+    acc[product] = offers.filter(o => o.product === product);
+    return acc;
+  }, {} as Record<OfferProduct, any[]>);
+
+  const totalValue = offers.reduce((sum, o) => sum + (o.value || 0), 0);
+  const hasActiveFilter = filterProduct || filterOpenStatus || filterDateFrom || filterDateTo;
+
+  if (unauthorized) return (
+    <div className="deals-page">
+      <div className="deals-page__header">
+        <div className="deals-page__title">
+          <DollarSign className="deals-page__title-icon" />
+          <h1 className="deals-page__title-text">Openlar</h1>
+        </div>
+      </div>
+      <p style={{ color: 'var(--text-light)', textAlign: 'center', padding: 'var(--spacing-2xl)' }}>
+        Bu sayfayı görüntüleme yetkiniz bulunmamaktadır.
+      </p>
+    </div>
+  );
+
+  return (
+    <div className="deals-page">
+      <div className="deals-page__header">
+        <div className="deals-page__title">
+          <DollarSign className="deals-page__title-icon" />
+          <h1 className="deals-page__title-text">Openlar</h1>
+        </div>
+        <div className="deals-page__actions">
+          <button
+            className={`deals-page__filter-btn ${hasActiveFilter ? 'deals-page__filter-btn--active' : ''}`}
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <Filter className="deals-page__filter-btn-icon" />
+            Filtrele {hasActiveFilter ? '●' : ''}
+          </button>
+          <button className="deals-page__add-btn" onClick={() => setShowAddModal(true)}>
+            <Plus className="deals-page__add-btn-icon" />
+            Yeni Open
+          </button>
+        </div>
+      </div>
+
+      {/* Product Pill Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+        {[{ value: '', label: 'Tümü' }, { value: 'GTE', label: 'GTe' }, { value: 'GTA', label: 'GTa' }, { value: 'EWA', label: 'EwA' }, { value: 'GV', label: 'GV' }].map(tab => (
+          <button
+            key={tab.value}
+            onClick={() => { setFilterProduct(tab.value as any); fetchData(tab.value, filterOpenStatus, filterDateFrom, filterDateTo); }}
+            style={{
+              padding: '6px 18px', borderRadius: '999px', fontSize: '13px', fontWeight: '600',
+              border: `1.5px solid ${filterProduct === tab.value ? 'var(--foreground)' : 'var(--border-color)'}`,
+              background: filterProduct === tab.value ? 'var(--foreground)' : 'var(--neutral-light)',
+              color: filterProduct === tab.value ? 'var(--neutral-light)' : 'var(--text-regular)',
+              cursor: 'pointer', transition: 'all 0.15s'
+            }}
+          >{tab.label}</button>
+        ))}
+        <select
+          style={{ marginLeft: 'auto', padding: '6px 12px', border: '1.5px solid var(--border-color)', borderRadius: '8px', fontSize: '13px', background: 'var(--neutral-light)', color: 'var(--text-regular)', cursor: 'pointer' }}
+          value={filterOpenStatus}
+          onChange={e => { const v = e.target.value as any; setFilterOpenStatus(v); fetchData(filterProduct, v, filterDateFrom, filterDateTo); }}
+        >
+          <option value="">Tüm Durumlar</option>
+          <option value="NEW_OPEN">New Open</option>
+          <option value="RE_OPEN">Re Open</option>
+        </select>
+      </div>
+
+      <div className="deals-page__stats">
+        <div className="deals-page__stat">
+          <div className="deals-page__stat-label">New Open</div>
+          <div className="deals-page__stat-value">{stats.newOpen}</div>
+        </div>
+        <div className="deals-page__stat">
+          <div className="deals-page__stat-label">Re Open</div>
+          <div className="deals-page__stat-value">{stats.reOpen}</div>
+        </div>
+        <div className="deals-page__stat">
+          <div className="deals-page__stat-label">Total Open</div>
+          <div className="deals-page__stat-value">{stats.totalOpen}</div>
+        </div>
+        <div className="deals-page__stat">
+          <div className="deals-page__stat-label">Toplam Değer</div>
+          <div className="deals-page__stat-value deals-page__stat-value--currency">
+            {totalValue.toLocaleString('tr-TR')} TL
+          </div>
+        </div>
+      </div>
+
+      {/* Offers by Product */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '48px', color: '#6b7280' }}>Yükleniyor...</div>
+      ) : (
+        <div className="kanban-wrapper">
+          <div className="kanban">
+            {PRODUCT_OPTIONS.map((product) => (
+              <div key={product} className="kanban__column">
+                <div className="kanban__column-header">
+                  <span className="kanban__column-title">{PRODUCT_LABELS[product]}</span>
+                  <span className="kanban__column-count">{offersByProduct[product].length}</span>
+                </div>
+                <div className="kanban__cards">
+                  {offersByProduct[product].length > 0 ? offersByProduct[product].map((offer: any) => (
+                    <div key={offer.id} className="deal-card">
+                      <div className="deal-card__header">
+                        <span className="deal-card__company">{offer.company?.name || '—'}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {offer.value ? <span className="deal-card__value">{offer.value.toLocaleString('tr-TR')} TL</span> : <span />}
+                          <div className="deal-card__dropdown" style={{ position: 'relative' }}>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === offer.id ? null : offer.id); }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-light)', borderRadius: '4px' }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                            {activeDropdown === offer.id && (
+                              <div style={{
+                                position: 'absolute', right: 0, top: '100%', backgroundColor: 'var(--dashboard-bg)',
+                                border: '1px solid var(--border-color)', borderRadius: '8px', zIndex: 10,
+                                minWidth: '150px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                              }}>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(null);
+                                    setEditOffer({
+                                      id: offer.id, title: offer.title, product: offer.product,
+                                      duration: offer.duration, openStatus: offer.openStatus,
+                                      value: offer.value || '', companyId: String(offer.companyId),
+                                      documentUrl: offer.documentUrl || '', documentName: '',
+                                      offerDate: unixToDateInput(offer.offerDate)
+                                    });
+                                    setShowEditModal(true);
+                                  }}
+                                  style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 16px',
+                                    border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: 'var(--text-regular)'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                  <Edit2 size={14} /> Düzenle
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(null);
+                                    setSelectedOffer(offer);
+                                    setShowDeleteModal(true);
+                                  }}
+                                  style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '10px 16px',
+                                    border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#ef4444'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                  <Trash2 size={14} /> Sil
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="deal-card__title">{offer.title}</div>
+                      <div className="deal-card__meta">
+                        <div className="deal-card__meta-row">
+                          <Building2 className="deal-card__meta-icon" />
+                          <span>{DURATION_LABELS[offer.duration as OfferDuration]}</span>
+                        </div>
+                        {offer.offerDate && (
+                          <div className="deal-card__meta-row" style={{ marginTop: '4px' }}>
+                            <Calendar size={12} style={{ color: 'var(--text-light)', flexShrink: 0 }} />
+                            <span style={{ fontSize: '11px', color: 'var(--text-light)' }}>
+                              {new Date(offer.offerDate * 1000).toLocaleDateString('tr-TR')}
+                            </span>
+                          </div>
+                        )}
+                        {offer.documentUrl && (
+                          <div className="deal-card__meta-row mt-1">
+                            <a href={offer.documentUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--primary)', textDecoration: 'none', fontWeight: '500' }}>
+                              <span>Belge</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                      <div className="deal-card__footer">
+                        <div className="deal-card__owner">
+                          <Avatar
+                            src={offer.createdBy?.image}
+                            alt={offer.createdBy?.name}
+                            size={24}
+                            className="deal-card__owner-avatar"
+                          />
+                          <span>{offer.createdBy?.name || '—'}</span>
+                        </div>
+                        <span style={{
+                          backgroundColor: offer.openStatus === 'NEW_OPEN' ? '#dcfce7' : '#fef9c3',
+                          color: offer.openStatus === 'NEW_OPEN' ? '#16a34a' : '#ca8a04',
+                          padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600'
+                        }}>
+                          {OPEN_STATUS_LABELS[offer.openStatus as OfferOpenStatus]}
+                        </span>
+                      </div>
+                    </div>
+                  )) : (
+                    <div style={{ textAlign: 'center', padding: '24px', color: '#9ca3af', fontSize: '13px' }}>
+                      Open yok
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Add Offer Modal */}
+      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Yeni Open Ekle" maxWidth="600px">
+        <form className="modal__form" onSubmit={handleAddOffer}>
+          <div className="modal__section">
+            <h4 className="modal__section-title">Open Bilgileri</h4>
+            <div className="modal__row">
+              <div className="modal__field" ref={companyDropdownRef}>
+                <label className="modal__label modal__label--required">Şirket</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="modal__input"
+                    placeholder="Şirket ara..."
+                    value={companySearch}
+                    onChange={(e) => {
+                      setCompanySearch(e.target.value);
+                      setNewOffer(prev => ({ ...prev, companyId: '' }));
+                      setShowCompanyDropdown(true);
+                    }}
+                    onFocus={() => setShowCompanyDropdown(true)}
+                    required={!newOffer.companyId}
+                  />
+                  {showCompanyDropdown && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0, maxHeight: '200px',
+                      overflowY: 'auto', backgroundColor: 'var(--dashboard-bg)', border: '1px solid var(--border-color)',
+                      borderRadius: '8px', zIndex: 50, marginTop: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                    }}>
+                      {companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).length > 0 ? (
+                        companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase())).map(company => (
+                          <div
+                            key={company.id}
+                            style={{ padding: '10px 12px', cursor: 'pointer', fontSize: '14px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-regular)' }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setNewOffer(prev => ({ ...prev, companyId: String(company.id) }));
+                              setCompanySearch(company.name);
+                              setShowCompanyDropdown(false);
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--neutral-light)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          >
+                            {company.name}
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ padding: '10px 12px', fontSize: '14px', color: 'var(--text-light)' }}>Şirket bulunamadı</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="modal__field">
+                <label className="modal__label modal__label--required">Ürün</label>
+                <select className="modal__select" value={newOffer.product} onChange={(e) => setNewOffer(prev => ({ ...prev, product: e.target.value as OfferProduct }))}>
+                  {PRODUCT_OPTIONS.map(p => <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="modal__field">
+              <label className="modal__label modal__label--required">Teklif Başlığı</label>
+              <input type="text" className="modal__input" placeholder="Proje adı girin" value={newOffer.title} onChange={(e) => setNewOffer(prev => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="modal__row">
+              <div className="modal__field">
+                <label className="modal__label modal__label--required">Dönem</label>
+                <select className="modal__select" value={newOffer.duration} onChange={(e) => setNewOffer(prev => ({ ...prev, duration: e.target.value as OfferDuration }))}>
+                  {DURATION_OPTIONS.map(d => <option key={d} value={d}>{DURATION_LABELS[d]}</option>)}
+                </select>
+              </div>
+              <div className="modal__field">
+                <label className="modal__label modal__label--required">Durum</label>
+                <select className="modal__select" value={newOffer.openStatus} onChange={(e) => setNewOffer(prev => ({ ...prev, openStatus: e.target.value as OfferOpenStatus }))}>
+                  <option value="NEW_OPEN">New Open</option>
+                  <option value="RE_OPEN">Re Open</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal__row">
+              <div className="modal__field">
+                <label className="modal__label">Değer (TL)</label>
+                <input type="number" className="modal__input" placeholder="0" value={newOffer.value} onChange={(e) => setNewOffer(prev => ({ ...prev, value: e.target.value }))} min="0" />
+              </div>
+              <div className="modal__field">
+                <label className="modal__label">Tarih</label>
+                <input type="date" className="modal__input" value={newOffer.offerDate} onChange={(e) => setNewOffer(prev => ({ ...prev, offerDate: e.target.value }))} />
+              </div>
+            </div>
+
+            <div className="modal__field" style={{ marginTop: '16px' }}>
+              <label className="modal__label">Doküman (Opsiyonel)</label>
+              <FileUpload
+                onUploadSuccess={(url, name) => setNewOffer(prev => ({ ...prev, documentUrl: url, documentName: name }))}
+              />
+            </div>
+          </div>
+          <div className="modal__actions">
+            <button type="button" className="modal__btn modal__btn--secondary" onClick={() => setShowAddModal(false)}>İptal</button>
+            <button type="submit" className="modal__btn modal__btn--primary" disabled={submitting}>
+              <Save />
+              {submitting ? 'Kaydediliyor...' : 'Kaydet'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Offer Modal */}
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Open Düzenle" maxWidth="600px">
+        <form className="modal__form" onSubmit={handleEditOfferSubmit}>
+          <div className="modal__section">
+            <h4 className="modal__section-title">Open Bilgileri</h4>
+            <div className="modal__field">
+              <label className="modal__label modal__label--required">Teklif Başlığı</label>
+              <input type="text" className="modal__input" placeholder="Proje adı girin" value={editOffer.title} onChange={(e) => setEditOffer(prev => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="modal__row">
+              <div className="modal__field">
+                <label className="modal__label">Değer (TL)</label>
+                <input type="number" className="modal__input" placeholder="0" value={editOffer.value} onChange={(e) => setEditOffer(prev => ({ ...prev, value: e.target.value }))} min="0" />
+              </div>
+              <div className="modal__field">
+                <label className="modal__label">Tarih</label>
+                <input type="date" className="modal__input" value={editOffer.offerDate} onChange={(e) => setEditOffer(prev => ({ ...prev, offerDate: e.target.value }))} />
+              </div>
+            </div>
+          </div>
+          <div className="modal__actions">
+            <button type="button" className="modal__btn modal__btn--secondary" onClick={() => setShowEditModal(false)}>İptal</button>
+            <button type="submit" className="modal__btn modal__btn--primary" disabled={submitting}>
+              <Save />
+              {submitting ? 'Kaydediliyor...' : 'Kaydet'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Open Sil" maxWidth="400px">
+        <div style={{ padding: '24px' }}>
+          <p style={{ fontSize: '15px', color: 'var(--text-regular)', marginBottom: '24px' }}>
+            Bu open'ı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+          </p>
+          <div className="modal__actions">
+            <button type="button" className="modal__btn modal__btn--secondary" onClick={() => setShowDeleteModal(false)}>İptal</button>
+            <button type="button" className="modal__btn" style={{ backgroundColor: '#ef4444', color: 'white' }} onClick={handleDeleteOffer} disabled={submitting}>
+              {submitting ? 'Siliniyor...' : 'Evet, Sil'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Filter Modal */}
+      {showFilter && (
+        <>
+          <div className="filter-modal__overlay" onClick={() => setShowFilter(false)} />
+          <div className="filter-modal">
+            <div className="filter-modal__header">
+              <div className="filter-modal__icon"><Filter /></div>
+              <button className="filter-modal__close" onClick={() => setShowFilter(false)}><X /></button>
+            </div>
+            <div className="filter-modal__content">
+              <h2 className="filter-modal__title">Detaylı Filtreleme</h2>
+              <p className="filter-modal__message">Aşağıdaki kriterlere göre openleri daraltın.</p>
+            </div>
+            <div className="filter-modal__form">
+              <div className="filter-modal__group">
+                <label className="filter-modal__label">Ürün</label>
+                <select
+                  className="filter-modal__select"
+                  value={tempFilterProduct}
+                  onChange={(e) => setTempFilterProduct(e.target.value as OfferProduct | '')}
+                >
+                  <option value="">Tümü</option>
+                  {PRODUCT_OPTIONS.map(p => <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>)}
+                </select>
+              </div>
+              <div className="filter-modal__group">
+                <label className="filter-modal__label">Durum</label>
+                <select
+                  className="filter-modal__select"
+                  value={tempFilterOpenStatus}
+                  onChange={(e) => setTempFilterOpenStatus(e.target.value as OfferOpenStatus | '')}
+                >
+                  <option value="">Tümü</option>
+                  <option value="NEW_OPEN">New Open</option>
+                  <option value="RE_OPEN">Re Open</option>
+                </select>
+              </div>
+              <div className="filter-modal__group">
+                <label className="filter-modal__label">Tarih Aralığı</label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input
+                    type="date"
+                    className="filter-modal__select"
+                    value={tempFilterDateFrom}
+                    onChange={(e) => setTempFilterDateFrom(e.target.value)}
+                  />
+                  <span style={{ color: 'var(--text-light)', fontSize: '13px' }}>—</span>
+                  <input
+                    type="date"
+                    className="filter-modal__select"
+                    value={tempFilterDateTo}
+                    onChange={(e) => setTempFilterDateTo(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="filter-modal__actions">
+              <button className="filter-modal__btn filter-modal__btn--cancel" onClick={handleResetFilter}>
+                Sıfırla
+              </button>
+              <button className="filter-modal__btn filter-modal__btn--primary" onClick={handleApplyFilter}>
+                Uygula
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

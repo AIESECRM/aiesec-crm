@@ -1,0 +1,753 @@
+.companies-page {
+  display: flex;
+  gap: var(--spacing-xl);
+}
+
+.companies-page__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.companies-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xl);
+}
+
+.companies-page__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.companies-page__title-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--text-regular);
+}
+
+.companies-page__title-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-regular);
+}
+
+.companies-page__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.companies-page__filter-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.companies-page__filter-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+.companies-page__filter-btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.companies-page__add-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--primary-400);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.companies-page__add-btn:hover {
+  background-color: var(--primary-hover-dark);
+}
+
+.companies-page__add-btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.companies-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.companies-page__load-more {
+  display: flex;
+  justify-content: center;
+}
+
+.companies-page__load-more-btn {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background-color: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.companies-page__load-more-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+/* Modern Filter Modal */
+.filter-modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  animation: filterFadeIn 0.15s ease;
+}
+
+.filter-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: var(--neutral-light);
+  border-radius: var(--border-radius-lg);
+  z-index: 1001;
+  overflow: hidden;
+  animation: filterSlideIn 0.2s ease;
+}
+
+@keyframes filterFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes filterSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.filter-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  padding-bottom: 0;
+}
+
+.filter-modal__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.filter-modal__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.filter-modal__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.filter-modal__close:hover {
+  background-color: var(--dashboard-bg);
+  color: var(--text-regular);
+}
+
+.filter-modal__close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.filter-modal__content {
+  padding: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+}
+
+.filter-modal__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-regular);
+  margin-bottom: var(--spacing-xs);
+}
+
+.filter-modal__message {
+  font-size: 14px;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.filter-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+}
+
+.filter-modal__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.filter-modal__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--primary-400);
+}
+
+.filter-modal__select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-regular);
+  background-color: var(--neutral-light);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  padding-right: var(--spacing-xl);
+}
+
+.filter-modal__select:focus {
+  outline: none;
+  border-color: var(--primary-400);
+}
+
+.filter-modal__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  padding-top: 0;
+}
+
+.filter-modal__btn {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-modal__btn--cancel {
+  background-color: var(--dashboard-bg);
+  color: var(--text-regular);
+  border: none;
+}
+
+.filter-modal__btn--cancel:hover {
+  background-color: var(--border-color);
+}
+
+.filter-modal__btn--primary {
+  background-color: var(--primary-400);
+  color: white;
+  border: none;
+}
+
+.filter-modal__btn--primary:hover {
+  background-color: var(--primary-hover-dark);
+}
+
+@media (max-width: 1100px) {
+  .companies-page {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 900px) {
+  .companies-page__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .companies-page__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .companies-page__filter-btn,
+  .companies-page__add-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 13px;
+  }
+
+  .companies-page__title-text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .companies-page__actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .companies-page__filter-btn,
+  .companies-page__add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .companies-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile Modal */
+.companies-page__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+.companies-page__modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 85vh;
+  background-color: var(--neutral-light);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  z-index: 201;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  padding-top: var(--spacing-md);
+}
+
+.companies-page__modal-close {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--dashboard-bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color var(--transition-fast);
+}
+
+.companies-page__modal-close:hover {
+  background-color: var(--border-color);
+}
+
+.companies-page__modal-close svg {
+  width: 20px;
+  height: 20px;
+  color: var(--text-regular);
+}
+
+.companies-page__modal .company-sidebar {
+  position: static;
+  width: 100%;
+  max-height: none;
+  border: none;
+  background: transparent;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (max-width: 1100px) {
+  /* Hide desktop sidebar on mobile */
+  .companies-page > .company-sidebar {
+    display: none;
+  }
+}
+
+/* ─── VIEW TOGGLE ─── */
+.view-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: all 0.15s;
+}
+
+.view-toggle__btn--active {
+  background: var(--primary-400);
+  color: white;
+}
+
+.view-toggle__btn:not(.view-toggle__btn--active):hover {
+  background: var(--dashboard-bg);
+  color: var(--text-regular);
+}
+
+/* ─── PRODUCT PILL TABS ─── */
+.product-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.product-tab {
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--border-color);
+  background: var(--neutral-light);
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.product-tab:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+.product-tab--active {
+  background: var(--primary-400);
+  color: white;
+  border-color: var(--primary-400);
+}
+
+.companies-page__status-select {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--neutral-light);
+  color: var(--text-regular);
+  cursor: pointer;
+}
+
+/* ─── LIST TABLE ─── */
+.companies-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.companies-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.companies-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--dashboard-bg);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.companies-table__row {
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid var(--border-color-light, var(--border-color));
+}
+
+.companies-table__row:last-child {
+  border-bottom: none;
+}
+
+.companies-table__row:hover {
+  background: var(--dashboard-bg);
+}
+
+.companies-table td {
+  padding: 11px 16px;
+  vertical-align: middle;
+  color: var(--text-regular);
+}
+
+.companies-table__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.companies-table__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--dashboard-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.companies-table__muted {
+  color: var(--text-light);
+}
+
+.companies-table__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: none;
+  font-size: 12px;
+  color: var(--text-regular);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.companies-table__edit-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+/* ─── KANBAN BOARD ─── */
+.kanban-board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: stretch;
+}
+
+.kanban-col {
+  flex: 0 0 230px;
+  min-width: 230px;
+  background: var(--dashboard-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-col--drag-over {
+  background: color-mix(in srgb, var(--primary-400) 6%, var(--dashboard-bg));
+  box-shadow: 0 0 0 2px var(--primary-400);
+}
+
+.kanban-col__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px 14px;
+  border-top: 3px solid transparent;
+  border-radius: 11px 11px 0 0;
+}
+
+.kanban-col__title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kanban-col__count {
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--neutral-light);
+  border-radius: 20px;
+  padding: 1px 8px;
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+.kanban-col__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px 10px 10px;
+  min-height: 80px;
+  flex: 1;
+}
+
+.kanban-col__empty {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 12px;
+  padding: 16px 0;
+}
+
+.kanban-card {
+  background: var(--neutral-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  transition: box-shadow 0.15s, transform 0.1s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: rotate(1deg) scale(1.02);
+}
+
+.kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.kanban-card__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+.kanban-card__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-regular);
+  line-height: 1.3;
+}
+
+.kanban-card__meta {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.kanban-card__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.kanban-card__info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* ─── PRODUCT MULTI-CHECKBOX IN FORM ─── */
+.product-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.product-checkbox input {
+  display: none;
+}
+
+.product-checkbox--checked {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 10%, white);
+}
+
+.product-checkbox:hover {
+  border-color: var(--primary-400);
+}
+
