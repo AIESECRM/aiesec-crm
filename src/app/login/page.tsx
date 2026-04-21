@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import "./page.css";
 
-type Step = "login" | "forgot-email" | "forgot-code" | "forgot-newpass";
+type Step = "login" | "forgot-email" | "forgot-code";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,52 +16,36 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Şifremi unuttum
   const [resetEmail, setResetEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
 
+  useEffect(() => { setMounted(true); }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     const result = await signIn("credentials", { email, password, redirect: false });
-
-    if (result?.error) {
-      setError("Email veya şifre hatalı!");
-      setLoading(false);
-      return;
-    }
-
+    if (result?.error) { setError("Email veya şifre hatalı!"); setLoading(false); return; }
     const sessionRes = await fetch("/api/auth/session");
     const sessionData = await sessionRes.json();
     const role = sessionData?.user?.role;
     const status = sessionData?.user?.status;
-
-    if (status === "PENDING") {
-      router.push("/onay-bekleniyor");
-    } else if (status === "REJECTED") {
-      setError("Hesabınız reddedildi. Lütfen yöneticinizle iletişime geçin.");
-      setLoading(false);
-    } else if (role === "ADMIN") {
-      router.push("/admin");
-    } else {
-      router.push("/");
-    }
+    if (status === "PENDING") { router.push("/onay-bekleniyor"); }
+    else if (status === "REJECTED") { setError("Hesabınız reddedildi. Lütfen yöneticinizle iletişime geçin."); setLoading(false); }
+    else if (role === "ADMIN") { router.push("/admin"); }
+    else { router.push("/"); }
   };
 
   const handleSendCode = async () => {
     setError(""); setSuccess("");
     if (!resetEmail) { setError("Email zorunludur!"); return; }
     setLoading(true);
-    const res = await fetch("/api/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "send-code", email: resetEmail }),
-    });
+    const res = await fetch("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "send-code", email: resetEmail }) });
     const data = await res.json();
     setLoading(false);
     if (!res.ok) { setError(data.error); return; }
@@ -74,143 +59,105 @@ export default function LoginPage() {
     if (!newPassword || newPassword.length < 8) { setError("Şifre en az 8 karakter olmalıdır!"); return; }
     if (newPassword !== newPasswordConfirm) { setError("Şifreler eşleşmiyor!"); return; }
     setLoading(true);
-    const res = await fetch("/api/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "reset-password", email: resetEmail, code: resetCode, newPassword }),
-    });
+    const res = await fetch("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "reset-password", email: resetEmail, code: resetCode, newPassword }) });
     const data = await res.json();
     setLoading(false);
     if (!res.ok) { setError(data.error); return; }
-    setSuccess("Şifreniz başarıyla güncellendi! Giriş yapabilirsiniz.");
+    setSuccess("Şifreniz başarıyla güncellendi!");
     setTimeout(() => { setStep("login"); setSuccess(""); }, 2500);
   };
 
-  const inputStyle = { width: "100%", border: "1px solid #d1d5db", borderRadius: "8px", padding: "8px 12px", fontSize: "14px", boxSizing: "border-box" as const };
-  const btnStyle = (disabled: boolean) => ({ width: "100%", backgroundColor: disabled ? "#93c5fd" : "#2563eb", color: "white", padding: "10px", borderRadius: "8px", fontWeight: "600", fontSize: "16px", border: "none", cursor: disabled ? "not-allowed" : "pointer" });
-
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
-      <div style={{ backgroundColor: "var(--card)", padding: "32px", borderRadius: "12px", border: "1px solid var(--border-color)", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "400px" }}>
+    <div className={`auth-page ${mounted ? 'auth-page--mounted' : ''}`}>
+      {/* Animated background */}
+      <div className="auth-bg">
+        <div className="auth-bg__orb auth-bg__orb--1" />
+        <div className="auth-bg__orb auth-bg__orb--2" />
+        <div className="auth-bg__orb auth-bg__orb--3" />
+      </div>
 
-        <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "var(--primary)", marginBottom: "8px" }}>AIESEC CRM</h1>
-        <p style={{ textAlign: "center", color: "var(--text-regular)", marginBottom: "24px", fontWeight: "500" }}>
-          {step === "login" && "Hesabınıza giriş yapın"}
-          {step === "forgot-email" && "Şifre sıfırlama"}
-          {step === "forgot-code" && "Doğrulama kodu"}
-        </p>
+      <div className="auth-card">
+        {/* Logo */}
+        <div className="auth-logo">
+          <img src="/logo/primary.svg" alt="AIESEC" className="auth-logo__img" />
+          <div className="auth-logo__badge">CRM</div>
+        </div>
 
-        {error && <div style={{ backgroundColor: "rgba(220, 38, 38, 0.1)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "#ef4444", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>{error}</div>}
-        {success && <div style={{ backgroundColor: "rgba(22, 163, 74, 0.1)", border: "1px solid rgba(22, 163, 74, 0.3)", color: "#10b981", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>{success}</div>}
+        <div className="auth-header">
+          <h1 className="auth-title">
+            {step === "login" && "Hoş Geldiniz"}
+            {step === "forgot-email" && "Şifre Sıfırla"}
+            {step === "forgot-code" && "Kodu Girin"}
+          </h1>
+          <p className="auth-subtitle">
+            {step === "login" && "Hesabınıza giriş yapın"}
+            {step === "forgot-email" && "Email adresinize kod göndereceğiz"}
+            {step === "forgot-code" && `${resetEmail} adresine kod gönderdik`}
+          </p>
+        </div>
 
-        {/* LOGIN */}
+        {error && <div className="auth-alert auth-alert--error">{error}</div>}
+        {success && <div className="auth-alert auth-alert--success">{success}</div>}
+
         {step === "login" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
-                  placeholder="ornek@aiesec.net"
-                  required
-                />
-              </div>
-              <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şifre</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <div style={{ textAlign: "right", marginTop: "-4px" }}>
-                <button type="button" onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}
-                  style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
-                  Şifremi unuttum
-                </button>
-              </div>
-              <button type="submit" disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px", opacity: loading ? 0.6 : 1, transition: "all 0.2s ease-in-out" }}>
-                {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label className="auth-label">Email</label>
+              <input type="email" className="auth-input" placeholder="ornek@aiesec.net" value={email} onChange={e => setEmail(e.target.value)} required />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label">Şifre</label>
+              <input type="password" className="auth-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+            </div>
+            <div className="auth-forgot">
+              <button type="button" className="auth-link-btn" onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}>
+                Şifremi unuttum
               </button>
-            </form>
-            <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text-regular)", marginTop: "8px" }}>
+            </div>
+            <button type="submit" className="auth-btn" disabled={loading}>
+              {loading ? <span className="auth-btn__spinner" /> : null}
+              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+            </button>
+            <p className="auth-footer-text">
               Hesabın yok mu?{" "}
-              <Link href="/login/register" style={{ color: "var(--primary)", fontWeight: "600", textDecoration: "none" }}>Kayıt ol</Link>
+              <Link href="/login/register" className="auth-link">Kayıt ol</Link>
             </p>
-          </div>
+          </form>
         )}
 
-        {/* FORGOT - EMAIL */}
         {step === "forgot-email" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email Adresiniz</label>
-              <input
-                type="email"
-                value={resetEmail}
-                onChange={e => setResetEmail(e.target.value)}
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
-                placeholder="ornek@aiesec.net"
-              />
+          <div className="auth-form">
+            <div className="auth-field">
+              <label className="auth-label">Email Adresiniz</label>
+              <input type="email" className="auth-input" placeholder="ornek@aiesec.net" value={resetEmail} onChange={e => setResetEmail(e.target.value)} />
             </div>
-            <button onClick={handleSendCode} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
+            <button className="auth-btn" onClick={handleSendCode} disabled={loading}>
               {loading ? "Gönderiliyor..." : "Doğrulama Kodu Gönder"}
             </button>
-            <button onClick={() => { setStep("login"); setError(""); setSuccess(""); }}
-              style={{ background: "none", border: "none", color: "var(--text-regular)", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "8px" }}>
+            <button className="auth-back-btn" onClick={() => { setStep("login"); setError(""); setSuccess(""); }}>
               ← Geri dön
             </button>
           </div>
         )}
 
-        {/* FORGOT - CODE + NEW PASS */}
         {step === "forgot-code" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <p style={{ fontSize: "14px", color: "var(--text-regular)", textAlign: "center" }}>
-              <strong style={{ color: "var(--foreground)" }}>{resetEmail}</strong> adresine kod gönderdik.
-            </p>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Doğrulama Kodu</label>
-              <input
-                type="text"
-                value={resetCode}
-                onChange={e => setResetCode(e.target.value)}
-                maxLength={6}
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--primary)", border: "1px solid var(--border-color)", padding: "12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "28px", fontWeight: "bold", textAlign: "center", letterSpacing: "12px" }}
-                placeholder="000000"
-              />
+          <div className="auth-form">
+            <div className="auth-field">
+              <label className="auth-label">Doğrulama Kodu</label>
+              <input type="text" className="auth-input auth-input--code" maxLength={6} placeholder="000000" value={resetCode} onChange={e => setResetCode(e.target.value)} />
             </div>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
-                placeholder="En az 8 karakter"
-              />
+            <div className="auth-field">
+              <label className="auth-label">Yeni Şifre</label>
+              <input type="password" className="auth-input" placeholder="En az 8 karakter" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
             </div>
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Yeni Şifre Tekrar</label>
-              <input
-                type="password"
-                value={newPasswordConfirm}
-                onChange={e => setNewPasswordConfirm(e.target.value)}
-                style={{ ...inputStyle, backgroundColor: "var(--neutral-light)", color: "var(--foreground)", border: "1px solid var(--border-color)", padding: "10px 12px", borderRadius: "8px", width: "100%", outline: "none", fontSize: "15px" }}
-                placeholder="Şifrenizi tekrar girin"
-              />
+            <div className="auth-field">
+              <label className="auth-label">Yeni Şifre Tekrar</label>
+              <input type="password" className="auth-input" placeholder="Şifrenizi tekrar girin" value={newPasswordConfirm} onChange={e => setNewPasswordConfirm(e.target.value)} />
             </div>
-            <button onClick={handleResetPassword} disabled={loading} style={{ ...btnStyle(loading), backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "600", fontSize: "15px", marginTop: "8px" }}>
+            <button className="auth-btn" onClick={handleResetPassword} disabled={loading}>
               {loading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
             </button>
-            <button onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}
-              style={{ background: "none", border: "none", color: "var(--text-regular)", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "8px" }}>
+            <button className="auth-back-btn" onClick={() => { setStep("forgot-email"); setError(""); setSuccess(""); }}>
               ← Geri dön
             </button>
           </div>

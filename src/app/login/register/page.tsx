@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import "../page.css";
 
 const CHAPTERS = [
   { value: "ADANA", label: "Adana" },
@@ -41,25 +42,21 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
-    role: "TM",
-    chapter: "",
-    phone: "",
+    name: "", email: "", password: "", passwordConfirm: "",
+    role: "TM", chapter: "", phone: "",
   });
   const [code, setCode] = useState("");
+
+  useEffect(() => { setMounted(true); }, []);
 
   const isNational = NATIONAL_ROLES.includes(form.role);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
     if (name === "role") {
       if (NATIONAL_ROLES.includes(value)) {
-        // MCP/MCVP için chapter'ı otomatik GENEL_MERKEZ yap
         setForm({ ...form, role: value, chapter: "GENEL_MERKEZ" });
       } else {
         setForm({ ...form, role: value, chapter: "" });
@@ -72,17 +69,10 @@ export default function RegisterPage() {
   const handleSubmit = async () => {
     setError("");
     if (!form.name || !form.email || !form.password || (!isNational && !form.chapter)) {
-      setError("Lütfen tüm zorunlu alanları doldurun!");
-      return;
+      setError("Lütfen tüm zorunlu alanları doldurun!"); return;
     }
-    if (form.password !== form.passwordConfirm) {
-      setError("Şifreler eşleşmiyor!");
-      return;
-    }
-    if (form.password.length < 8) {
-      setError("Şifre en az 8 karakter olmalı!");
-      return;
-    }
+    if (form.password !== form.passwordConfirm) { setError("Şifreler eşleşmiyor!"); return; }
+    if (form.password.length < 8) { setError("Şifre en az 8 karakter olmalı!"); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/register", {
@@ -91,24 +81,15 @@ export default function RegisterPage() {
         body: JSON.stringify({ action: "send-code", ...form }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error);
-      } else {
-        setStep("verify");
-        setSuccess("Doğrulama kodu email adresinize gönderildi!");
-      }
-    } catch {
-      setError("Sunucu hatası!");
-    }
+      if (!res.ok) { setError(data.error); }
+      else { setStep("verify"); setSuccess("Doğrulama kodu email adresinize gönderildi!"); }
+    } catch { setError("Sunucu hatası!"); }
     setLoading(false);
   };
 
   const handleVerify = async () => {
     setError("");
-    if (!code || code.length !== 6) {
-      setError("Lütfen 6 haneli kodu girin!");
-      return;
-    }
+    if (!code || code.length !== 6) { setError("Lütfen 6 haneli kodu girin!"); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/register", {
@@ -117,138 +98,104 @@ export default function RegisterPage() {
         body: JSON.stringify({ action: "verify-code", email: form.email, code }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error);
-      } else {
-        setSuccess("Hesabınız oluşturuldu! Yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/onay-bekleniyor"), 2000);
-      }
-    } catch {
-      setError("Sunucu hatası!");
-    }
+      if (!res.ok) { setError(data.error); }
+      else { setSuccess("Hesabınız oluşturuldu! Yönlendiriliyorsunuz..."); setTimeout(() => router.push("/onay-bekleniyor"), 2000); }
+    } catch { setError("Sunucu hatası!"); }
     setLoading(false);
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
-      <div style={{ backgroundColor: "var(--card)", padding: "32px", borderRadius: "12px", border: "1px solid var(--border-color)", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "480px" }}>
+    <div className={`auth-page ${mounted ? 'auth-page--mounted' : ''}`}>
+      <div className="auth-bg">
+        <div className="auth-bg__orb auth-bg__orb--1" />
+        <div className="auth-bg__orb auth-bg__orb--2" />
+        <div className="auth-bg__orb auth-bg__orb--3" />
+      </div>
 
-        <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "var(--primary)", marginBottom: "8px" }}>
-          AIESEC CRM
-        </h1>
-        <p style={{ textAlign: "center", color: "var(--text-regular)", marginBottom: "24px", fontWeight: "500" }}>
-          {step === "form" ? "Yeni hesap oluşturun" : "Email doğrulama"}
-        </p>
+      <div className="auth-card" style={{ maxWidth: '480px' }}>
+        <div className="auth-logo">
+          <img src="/logo/primary.svg" alt="AIESEC" className="auth-logo__img" />
+          <div className="auth-logo__badge">CRM</div>
+        </div>
 
-        {error && (
-          <div style={{ backgroundColor: "rgba(220, 38, 38, 0.1)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "#ef4444", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>
-            {error}
-          </div>
-        )}
+        <div className="auth-header">
+          <h1 className="auth-title">
+            {step === "form" ? "Hesap Oluştur" : "Email Doğrulama"}
+          </h1>
+          <p className="auth-subtitle">
+            {step === "form" ? "Yeni hesabınızı oluşturun" : `${form.email} adresine kod gönderdik`}
+          </p>
+        </div>
 
-        {success && (
-          <div style={{ backgroundColor: "rgba(22, 163, 74, 0.1)", border: "1px solid rgba(22, 163, 74, 0.3)", color: "#10b981", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", fontWeight: "500" }}>
-            {success}
-          </div>
-        )}
+        {error && <div className="auth-alert auth-alert--error">{error}</div>}
+        {success && <div className="auth-alert auth-alert--success">{success}</div>}
 
         {step === "form" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Ad Soyad *</label>
-              <input type="text" name="name" value={form.name} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}
-                placeholder="Adınız Soyadınız" />
+          <div className="auth-form">
+            <div className="auth-field">
+              <label className="auth-label">Ad Soyad *</label>
+              <input type="text" name="name" className="auth-input" placeholder="Adınız Soyadınız" value={form.name} onChange={handleChange} />
             </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Email *</label>
-              <input type="email" name="email" value={form.email} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}
-                placeholder="ornek@aiesec.net" />
+            <div className="auth-field">
+              <label className="auth-label">Email *</label>
+              <input type="email" name="email" className="auth-input" placeholder="ornek@aiesec.net" value={form.email} onChange={handleChange} />
             </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Telefon</label>
-              <input type="tel" name="phone" value={form.phone} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}
-                placeholder="05XX XXX XX XX" />
+            <div className="auth-field">
+              <label className="auth-label">Telefon</label>
+              <input type="tel" name="phone" className="auth-input" placeholder="05XX XXX XX XX" value={form.phone} onChange={handleChange} />
             </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Rol</label>
-              <select name="role" value={form.role} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}>
-                {ROLES.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
-                ))}
+            <div className="auth-field">
+              <label className="auth-label">Rol</label>
+              <select name="role" className="auth-input" value={form.role} onChange={handleChange}>
+                {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
 
             {isNational ? (
-              <div style={{ backgroundColor: "rgba(3, 126, 243, 0.08)", border: "1px solid rgba(3, 126, 243, 0.2)", borderRadius: "8px", padding: "12px", fontSize: "14px", color: "var(--primary)" }}>
+              <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: "10px", padding: "12px", fontSize: "14px", color: "var(--primary)" }}>
                 🏢 <strong>Genel Merkez</strong> — MCP/MCVP tüm şubeleri görüntüleyebilir
               </div>
             ) : (
-              <div>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şube *</label>
-                <select name="chapter" value={form.chapter} onChange={handleChange}
-                  style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}>
+              <div className="auth-field">
+                <label className="auth-label">Şube *</label>
+                <select name="chapter" className="auth-input" value={form.chapter} onChange={handleChange}>
                   <option value="">Şube seçin...</option>
-                  {CHAPTERS.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
+                  {CHAPTERS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               </div>
             )}
 
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şifre *</label>
-              <input type="password" name="password" value={form.password} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}
-                placeholder="En az 8 karakter" />
+            <div className="auth-field">
+              <label className="auth-label">Şifre *</label>
+              <input type="password" name="password" className="auth-input" placeholder="En az 8 karakter" value={form.password} onChange={handleChange} />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label">Şifre Tekrar *</label>
+              <input type="password" name="passwordConfirm" className="auth-input" placeholder="Şifrenizi tekrar girin" value={form.passwordConfirm} onChange={handleChange} />
             </div>
 
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Şifre Tekrar *</label>
-              <input type="password" name="passwordConfirm" value={form.passwordConfirm} onChange={handleChange}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "10px 12px", fontSize: "15px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--foreground)", outline: "none" }}
-                placeholder="Şifrenizi tekrar girin" />
-            </div>
-
-            <button onClick={handleSubmit} disabled={loading}
-              style={{ width: "100%", backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", fontWeight: "600", fontSize: "15px", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, marginTop: "8px", transition: "all 0.2s ease-in-out" }}>
+            <button className="auth-btn" onClick={handleSubmit} disabled={loading}>
+              {loading ? <span className="auth-btn__spinner" /> : null}
               {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
             </button>
-
-            <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text-regular)", marginTop: "4px" }}>
+            <p className="auth-footer-text">
               Zaten hesabın var mı?{" "}
-              <Link href="/login" style={{ color: "var(--primary)", fontWeight: "600", textDecoration: "none" }}>Giriş yap</Link>
+              <Link href="/login" className="auth-link">Giriş yap</Link>
             </p>
           </div>
         )}
 
         {step === "verify" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <p style={{ textAlign: "center", fontSize: "14px", color: "var(--text-regular)" }}>
-              <strong style={{ color: "var(--foreground)" }}>{form.email}</strong> adresine 6 haneli kod gönderdik.
-            </p>
-
-            <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "6px", color: "var(--foreground)" }}>Doğrulama Kodu</label>
-              <input type="text" value={code} onChange={(e) => setCode(e.target.value)} maxLength={6}
-                style={{ width: "100%", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "12px", fontSize: "28px", fontWeight: "bold", textAlign: "center", letterSpacing: "12px", boxSizing: "border-box", backgroundColor: "var(--neutral-light)", color: "var(--primary)", outline: "none" }}
-                placeholder="000000" />
+          <div className="auth-form">
+            <div className="auth-field">
+              <label className="auth-label">Doğrulama Kodu</label>
+              <input type="text" className="auth-input auth-input--code" maxLength={6} placeholder="000000" value={code} onChange={e => setCode(e.target.value)} />
             </div>
-
-            <button onClick={handleVerify} disabled={loading}
-              style={{ width: "100%", backgroundColor: "var(--primary)", color: "white", padding: "12px", borderRadius: "8px", fontWeight: "600", fontSize: "15px", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "8px" }}>
+            <button className="auth-btn" onClick={handleVerify} disabled={loading}>
+              {loading ? <span className="auth-btn__spinner" /> : null}
               {loading ? "Doğrulanıyor..." : "Hesabı Oluştur"}
             </button>
-
-            <button onClick={() => { setStep("form"); setError(""); setSuccess(""); }}
-              style={{ width: "100%", backgroundColor: "transparent", color: "var(--text-regular)", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer", marginTop: "4px" }}>
+            <button className="auth-back-btn" onClick={() => { setStep("form"); setError(""); setSuccess(""); }}>
               ← Geri dön
             </button>
           </div>
