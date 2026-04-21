@@ -45,12 +45,14 @@
   font-size: 14px;
   color: var(--text-regular);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .deals-page__filter-btn:hover {
   border-color: var(--primary-400);
   color: var(--primary-400);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .deals-page__filter-btn--active {
@@ -64,8 +66,6 @@
   height: 18px;
 }
 
-/* deals-page__filter-wrapper removed for new modal style */
-
 .deals-page__add-btn {
   display: flex;
   align-items: center;
@@ -78,11 +78,13 @@
   font-weight: 500;
   color: var(--neutral-light);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .deals-page__add-btn:hover {
   background-color: var(--primary-hover-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .deals-page__add-btn-icon {
@@ -101,16 +103,43 @@
   background-color: var(--neutral-light);
   border-radius: var(--border-radius);
   padding: var(--spacing-lg);
+  border: 1px solid var(--border-color-light);
+  transition: all 0.2s ease;
+  animation: statFadeIn 0.4s ease both;
+}
+
+.deals-page__stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.deals-page__stat:nth-child(1) { animation-delay: 0.05s; }
+.deals-page__stat:nth-child(2) { animation-delay: 0.1s; }
+.deals-page__stat:nth-child(3) { animation-delay: 0.15s; }
+.deals-page__stat:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes statFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .deals-page__stat-label {
   font-size: 13px;
   color: var(--text-light);
   margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .deals-page__stat-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-regular);
 }
@@ -132,7 +161,7 @@
 }
 
 .kanban-wrapper::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
 }
 
 .kanban-wrapper::-webkit-scrollbar-track {
@@ -157,6 +186,23 @@
   background-color: var(--dashboard-bg);
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
+  animation: columnFadeIn 0.35s ease both;
+}
+
+.kanban__column:nth-child(1) { animation-delay: 0.05s; }
+.kanban__column:nth-child(2) { animation-delay: 0.1s; }
+.kanban__column:nth-child(3) { animation-delay: 0.15s; }
+.kanban__column:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes columnFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .kanban__column-header {
@@ -168,18 +214,10 @@
   border-bottom: 3px solid var(--border-color-light);
 }
 
-/* Ürün bazlı renkler */
-.kanban__column:nth-child(1) .kanban__column-header {
-  border-bottom-color: #3b82f6;
-}
-
-.kanban__column:nth-child(2) .kanban__column-header {
-  border-bottom-color: #10b981;
-}
-
-.kanban__column:nth-child(3) .kanban__column-header {
-  border-bottom-color: #f59e0b;
-}
+.kanban__column:nth-child(1) .kanban__column-header { border-bottom-color: #3b82f6; }
+.kanban__column:nth-child(2) .kanban__column-header { border-bottom-color: #10b981; }
+.kanban__column:nth-child(3) .kanban__column-header { border-bottom-color: #f59e0b; }
+.kanban__column:nth-child(4) .kanban__column-header { border-bottom-color: #8b5cf6; }
 
 .kanban__column-title {
   font-size: 15px;
@@ -193,6 +231,7 @@
   background-color: var(--neutral-light);
   padding: 2px 8px;
   border-radius: var(--border-radius-sm);
+  font-weight: 600;
 }
 
 .kanban__cards {
@@ -207,13 +246,26 @@
   background-color: var(--neutral-light);
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
   border: 1px solid transparent;
+  animation: cardFadeIn 0.3s ease both;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .deal-card:hover {
   border-color: var(--primary-200);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .deal-card__header {
@@ -367,9 +419,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   z-index: 1000;
-  animation: filterFadeIn 0.15s ease;
+  animation: filterFadeIn 0.2s ease;
+  backdrop-filter: blur(2px);
 }
 
 .filter-modal {
@@ -378,12 +431,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
   background-color: var(--neutral-light);
-  border-radius: var(--border-radius-lg);
+  border-radius: 16px;
   z-index: 1001;
   overflow: hidden;
-  animation: filterSlideIn 0.2s ease;
+  animation: filterSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes filterFadeIn {
@@ -394,7 +448,7 @@
 @keyframes filterSlideIn {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translate(-50%, -48%) scale(0.92);
   }
   to {
     opacity: 1;
@@ -413,11 +467,11 @@
 .filter-modal__icon {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(59, 130, 246, 0.1);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
   color: #3b82f6;
 }
 
@@ -436,13 +490,14 @@
   border: none;
   cursor: pointer;
   color: var(--text-light);
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-fast);
+  border-radius: 8px;
+  transition: all 0.15s ease;
 }
 
 .filter-modal__close:hover {
   background-color: var(--dashboard-bg);
   color: var(--text-regular);
+  transform: rotate(90deg);
 }
 
 .filter-modal__close svg {
@@ -457,13 +512,13 @@
 
 .filter-modal__title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-regular);
   margin-bottom: var(--spacing-xs);
 }
 
 .filter-modal__message {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-light);
   line-height: 1.5;
 }
@@ -479,25 +534,27 @@
 .filter-modal__group {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 6px;
 }
 
 .filter-modal__label {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--primary-400);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .filter-modal__select {
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  padding: 10px var(--spacing-md);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
   font-size: 14px;
   color: var(--text-regular);
-  background-color: var(--neutral-light);
+  background-color: var(--dashboard-bg);
   cursor: pointer;
-  transition: border-color var(--transition-fast);
+  transition: all 0.15s ease;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -508,6 +565,25 @@
 .filter-modal__select:focus {
   outline: none;
   border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: var(--neutral-light);
+}
+
+/* Tarih input özel stili */
+.filter-modal__select[type="date"] {
+  background-image: none;
+  padding-right: var(--spacing-md);
+  color-scheme: light;
+}
+
+.filter-modal__select[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.filter-modal__select[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 .filter-modal__actions {
@@ -519,30 +595,33 @@
 
 .filter-modal__btn {
   flex: 1;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius);
+  padding: 10px var(--spacing-lg);
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .filter-modal__btn--cancel {
   background-color: var(--dashboard-bg);
   color: var(--text-regular);
-  border: none;
+  border: 1.5px solid var(--border-color);
 }
 
 .filter-modal__btn--cancel:hover {
   background-color: var(--border-color);
+  transform: translateY(-1px);
 }
 
 .filter-modal__btn--primary {
-  background-color: var(--primary-400);
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
   color: white;
   border: none;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .filter-modal__btn--primary:hover {
-  background-color: var(--primary-hover-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }

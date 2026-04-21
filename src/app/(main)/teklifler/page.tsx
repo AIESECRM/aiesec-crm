@@ -314,7 +314,7 @@ export default function DealsPage() {
       ) : (
         <div className="kanban-wrapper">
           <div className="kanban">
-            {PRODUCT_OPTIONS.map((product) => (
+            {(filterProduct ? PRODUCT_OPTIONS.filter(p => p === filterProduct) : PRODUCT_OPTIONS).map((product) => (
               <div key={product} className="kanban__column">
                 <div className="kanban__column-header">
                   <span className="kanban__column-title">{PRODUCT_LABELS[product]}</span>

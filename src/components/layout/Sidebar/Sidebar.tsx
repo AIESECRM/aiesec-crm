@@ -58,7 +58,7 @@ export default function Sidebar() {
     },
     {
       href: '/teklifler',
-      label: 'Teklifler',
+      label: 'Openlar',
       icon: <DollarSign className="sidebar__nav-icon" />,
       show: permissions.canViewDeals,
     },
