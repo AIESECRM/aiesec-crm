@@ -326,7 +326,7 @@ export default function CompanyDetailPage() {
                   <div className="company-detail__contact-avatar">
                     {manager.image ? (
                       <img
-                        src={manager.image}
+                        src={manager.image.includes('cdn.aiesecrm.com') ? `/api/image-proxy?url=${encodeURIComponent(manager.image)}` : manager.image}
                         alt={manager.name}
                         style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                       />
