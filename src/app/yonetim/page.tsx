@@ -39,8 +39,8 @@ export default function YonetimPage() {
         return <div style={{ padding: '40px', textAlign: 'center' }}>Yükleniyor...</div>;
     }
 
-    // Filter by chapter
-    const branchUsers = allUsers.filter(u => u.chapter === user.chapter);
+    // Filter by chapter, exclude inactive users
+    const branchUsers = allUsers.filter(u => u.chapter === user.chapter && (u as any).status !== 'INACTIVE');
     const branchUserIds = branchUsers.map(u => u.id);
 
     const branchActivities = allActivities.filter(a => branchUserIds.includes(a.userId));
