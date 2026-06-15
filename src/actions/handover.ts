@@ -46,6 +46,12 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                     timestamp: Math.floor(Date.now() / 1000)
                 }
             });
+
+            // 6. Kaynak üyeyi pasife al
+            await tx.user.update({
+                where: { id: fromId },
+                data: { status: 'INACTIVE' }
+            });
         }, {
             maxWait: 10000,  // Transaction başlaması için max bekleme: 10sn
             timeout: 30000,  // Transaction çalışma süresi: 30sn
