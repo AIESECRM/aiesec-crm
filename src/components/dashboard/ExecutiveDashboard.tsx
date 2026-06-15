@@ -9,6 +9,7 @@ import {
     TrendingUp, DollarSign, Target, Activity, ArrowUpRight, ArrowDownRight,
     Users, Zap, Award, ChevronDown, FileText, Phone, Handshake, CheckCircle2
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import './ExecutiveDashboard.css';
 
 const formatCurrency = (val: number) => {
@@ -34,6 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function ExecutiveDashboard() {
+    const router = useRouter();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [chapter, setChapter] = useState('');
@@ -107,7 +109,11 @@ export default function ExecutiveDashboard() {
 
             {/* KPI Row — 4 cards, compact */}
             <div className="exec__kpi-grid">
-                <div className="exec__kpi exec__kpi--purple">
+                <div 
+                    className="exec__kpi exec__kpi--purple" 
+                    onClick={() => router.push('/teklifler')}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className="exec__kpi-top">
                         <div className="exec__kpi-icon"><FileText /></div>
                     </div>
@@ -116,7 +122,11 @@ export default function ExecutiveDashboard() {
                     <div className="exec__kpi-sub">{formatCurrency(kpis.totalOfferValue)} toplam değer</div>
                 </div>
 
-                <div className="exec__kpi exec__kpi--green">
+                <div 
+                    className="exec__kpi exec__kpi--green"
+                    onClick={() => router.push('/sirketler')}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className="exec__kpi-top">
                         <div className="exec__kpi-icon"><Target /></div>
                     </div>
@@ -125,7 +135,11 @@ export default function ExecutiveDashboard() {
                     <div className="exec__kpi-sub">{kpis.positiveCompanies}/{kpis.totalCompanies} şirket</div>
                 </div>
 
-                <div className="exec__kpi exec__kpi--blue">
+                <div 
+                    className="exec__kpi exec__kpi--blue"
+                    onClick={() => router.push('/aktiviteler')}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className="exec__kpi-top">
                         <div className="exec__kpi-icon"><Activity /></div>
                         {kpis.activityTrend !== 0 && (
@@ -140,7 +154,11 @@ export default function ExecutiveDashboard() {
                     <div className="exec__kpi-sub">{kpis.totalActivities} toplam</div>
                 </div>
 
-                <div className="exec__kpi exec__kpi--orange">
+                <div 
+                    className="exec__kpi exec__kpi--orange"
+                    onClick={() => router.push('/sirketler')}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div className="exec__kpi-top">
                         <div className="exec__kpi-icon"><TrendingUp /></div>
                     </div>
@@ -256,7 +274,12 @@ export default function ExecutiveDashboard() {
                     </div>
                     <div className="exec__pipeline-legend">
                         {pipeline.map((p: any) => (
-                            <div key={p.status} className="exec__pipeline-row">
+                            <div 
+                                key={p.status} 
+                                className="exec__pipeline-row" 
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => router.push('/sirketler')}
+                            >
                                 <span className="exec__pipeline-dot" style={{ background: p.color }} />
                                 <span className="exec__pipeline-label">{p.label}</span>
                                 <span className="exec__pipeline-count">{p.count}</span>
@@ -276,7 +299,12 @@ export default function ExecutiveDashboard() {
                             const totalVal = productMix.reduce((s: number, p: any) => s + p.value, 0);
                             const pct = totalVal > 0 ? Math.round((pm.value / totalVal) * 100) : 0;
                             return (
-                                <div key={pm.product} className="exec__product">
+                                <div 
+                                    key={pm.product} 
+                                    className="exec__product"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => router.push('/teklifler')}
+                                >
                                     <div className="exec__product-top">
                                         <span className="exec__product-name">
                                             <span className="exec__product-dot" style={{ background: pm.color }} />
@@ -304,10 +332,18 @@ export default function ExecutiveDashboard() {
                         Süreç Kalitesi
                     </h3>
                     <div className="exec__quality">
-                        <QualityItem icon={<Phone size={16} />} label="Dönüşüm / Arama" value={processQuality.avgCallsPerConversion} desc="pozitif sonuç başına arama" color="#037EF3" />
-                        <QualityItem icon={<Handshake size={16} />} label="Toplantı → Teklif" value={`%${processQuality.meetingToOfferRatio}`} desc="toplantılardan teklif oranı" color="#22C55E" />
-                        <QualityItem icon={<CheckCircle2 size={16} />} label="Yanıt Oranı" value={`%${processQuality.responseRate}`} desc="cevap veren şirketler" color="#F59E0B" />
-                        <QualityItem icon={<Zap size={16} />} label="Ort. Etkileşim" value={processQuality.avgActivitiesPerCompany} desc="şirket başına aktivite" color="#8B5CF6" />
+                        <div onClick={() => router.push('/aktiviteler')} style={{ cursor: 'pointer' }}>
+                            <QualityItem icon={<Phone size={16} />} label="Dönüşüm / Arama" value={processQuality.avgCallsPerConversion} desc="pozitif sonuç başına arama" color="#037EF3" />
+                        </div>
+                        <div onClick={() => router.push('/teklifler')} style={{ cursor: 'pointer' }}>
+                            <QualityItem icon={<Handshake size={16} />} label="Toplantı → Teklif" value={`%${processQuality.meetingToOfferRatio}`} desc="toplantılardan teklif oranı" color="#22C55E" />
+                        </div>
+                        <div onClick={() => router.push('/sirketler')} style={{ cursor: 'pointer' }}>
+                            <QualityItem icon={<CheckCircle2 size={16} />} label="Yanıt Oranı" value={`%${processQuality.responseRate}`} desc="cevap veren şirketler" color="#F59E0B" />
+                        </div>
+                        <div onClick={() => router.push('/aktiviteler')} style={{ cursor: 'pointer' }}>
+                            <QualityItem icon={<Zap size={16} />} label="Ort. Etkileşim" value={processQuality.avgActivitiesPerCompany} desc="şirket başına aktivite" color="#8B5CF6" />
+                        </div>
                     </div>
                 </div>
             </div>
