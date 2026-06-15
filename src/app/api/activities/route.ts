@@ -17,13 +17,16 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const companyId = searchParams.get("companyId");
   const type = searchParams.get("type");
+  const chapter = searchParams.get("chapter");
 
   const where: any = {};
 
   if (companyId) {
     where.companyId = parseInt(companyId);
   } else if (NATIONAL_ROLES.includes(user.role)) {
-    // Tüm şubeleri görebilir
+    if (chapter) {
+      where.company = { chapter };
+    }
   } else if (CHAPTER_ROLES.includes(user.role)) {
     where.company = { chapter: user.chapter };
   } else {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Users, Search, Plus, Building2, User, Phone, Mail, MessageSquare, Info, Save,
   ChevronDown,
@@ -9,8 +10,35 @@ import {
 import Modal from '@/components/common/Modal';
 import './page.css';
 
+const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
+const CHAPTER_OPTIONS = [
+    { value: '', label: 'Tüm Şubeler' },
+    { value: 'ADANA', label: 'Adana' },
+    { value: 'ANKARA', label: 'Ankara' },
+    { value: 'ANTALYA', label: 'Antalya' },
+    { value: 'BURSA', label: 'Bursa' },
+    { value: 'DENIZLI', label: 'Denizli' },
+    { value: 'DOGU_AKDENIZ', label: 'Doğu Akdeniz' },
+    { value: 'ESKISEHIR', label: 'Eskişehir' },
+    { value: 'GAZIANTEP', label: 'Gaziantep' },
+    { value: 'ISTANBUL', label: 'İstanbul' },
+    { value: 'ISTANBUL_ASYA', label: 'İstanbul Asya' },
+    { value: 'BATI_ISTANBUL', label: 'Batı İstanbul' },
+    { value: 'IZMIR', label: 'İzmir' },
+    { value: 'KOCAELI', label: 'Kocaeli' },
+    { value: 'KONYA', label: 'Konya' },
+    { value: 'KUTAHYA', label: 'Kütahya' },
+    { value: 'SAKARYA', label: 'Sakarya' },
+    { value: 'TRABZON', label: 'Trabzon' },
+];
+
 export default function PeoplePage() {
+  const context = useAuth() as any;
+  const user = context?.user;
+  const isNational = NATIONAL_ROLES.includes(user?.role);
+
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterChapter, setFilterChapter] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [companies, setCompanies] = useState<any[]>([]);
   const [contacts, setContacts] = useState<any[]>([]);
@@ -34,7 +62,8 @@ export default function PeoplePage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [filterChapter]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target as Node)) {
@@ -47,9 +76,10 @@ export default function PeoplePage() {
 
   const fetchData = async () => {
     setLoading(true);
+    const query = filterChapter ? `?chapter=${filterChapter}` : '';
     const [companiesRes, contactsRes] = await Promise.all([
-      fetch('/api/companies'),
-      fetch('/api/contacts'),
+      fetch(`/api/companies${query}`),
+      fetch(`/api/contacts${query}`),
     ]);
     const companiesData = await companiesRes.json();
     const contactsData = await contactsRes.json();
@@ -95,7 +125,18 @@ export default function PeoplePage() {
           <Users className="people-page__title-icon" />
           <h1 className="people-page__title-text">Kişiler</h1>
         </div>
-        <div className="people-page__actions">
+        <div className="people-page__actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {isNational && (
+              <select
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px', backgroundColor: 'var(--neutral-light)' }}
+                  value={filterChapter}
+                  onChange={(e) => setFilterChapter(e.target.value)}
+              >
+                  {CHAPTER_OPTIONS.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+              </select>
+          )}
           <div className="people-page__search">
             <Search className="people-page__search-icon" />
             <input

@@ -16,12 +16,16 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const companyId = searchParams.get("companyId");
 
+  const chapter = searchParams.get("chapter");
+
   const where: any = {};
 
   if (companyId) {
     where.companyId = parseInt(companyId, 10);
   } else if (!NATIONAL_ROLES.includes(user.role)) {
     where.company = { chapter: user.chapter };
+  } else if (chapter) {
+    where.company = { chapter };
   }
 
   const contacts = await prisma.contact.findMany({

@@ -74,6 +74,7 @@ export default function ActivitiesPage() {
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
   const [notes, setNotes] = useState('');
   const [showFilter, setShowFilter] = useState(false);
+  const [filterChapter, setFilterChapter] = useState('');
   const [filterType, setFilterType] = useState<ActivityType | ''>('');
   const [filterMemberId, setFilterMemberId] = useState('');
   const [usersStore, setUsersStore] = useState<any[]>([]);
@@ -96,8 +97,11 @@ export default function ActivitiesPage() {
 
   useEffect(() => {
     fetchCompanies();
-    fetchActivities();
   }, []);
+
+  useEffect(() => {
+    fetchActivities();
+  }, [filterChapter]);
 
   useEffect(() => {
     // Sadece LCP, LCVP ve TL rolleri için alt üyeleri getir
@@ -212,7 +216,8 @@ export default function ActivitiesPage() {
 
   const fetchActivities = async () => {
     setLoading(true);
-    const res = await fetch('/api/activities');
+    const query = filterChapter ? `?chapter=${filterChapter}` : '';
+    const res = await fetch(`/api/activities${query}`);
     const data = await res.json();
     setActivities(data.activities || []);
     setLoading(false);
@@ -410,7 +415,19 @@ export default function ActivitiesPage() {
             <ListTodo className="activities-page__title-icon" />
             <h1 className="activities-page__title-text">Aktiviteler</h1>
           </div>
-          <div className="activities-page__header-actions">
+          <div className="activities-page__header-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            {isNationalRole && (
+                <select
+                    style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px', backgroundColor: 'var(--neutral-light)' }}
+                    value={filterChapter}
+                    onChange={(e) => setFilterChapter(e.target.value)}
+                >
+                    <option value="">Tüm Şubeler</option>
+                    {CHAPTER_OPTIONS.map(c => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                </select>
+            )}
             <div className="activities-page__search">
               <Search className="activities-page__search-icon" />
               <input

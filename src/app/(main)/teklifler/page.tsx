@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DollarSign, Filter, Plus, User, Building2, X, Save, MoreVertical, Edit2, Trash2, Calendar } from 'lucide-react';
 import Modal from '@/components/common/Modal';
+import { useAuth } from '@/contexts/AuthContext';
 import { FileUpload } from '@/components/common/FileUpload/FileUpload';
 import Avatar from '@/components/common/Avatar';
 import './page.css';
@@ -17,6 +18,28 @@ const OPEN_STATUS_LABELS: Record<OfferOpenStatus, string> = { NEW_OPEN: 'New Ope
 
 const PRODUCT_OPTIONS: OfferProduct[] = ['GTA', 'GV', 'GTE', 'EWA'];
 const DURATION_OPTIONS: OfferDuration[] = ['SHORT', 'MEDIUM', 'LONG'];
+
+const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
+const CHAPTER_OPTIONS = [
+    { value: '', label: 'Tüm Şubeler' },
+    { value: 'ADANA', label: 'Adana' },
+    { value: 'ANKARA', label: 'Ankara' },
+    { value: 'ANTALYA', label: 'Antalya' },
+    { value: 'BURSA', label: 'Bursa' },
+    { value: 'DENIZLI', label: 'Denizli' },
+    { value: 'DOGU_AKDENIZ', label: 'Doğu Akdeniz' },
+    { value: 'ESKISEHIR', label: 'Eskişehir' },
+    { value: 'GAZIANTEP', label: 'Gaziantep' },
+    { value: 'ISTANBUL', label: 'İstanbul' },
+    { value: 'ISTANBUL_ASYA', label: 'İstanbul Asya' },
+    { value: 'BATI_ISTANBUL', label: 'Batı İstanbul' },
+    { value: 'IZMIR', label: 'İzmir' },
+    { value: 'KOCAELI', label: 'Kocaeli' },
+    { value: 'KONYA', label: 'Konya' },
+    { value: 'KUTAHYA', label: 'Kütahya' },
+    { value: 'SAKARYA', label: 'Sakarya' },
+    { value: 'TRABZON', label: 'Trabzon' },
+];
 
 function unixToDateInput(unix: number | null | undefined): string {
   if (!unix) return '';
@@ -34,6 +57,10 @@ function dateInputToUnixEndOfDay(dateStr: string): string {
 }
 
 export default function DealsPage() {
+  const context = useAuth() as any;
+  const user = context?.user;
+  const isNational = NATIONAL_ROLES.includes(user?.role);
+
   const [offers, setOffers] = useState<any[]>([]);
   const [companies, setCompanies] = useState<any[]>([]);
   const [stats, setStats] = useState({ newOpen: 0, reOpen: 0, totalOpen: 0 });
@@ -41,6 +68,7 @@ export default function DealsPage() {
   const [unauthorized, setUnauthorized] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
+  const [filterChapter, setFilterChapter] = useState('');
   const [filterProduct, setFilterProduct] = useState<OfferProduct | ''>('');
   const [filterOpenStatus, setFilterOpenStatus] = useState<OfferOpenStatus | ''>('');
   const [filterDateFrom, setFilterDateFrom] = useState('');
@@ -116,6 +144,7 @@ export default function DealsPage() {
   const fetchData = async (product: string, openStatus: string, dateFrom: string = '', dateTo: string = '') => {
     setLoading(true);
     const params = new URLSearchParams();
+    if (filterChapter) params.set('chapter', filterChapter);
     if (product) params.set('product', product);
     if (openStatus) params.set('openStatus', openStatus);
     if (dateFrom) params.set('dateFrom', dateInputToUnix(dateFrom));
@@ -128,6 +157,10 @@ export default function DealsPage() {
     setStats(data.stats || { newOpen: 0, reOpen: 0, totalOpen: 0 });
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData(filterProduct, filterOpenStatus, filterDateFrom, filterDateTo);
+  }, [filterChapter]);
 
   const fetchCompanies = async () => {
     const res = await fetch('/api/companies');
@@ -246,7 +279,18 @@ export default function DealsPage() {
           <DollarSign className="deals-page__title-icon" />
           <h1 className="deals-page__title-text">Openlar</h1>
         </div>
-        <div className="deals-page__actions">
+        <div className="deals-page__actions" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {isNational && (
+              <select
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px', backgroundColor: 'var(--neutral-light)' }}
+                  value={filterChapter}
+                  onChange={(e) => setFilterChapter(e.target.value)}
+              >
+                  {CHAPTER_OPTIONS.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+              </select>
+          )}
           <button
             className={`deals-page__filter-btn ${hasActiveFilter ? 'deals-page__filter-btn--active' : ''}`}
             onClick={() => setShowFilter(!showFilter)}

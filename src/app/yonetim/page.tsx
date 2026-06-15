@@ -5,6 +5,28 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Building2, Phone, Calendar, TrendingUp } from 'lucide-react';
 import { Activity, User } from '@/types';
 
+const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
+const CHAPTER_OPTIONS = [
+    { value: '', label: 'Tüm Şubeler' },
+    { value: 'ADANA', label: 'Adana' },
+    { value: 'ANKARA', label: 'Ankara' },
+    { value: 'ANTALYA', label: 'Antalya' },
+    { value: 'BURSA', label: 'Bursa' },
+    { value: 'DENIZLI', label: 'Denizli' },
+    { value: 'DOGU_AKDENIZ', label: 'Doğu Akdeniz' },
+    { value: 'ESKISEHIR', label: 'Eskişehir' },
+    { value: 'GAZIANTEP', label: 'Gaziantep' },
+    { value: 'ISTANBUL', label: 'İstanbul' },
+    { value: 'ISTANBUL_ASYA', label: 'İstanbul Asya' },
+    { value: 'BATI_ISTANBUL', label: 'Batı İstanbul' },
+    { value: 'IZMIR', label: 'İzmir' },
+    { value: 'KOCAELI', label: 'Kocaeli' },
+    { value: 'KONYA', label: 'Konya' },
+    { value: 'KUTAHYA', label: 'Kütahya' },
+    { value: 'SAKARYA', label: 'Sakarya' },
+    { value: 'TRABZON', label: 'Trabzon' },
+];
+
 export default function YonetimPage() {
     const context = useAuth() as any;
     const user = context?.user;
@@ -12,6 +34,8 @@ export default function YonetimPage() {
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [allActivities, setAllActivities] = useState<Activity[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [filterChapter, setFilterChapter] = useState('');
+    const isNational = NATIONAL_ROLES.includes(user?.role);
 
     useEffect(() => {
         async function fetchData() {
@@ -40,7 +64,12 @@ export default function YonetimPage() {
     }
 
     // Filter by chapter, exclude inactive users
-    const branchUsers = allUsers.filter(u => u.chapter === user.chapter && (u as any).status !== 'INACTIVE');
+    const targetChapter = isNational && filterChapter ? filterChapter : (isNational ? null : user.chapter);
+    const branchUsers = allUsers.filter(u => {
+        if ((u as any).status === 'INACTIVE') return false;
+        if (targetChapter && u.chapter !== targetChapter) return false;
+        return true;
+    });
     const branchUserIds = branchUsers.map(u => u.id);
 
     const branchActivities = allActivities.filter(a => branchUserIds.includes(a.userId));
@@ -52,10 +81,24 @@ export default function YonetimPage() {
 
     return (
         <div style={{ padding: '24px' }}>
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
-                <TrendingUp size={24} />
-                Şube Genel Durumu ({user.chapter || 'Belirtilmedi'})
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '24px', fontWeight: 'bold' }}>
+                    <TrendingUp size={24} />
+                    Şube Genel Durumu ({targetChapter || 'Tüm Şubeler'})
+                </h2>
+                
+                {isNational && (
+                    <select
+                        style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px', backgroundColor: 'var(--neutral-light)' }}
+                        value={filterChapter}
+                        onChange={(e) => setFilterChapter(e.target.value)}
+                    >
+                        {CHAPTER_OPTIONS.map(c => (
+                            <option key={c.value} value={c.value}>{c.label}</option>
+                        ))}
+                    </select>
+                )}
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
                 <div style={{ backgroundColor: 'var(--neutral-light)', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
