@@ -30,23 +30,18 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                 data: { createdById: toId }
             });
 
-            // 3.5 Menajerlikleri (managers) aktar (Many-to-Many olduğu için tek tek)
-            const managedCompanies = await tx.company.findMany({
-                where: { managers: { some: { id: fromId } } },
-                select: { id: true }
-            });
-            // Paralel çalıştır — sıralı döngü timeout'a neden oluyordu
-            await Promise.all(managedCompanies.map((company: { id: number }) =>
-                tx.company.update({
-                    where: { id: company.id },
-                    data: {
-                        managers: {
-                            disconnect: { id: fromId },
-                            connect: { id: toId }
-                        }
-                    }
-                })
-            ));
+            // 3.5 Menajerlikleri (managers) aktar — Raw SQL ile tek seferde (N adet update yerine 2 sorgu)
+            // Önce hedef kullanıcıyı, kaynak kullanıcının olduğu tüm şirketlere ekle (zaten varsa atla)
+            await tx.$executeRawUnsafe(
+                `INSERT IGNORE INTO \`_CompanyManagers\` (A, B)
+                 SELECT A, ? FROM \`_CompanyManagers\` WHERE B = ?`,
+                toId, fromId
+            );
+            // Sonra kaynak kullanıcının tüm manager bağlantılarını sil
+            await tx.$executeRawUnsafe(
+                `DELETE FROM \`_CompanyManagers\` WHERE B = ?`,
+                fromId
+            );
 
             // 4. HandoverHistory kaydı
             await tx.handoverHistory.create({
