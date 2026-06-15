@@ -64,6 +64,7 @@ enum NotificationType {
   USER_APPROVED
   USER_REJECTED
   NEW_ACTIVITY
+  INACTIVE_COMPANY
 }
 
 enum Chapter {
@@ -95,8 +96,9 @@ model User {
   role      UserRole   @default(TM)
   chapter   Chapter?
   status    UserStatus @default(PENDING)
-  image     String?
-  createdAt Int        @default(0)
+  image              String?
+  emailNotifications Boolean    @default(true)
+  createdAt          Int        @default(0)
 
   activities       Activity[]
   companies        Company[]  @relation("CompanyCreator")
@@ -121,8 +123,9 @@ model Company {
   linkedinUrl String?
   chapter     Chapter?
   status      CompanyStatus @default(NO_ANSWER)
-  createdAt   Int           @default(0)
-  updatedAt   Int           @default(0)
+  createdAt      Int           @default(0)
+  updatedAt      Int           @default(0)
+  lastNotifiedAt Int           @default(0)
   createdById Int?
 
   createdBy  User?             @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)

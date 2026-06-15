@@ -2,7 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Mail, Bell } from "lucide-react";
 
 const CHAPTER_LABELS: Record<string, string> = {
   ADANA: "Adana",
@@ -36,12 +37,56 @@ const ROLE_LABELS: Record<string, string> = {
 export default function ProfilPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
   }, [status, router]);
+
+  // Mevcut ayarları çek
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetch("/api/profile/settings")
+        .then((r) => r.json())
+        .then((data) => {
+          if (typeof data.emailNotifications === "boolean") {
+            setEmailNotifications(data.emailNotifications);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [status]);
+
+  const handleToggleEmail = async () => {
+    const newValue = !emailNotifications;
+    setEmailNotifications(newValue);
+    setIsSaving(true);
+    setSaveMessage("");
+
+    try {
+      const res = await fetch("/api/profile/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailNotifications: newValue }),
+      });
+      if (res.ok) {
+        setSaveMessage(newValue ? "E-posta bildirimleri açıldı" : "E-posta bildirimleri kapatıldı");
+      } else {
+        setEmailNotifications(!newValue); // Geri al
+        setSaveMessage("Kaydetme başarısız oldu");
+      }
+    } catch {
+      setEmailNotifications(!newValue);
+      setSaveMessage("Bağlantı hatası");
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(""), 3000);
+    }
+  };
 
   if (status === "loading") {
     return (
@@ -95,6 +140,94 @@ export default function ProfilPage() {
               </span>
             </div>
 
+          </div>
+        </div>
+
+        {/* Bildirim Ayarları */}
+        <div style={{ padding: "0 24px 24px" }}>
+          <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "20px" }}>
+            <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Bell size={18} />
+              Bildirim Ayarları
+            </h3>
+
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "16px",
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "8px",
+                  backgroundColor: emailNotifications ? "#dbeafe" : "#f3f4f6",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s",
+                }}>
+                  <Mail size={18} color={emailNotifications ? "#2563eb" : "#9ca3af"} />
+                </div>
+                <div>
+                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1f2937" }}>
+                    E-posta Bildirimleri
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
+                    İşlemsiz şirketler için mail ile uyarı al
+                  </div>
+                </div>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                onClick={handleToggleEmail}
+                disabled={isSaving}
+                style={{
+                  position: "relative",
+                  width: "48px",
+                  height: "26px",
+                  borderRadius: "13px",
+                  border: "none",
+                  cursor: isSaving ? "wait" : "pointer",
+                  backgroundColor: emailNotifications ? "#2563eb" : "#d1d5db",
+                  transition: "background-color 0.3s",
+                  padding: 0,
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "3px",
+                    left: emailNotifications ? "25px" : "3px",
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    backgroundColor: "white",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                    transition: "left 0.3s",
+                  }}
+                />
+              </button>
+            </div>
+
+            {/* Kaydetme mesajı */}
+            {saveMessage && (
+              <div style={{
+                marginTop: "8px",
+                fontSize: "13px",
+                color: saveMessage.includes("başarısız") || saveMessage.includes("hata") ? "#dc2626" : "#16a34a",
+                textAlign: "center",
+                transition: "opacity 0.3s",
+              }}>
+                {saveMessage}
+              </div>
+            )}
           </div>
         </div>
       </div>
