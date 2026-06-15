@@ -21,6 +21,7 @@ enum UserStatus {
   PENDING
   ACTIVE
   REJECTED
+  INACTIVE
 }
 
 enum CompanyStatus {

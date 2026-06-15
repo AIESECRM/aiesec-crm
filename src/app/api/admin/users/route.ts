@@ -89,5 +89,21 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true, message: "Rol güncellendi!" });
   }
 
+  if (action === "deactivate") {
+    await prisma.user.update({
+      where: { id: parseInt(userId) },
+      data: { status: "INACTIVE" },
+    });
+    return NextResponse.json({ success: true, message: "Kullanıcı pasife alındı!" });
+  }
+
+  if (action === "activate") {
+    await prisma.user.update({
+      where: { id: parseInt(userId) },
+      data: { status: "ACTIVE" },
+    });
+    return NextResponse.json({ success: true, message: "Kullanıcı tekrar aktif edildi!" });
+  }
+
   return NextResponse.json({ error: "Geçersiz işlem!" }, { status: 400 });
 }

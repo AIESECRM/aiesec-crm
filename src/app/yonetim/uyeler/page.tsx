@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, UserRole, Company } from '@/types';
-import { Shield, Briefcase, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Shield, Briefcase, CheckCircle, XCircle, Clock, UserX, UserCheck } from 'lucide-react';
 
 const NATIONAL_ROLES = ['MCP', 'MCVP', 'ADMIN'];
 
@@ -15,7 +15,7 @@ export default function RoleManagementPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'pending' | 'active'>('pending');
+    const [activeTab, setActiveTab] = useState<'pending' | 'active' | 'inactive'>('pending');
 
     useEffect(() => {
         async function fetchData() {
@@ -83,6 +83,7 @@ export default function RoleManagementPage() {
 
     const pendingUsers = users.filter((u: any) => u.status === 'PENDING');
     const activeUsers = users.filter((u: any) => u.status === 'ACTIVE');
+    const inactiveUsers = users.filter((u: any) => u.status === 'INACTIVE');
 
     const handleApprove = async (userId: string) => {
         const res = await fetch('/api/admin/users', {
@@ -121,6 +122,31 @@ export default function RoleManagementPage() {
         }
     };
 
+    const handleDeactivate = async (userId: string) => {
+        if (!confirm('Bu üyeyi pasife almak istediğinize emin misiniz?')) return;
+        const res = await fetch('/api/admin/users', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, action: 'deactivate' })
+        });
+        if (res.ok) {
+            setUsers(users.map((u: any) => u.id === userId ? { ...u, status: 'INACTIVE' } : u));
+            alert('Üye pasife alındı.');
+        }
+    };
+
+    const handleActivate = async (userId: string) => {
+        const res = await fetch('/api/admin/users', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, action: 'activate' })
+        });
+        if (res.ok) {
+            setUsers(users.map((u: any) => u.id === userId ? { ...u, status: 'ACTIVE' } : u));
+            alert('Üye tekrar aktif edildi!');
+        }
+    };
+
     const assignableRoles: UserRole[] = user.role === 'LCP'
         ? ['LCVP', 'TL', 'TM']
         : NATIONAL_ROLES.includes(user.role)
@@ -153,6 +179,10 @@ export default function RoleManagementPage() {
                 </button>
                 <button style={tabStyle('active')} onClick={() => setActiveTab('active')}>
                     Aktif Üyeler ({activeUsers.length})
+                </button>
+                <button style={tabStyle('inactive')} onClick={() => setActiveTab('inactive')}>
+                    <UserX size={14} style={{ display: 'inline', marginRight: '6px' }} />
+                    Pasif Üyeler {inactiveUsers.length > 0 && `(${inactiveUsers.length})`}
                 </button>
             </div>
 
@@ -222,7 +252,39 @@ export default function RoleManagementPage() {
                                         ))}
                                     </select>
                                 )}
+                                <button
+                                    onClick={() => handleDeactivate(member.id)}
+                                    title="Pasife Al"
+                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '12px' }}
+                                >
+                                    <UserX size={14} /> Pasife Al
+                                </button>
                             </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Inactive Users */}
+            {activeTab === 'inactive' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {inactiveUsers.length === 0 ? (
+                        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-light)', backgroundColor: 'var(--neutral-light)', borderRadius: '12px' }}>
+                            Pasif üye bulunmuyor.
+                        </div>
+                    ) : inactiveUsers.map((member: any) => (
+                        <div key={member.id} style={{ backgroundColor: 'var(--neutral-light)', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '4px solid #9ca3af', opacity: 0.8 }}>
+                            <div>
+                                <div style={{ fontSize: '16px', fontWeight: '600' }}>{member.name}</div>
+                                <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{member.email}</div>
+                                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '2px' }}>{member.role} • {member.chapter || 'Genel Merkez'} • <span style={{ color: '#ef4444' }}>Pasif</span></div>
+                            </div>
+                            <button
+                                onClick={() => handleActivate(member.id)}
+                                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', backgroundColor: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}
+                            >
+                                <UserCheck size={16} /> Aktife Al
+                            </button>
                         </div>
                     ))}
                 </div>

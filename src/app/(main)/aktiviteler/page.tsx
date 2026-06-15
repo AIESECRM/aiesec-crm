@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ListTodo,
   Filter,
@@ -450,7 +451,18 @@ export default function ActivitiesPage() {
                       <div className="activity-log__user-avatar"><User /></div>
                       <span className="activity-log__user-name">{activity.user?.name || '—'}</span>
                     </td>
-                    <td style={{ fontSize: '14px', color: '#374151' }}>{activity.company?.name || '—'}</td>
+                    <td style={{ fontSize: '14px', color: '#374151' }}>
+                      {activity.company ? (
+                        <span
+                          style={{ color: '#037EF3', cursor: 'pointer', textDecoration: 'none', fontWeight: '500' }}
+                          onClick={() => window.location.href = `/sirketler/${activity.company.id}`}
+                          onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                          onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                        >
+                          {activity.company.name}
+                        </span>
+                      ) : '—'}
+                    </td>
                     <td>
                       <span style={{
                         backgroundColor: '#e0f2fe', color: '#0369a1',
@@ -525,7 +537,18 @@ export default function ActivitiesPage() {
               </div>
               <div className="activity-modal__row">
                 <span className="activity-modal__label">Şirket</span>
-                <span className="activity-modal__value">{detailModal.activity.company?.name || '—'}</span>
+                <span className="activity-modal__value">
+                  {detailModal.activity.company ? (
+                    <span
+                      style={{ color: '#037EF3', cursor: 'pointer', textDecoration: 'none', fontWeight: '500' }}
+                      onClick={() => window.location.href = `/sirketler/${detailModal.activity.company.id}`}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                    >
+                      {detailModal.activity.company.name}
+                    </span>
+                  ) : '—'}
+                </span>
               </div>
               <div className="activity-modal__row">
                 <span className="activity-modal__label">Tür</span>
