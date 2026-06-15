@@ -35,8 +35,9 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                 where: { managers: { some: { id: fromId } } },
                 select: { id: true }
             });
-            for (const company of managedCompanies) {
-                await tx.company.update({
+            // Paralel çalıştır — sıralı döngü timeout'a neden oluyordu
+            await Promise.all(managedCompanies.map((company: { id: number }) =>
+                tx.company.update({
                     where: { id: company.id },
                     data: {
                         managers: {
@@ -44,8 +45,8 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                             connect: { id: toId }
                         }
                     }
-                });
-            }
+                })
+            ));
 
             // 4. HandoverHistory kaydı
             await tx.handoverHistory.create({
@@ -68,6 +69,9 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
                     timestamp: Math.floor(Date.now() / 1000)
                 }
             });
+        }, {
+            maxWait: 10000,  // Transaction başlaması için max bekleme: 10sn
+            timeout: 30000,  // Transaction çalışma süresi: 30sn
         });
 
         return { success: true };
