@@ -23,6 +23,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const isValid = await bcrypt.compare(credentials.password as string, user.password);
         if (!isValid) return null;
 
+        if (user.status === "INACTIVE") {
+          throw new Error("Hesabınız pasife alınmıştır. Yöneticinizle iletişime geçin.");
+        }
+
         if (user.status !== "ACTIVE") {
           throw new Error("Hesabınız henüz onaylanmamış veya askıya alınmış.");
         }
