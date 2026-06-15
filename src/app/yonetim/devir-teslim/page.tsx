@@ -163,7 +163,7 @@ export default function HandoverPage() {
             return;
         }
 
-        const confirmTransfer = window.confirm("Bu işlem, seçili kullanıcının tüm şirket, teklif ve aktivitelerini yeni kullanıcıya aktaracaktır. Onaylıyor musunuz?");
+        const confirmTransfer = window.confirm("Bu işlem, seçili kullanıcının tüm şirket menajerliklerini yeni kullanıcıya aktaracaktır. Onaylıyor musunuz?");
         if (!confirmTransfer) return;
 
         setIsSubmitting(true);
@@ -193,7 +193,7 @@ export default function HandoverPage() {
 
             <div style={{ padding: '16px', backgroundColor: 'var(--dashboard-bg)', borderRadius: '12px', marginBottom: '24px' }}>
                 <p style={{ fontSize: '14px', color: 'var(--text-regular)', lineHeight: '1.5' }}>
-                    Bu modül ile görevi bırakan bir üyenin tüm portföyünü (şirketler, teklifler, aktiviteler) tek bir işlemle başka bir üyeye aktarabilirsiniz.
+                    Bu modül ile görevi bırakan bir üyenin tüm şirket menajerliklerini tek bir işlemle başka bir üyeye aktarabilirsiniz.
                     <br /><br />
                     <strong>Dikkat:</strong> Bu işlem geri alınamaz.
                 </p>

@@ -12,25 +12,7 @@ export async function executeHandover(fromUserId: string, toUserId: string, exec
         if (!toUser) throw new Error("Hedef kullanıcı bulunamadı.");
 
         await prisma.$transaction(async (tx: any) => {
-            // 1. Şirketlerin createdById'sini aktar
-            await tx.company.updateMany({
-                where: { createdById: fromId },
-                data: { createdById: toId }
-            });
-
-            // 2. Aktiviteleri aktar
-            await tx.activity.updateMany({
-                where: { userId: fromId },
-                data: { userId: toId }
-            });
-
-            // 3. Teklifleri aktar
-            await tx.offer.updateMany({
-                where: { createdById: fromId },
-                data: { createdById: toId }
-            });
-
-            // 3.5 Menajerlikleri (managers) aktar — Raw SQL ile tek seferde (N adet update yerine 2 sorgu)
+            // Menajerlikleri (managers) aktar — Raw SQL ile tek seferde
             // Önce hedef kullanıcıyı, kaynak kullanıcının olduğu tüm şirketlere ekle (zaten varsa atla)
             await tx.$executeRawUnsafe(
                 `INSERT IGNORE INTO \`_CompanyManagers\` (A, B)
