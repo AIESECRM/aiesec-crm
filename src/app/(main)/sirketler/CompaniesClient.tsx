@@ -129,6 +129,7 @@ export default function CompaniesClient({
   const [showMobileModal, setShowMobileModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterProduct, setFilterProduct] = useState('');
+  const [filterChapter, setFilterChapter] = useState('');
   const [visibleCount, setVisibleCount] = useState(20);
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
@@ -226,6 +227,7 @@ export default function CompaniesClient({
   // Product filtresi
   const filteredCompanies = companies.filter(c => {
     if (filterStatus && c.status !== filterStatus) return false;
+    if (filterChapter && c.chapter !== filterChapter) return false;
     if (filterProduct) {
       const compProducts = (c.products || '').split(',').filter(Boolean);
       if (!compProducts.includes(filterProduct)) return false;
@@ -266,7 +268,19 @@ export default function CompaniesClient({
             <Building2 className="companies-page__title-icon" />
             <h1 className="companies-page__title-text">Şirketler &amp; Aramalar</h1>
           </div>
-          <div className="companies-page__actions">
+          <div className="companies-page__actions" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {isNationalRole && (
+              <select
+                style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '14px', backgroundColor: 'var(--neutral-light)' }}
+                value={filterChapter}
+                onChange={(e) => setFilterChapter(e.target.value)}
+              >
+                <option value="">Tüm Şubeler</option>
+                {CHAPTER_OPTIONS.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            )}
             {/* Liste / Kanban toggle */}
             <div className="view-toggle">
               <button
