@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, User, Eye, EyeOff, Check, AlertCircle, LogOut } from 'lucide-react';
+import { X, User, Eye, EyeOff, Check, AlertCircle, LogOut, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { signOut, useSession } from 'next-auth/react';
 import ConfirmModal from '@/components/common/ConfirmModal';
@@ -44,6 +44,8 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [message, setMessage] = useState('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [emailSaving, setEmailSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,8 +55,34 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       setNewPassword('');
       setConfirmPassword('');
       setMessage('');
+      // E-posta bildirim ayarını çek
+      fetch('/api/profile/settings')
+        .then(r => r.json())
+        .then(data => {
+          if (typeof data.emailNotifications === 'boolean') {
+            setEmailNotifications(data.emailNotifications);
+          }
+        })
+        .catch(() => {});
     }
   }, [isOpen]);
+
+  const handleToggleEmail = async () => {
+    const newValue = !emailNotifications;
+    setEmailNotifications(newValue);
+    setEmailSaving(true);
+    try {
+      await fetch('/api/profile/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailNotifications: newValue }),
+      });
+    } catch {
+      setEmailNotifications(!newValue);
+    } finally {
+      setEmailSaving(false);
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -186,6 +214,56 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 value={user.chapter ? CHAPTER_LABELS[user.chapter] || user.chapter : '—'}
                 readOnly
               />
+            </div>
+          </div>
+
+          {/* E-posta Bildirim Ayarı */}
+          <div className="profile-modal__section">
+            <h3 className="profile-modal__section-title">Bildirim Ayarları</h3>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '12px 14px',
+              backgroundColor: 'var(--muted, #f9fafb)',
+              borderRadius: '8px',
+              border: '1px solid var(--border, #e5e7eb)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Mail size={18} color={emailNotifications ? '#2563eb' : '#9ca3af'} />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--foreground)' }}>E-posta Bildirimleri</div>
+                  <div style={{ fontSize: '12px', color: 'var(--muted-foreground, #6b7280)' }}>İşlemsiz şirketler için mail uyarısı</div>
+                </div>
+              </div>
+              <button
+                onClick={handleToggleEmail}
+                disabled={emailSaving}
+                style={{
+                  position: 'relative',
+                  width: '44px',
+                  height: '24px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: emailSaving ? 'wait' : 'pointer',
+                  backgroundColor: emailNotifications ? '#2563eb' : '#d1d5db',
+                  transition: 'background-color 0.3s',
+                  padding: 0,
+                  flexShrink: 0,
+                }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '2px',
+                  left: emailNotifications ? '22px' : '2px',
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  backgroundColor: 'white',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  transition: 'left 0.3s',
+                }} />
+              </button>
             </div>
           </div>
 
