@@ -1,0 +1,42 @@
+.aiesec-maps-widget {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  z-index: 9999;
+}
+
+.aiesec-widget-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.aiesec-widget-logo {
+  font-weight: 800;
+  font-size: 12px;
+  color: white;
+  background: #037ef3;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.aiesec-quick-btn {
+  background: white;
+  color: #0284c7;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aiesec-quick-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}

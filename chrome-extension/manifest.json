@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "AIESEC CRM Web Clipper & Pazar Keşfi",
+  "version": "1.0.0",
+  "description": "Google Haritalar'da (Google Maps) gezerken işletmeleri AIESEC CRM ile anlık kontrol edin ve tek tıkla şubenize ekleyin.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.google.com/maps/*",
+    "*://www.google.com/maps/*",
+    "http://localhost:3000/*",
+    "https://*.aiesec.tr/*",
+    "https://*.vercel.app/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AIESEC CRM Clipper"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.google.com/maps/*",
+        "*://www.google.com/maps/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
