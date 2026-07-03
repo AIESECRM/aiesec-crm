@@ -130,6 +130,7 @@ export default function CompaniesClient({
   const [filterStatus, setFilterStatus] = useState('');
   const [filterProduct, setFilterProduct] = useState('');
   const [filterChapter, setFilterChapter] = useState('');
+  const [filterManager, setFilterManager] = useState('');
   const [visibleCount, setVisibleCount] = useState(20);
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
@@ -157,6 +158,51 @@ export default function CompaniesClient({
     document.body.style.overflow = showMobileModal ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [showMobileModal]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = sessionStorage.getItem('aiesec_companies_page_state');
+      if (savedState) {
+        try {
+          const parsed = JSON.parse(savedState);
+          if (parsed.filterStatus !== undefined) setFilterStatus(parsed.filterStatus);
+          if (parsed.filterProduct !== undefined) setFilterProduct(parsed.filterProduct);
+          if (parsed.filterChapter !== undefined) setFilterChapter(parsed.filterChapter);
+          if (parsed.filterManager !== undefined) setFilterManager(parsed.filterManager);
+          if (parsed.viewMode !== undefined) setViewMode(parsed.viewMode);
+          if (parsed.visibleCount !== undefined) setVisibleCount(parsed.visibleCount);
+        } catch (e) {}
+      }
+
+      const savedScroll = sessionStorage.getItem('aiesec_companies_scroll_y');
+      if (savedScroll) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+        }, 100);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('aiesec_companies_page_state', JSON.stringify({
+        filterStatus,
+        filterProduct,
+        filterChapter,
+        filterManager,
+        viewMode,
+        visibleCount,
+      }));
+    }
+  }, [filterStatus, filterProduct, filterChapter, filterManager, viewMode, visibleCount]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem('aiesec_companies_scroll_y', String(window.scrollY));
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Sidebar'ı dışına tıklayınca kapat
   useEffect(() => {
@@ -224,6 +270,20 @@ export default function CompaniesClient({
     setDragOverStatus(null);
   };
 
+  const uniqueManagers = React.useMemo(() => {
+    const map = new Map<number, string>();
+    companies.forEach(c => {
+      (c.managers || []).forEach((m: any) => {
+        if (m && m.id && m.name) {
+          map.set(m.id, m.name);
+        }
+      });
+    });
+    return Array.from(map.entries())
+      .map(([id, name]) => ({ id: String(id), name }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+  }, [companies]);
+
   // Product filtresi
   const filteredCompanies = companies.filter(c => {
     if (filterStatus && c.status !== filterStatus) return false;
@@ -231,6 +291,14 @@ export default function CompaniesClient({
     if (filterProduct) {
       const compProducts = (c.products || '').split(',').filter(Boolean);
       if (!compProducts.includes(filterProduct)) return false;
+    }
+    if (filterManager) {
+      if (filterManager === 'UNASSIGNED') {
+        if (c.managers && c.managers.length > 0) return false;
+      } else {
+        const hasManager = (c.managers || []).some((m: any) => String(m.id) === String(filterManager));
+        if (!hasManager) return false;
+      }
     }
     return true;
   });
@@ -336,6 +404,18 @@ export default function CompaniesClient({
           >
             {STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
+          {/* Manager filter */}
+          <select
+            className="companies-page__status-select"
+            value={filterManager}
+            onChange={e => setFilterManager(e.target.value)}
+          >
+            <option value="">Tüm Menajerler</option>
+            <option value="UNASSIGNED">Atanmamış</option>
+            {uniqueManagers.map(m => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
         </div>
 
         {/* ─── LIST VIEW ─── */}
@@ -350,7 +430,7 @@ export default function CompaniesClient({
                     <tr>
                       <th>Şirket Adı</th>
                       <th>Product</th>
-                      <th>Sektör</th>
+                      <th>Telefon Numarası</th>
                       <th>Durum</th>
                       <th>Temsilci</th>
                       <th>LC</th>
@@ -380,7 +460,7 @@ export default function CompaniesClient({
                           </div>
                         </td>
                         <td><ProductBadges products={company.products} /></td>
-                        <td><span className="companies-table__muted">{company.category || '—'}</span></td>
+                        <td><span className="companies-table__muted">{company.phone || '—'}</span></td>
                         <td>
                           {(() => {
                             const s = (company.status || '').toUpperCase();

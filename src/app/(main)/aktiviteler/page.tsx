@@ -60,6 +60,19 @@ const STATUS_OPTIONS = [
   { value: 'MEETING_PLANNED', label: 'Toplantı Planlandı' },
 ];
 
+const PRODUCT_TABS = [
+  { value: '', label: 'Tümü' },
+  { value: 'IGV', label: 'iGV' },
+  { value: 'IGTA', label: 'iGTa' },
+  { value: 'IGTE', label: 'iGTe' },
+];
+
+const PRODUCT_COLORS: Record<string, string> = {
+  IGV: '#e11d48',
+  IGTA: '#0284c7',
+  IGTE: '#16a34a',
+};
+
 export default function ActivitiesPage() {
   const { user } = useAuth() as any;
   const isNationalRole = user && ['MCP', 'MCVP', 'ADMIN'].includes(user.role);
@@ -67,7 +80,7 @@ export default function ActivitiesPage() {
 
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [newCompany, setNewCompany] = useState({
-    name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: ''
+    name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: '', documentUrl: '', documentName: '', products: [] as string[]
   });
   const [creatingCompany, setCreatingCompany] = useState(false);
   const [selectedType, setSelectedType] = useState<ActivityType>('COLD_CALL');
@@ -185,6 +198,15 @@ export default function ActivitiesPage() {
       setCompanySearch(data.companies[0].name);
     };
   };
+  const toggleProduct = (product: string) => {
+    setNewCompany(prev => ({
+      ...prev,
+      products: prev.products.includes(product)
+        ? prev.products.filter(p => p !== product)
+        : [...prev.products, product]
+    }));
+  };
+
   const handleQuickAddCompany = async () => {
     if (!newCompany.name.trim()) return;
     setCreatingCompany(true);
@@ -193,7 +215,11 @@ export default function ActivitiesPage() {
       const res = await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newCompany, chapter: user?.chapter || '' })
+        body: JSON.stringify({
+          ...newCompany,
+          products: newCompany.products ? newCompany.products.join(',') : '',
+          chapter: isNationalRole ? newCompany.chapter : (user?.chapter || '')
+        })
       });
       const result = await res.json();
 
@@ -202,7 +228,7 @@ export default function ActivitiesPage() {
         setSelectedCompanyId(String(result.company?.id || result.data?.id));
         setCompanySearch(result.company?.name || result.data?.name);
         setShowAddCompanyModal(false);
-        setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: isNationalRole ? '' : (user?.chapter || ''), documentUrl: '', documentName: '' });
+        setNewCompany({ name: '', phone: '', email: '', status: 'NO_ANSWER', notes: '', chapter: isNationalRole ? '' : (user?.chapter || ''), documentUrl: '', documentName: '', products: [] as string[] });
       } else {
         alert(result.error || "Şirket eklenemedi.");
       }
@@ -674,6 +700,25 @@ export default function ActivitiesPage() {
                       value={newCompany.phone}
                       onChange={(e) => setNewCompany(prev => ({ ...prev, phone: e.target.value }))}
                     />
+                  </div>
+                </div>
+
+                {/* Product multi-select */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-light)' }}>Hedef Ürün(ler)</label>
+                  <div className="product-checkbox-group">
+                    {PRODUCT_TABS.filter(t => t.value).map(tab => (
+                      <label key={tab.value} className={`product-checkbox ${newCompany.products.includes(tab.value) ? 'product-checkbox--checked' : ''}`}>
+                        <input
+                          type="checkbox"
+                          checked={newCompany.products.includes(tab.value)}
+                          onChange={() => toggleProduct(tab.value)}
+                        />
+                        <span style={{ color: newCompany.products.includes(tab.value) ? PRODUCT_COLORS[tab.value] : undefined }}>
+                          {tab.label}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 

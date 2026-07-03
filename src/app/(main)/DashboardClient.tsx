@@ -121,9 +121,9 @@ export default function DashboardClient({
   const unattendedCompanies = companies.filter(c => {
     const isManager = c.managers?.some((m: any) => String(m.id) === String(user.id));
     const isInactive = c.updatedAt < threeDaysAgo; // Son işlem 3 günden eskiyse
-    const excludedStatuses = ['POSITIVE', 'MEETING_PLANNED'];
-    const isNotExcluded = !excludedStatuses.includes(c.status);
-    return isManager && isInactive && isNotExcluded;
+    const targetStatuses = ['NO_ANSWER', 'CALL_AGAIN'];
+    const isTargetStatus = targetStatuses.includes(c.status);
+    return isManager && isInactive && isTargetStatus;
   });
 
   const todayColdCalls = completedActivities.filter(a => {

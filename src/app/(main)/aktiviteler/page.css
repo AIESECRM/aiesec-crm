@@ -1111,3 +1111,37 @@
     flex-direction: column-reverse;
   }
 }
+
+/* ─── PRODUCT MULTI-CHECKBOX IN FORM ─── */
+.product-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.product-checkbox input {
+  display: none;
+}
+
+.product-checkbox--checked {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 10%, white);
+}
+
+.product-checkbox:hover {
+  border-color: var(--primary-400);
+}
