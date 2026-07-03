@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // URL Yükle
   chrome.storage.local.get(['crmUrl'], (res) => {
-    crmUrlInput.value = res.crmUrl || 'http://localhost:3000';
+    crmUrlInput.value = res.crmUrl || 'https://aiesecrm.com';
   });
 
   // URL Kaydet
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scanResult.classList.remove('hidden');
 
       // CRM Kontrolü
-      const crmUrl = (crmUrlInput.value.trim() || 'http://localhost:3000').replace(/\/$/, '');
+      const crmUrl = (crmUrlInput.value.trim() || 'https://aiesecrm.com').replace(/\/$/, '');
       matchBadgeContainer.innerHTML = '<span style="color:#64748b; font-size:11px;">🔍 CRM verileriyle karşılaştırılıyor...</span>';
       addToCrmBtn.classList.add('hidden');
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addToCrmBtn.disabled = true;
     addToCrmBtn.textContent = '⏳ Ekleniyor...';
 
-    const crmUrl = (crmUrlInput.value.trim() || 'http://localhost:3000').replace(/\/$/, '');
+    const crmUrl = (crmUrlInput.value.trim() || 'https://aiesecrm.com').replace(/\/$/, '');
 
     try {
       const res = await fetch(`${crmUrl}/api/companies`, {

@@ -70,7 +70,7 @@ function injectAiesecWidget() {
     if (btn) btn.textContent = '⏳ Ekleniyor...';
 
     chrome.storage.local.get(['crmUrl'], async (res) => {
-      const crmUrl = (res.crmUrl || 'http://localhost:3000').replace(/\/$/, '');
+      const crmUrl = (res.crmUrl || 'https://aiesecrm.com').replace(/\/$/, '');
       try {
         const fetchRes = await fetch(`${crmUrl}/api/companies`, {
           method: 'POST',
