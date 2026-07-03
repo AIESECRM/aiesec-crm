@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   Settings,
-  LogOut
+  LogOut,
+  Compass
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import './Sidebar.css';
@@ -66,6 +67,12 @@ export default function Sidebar() {
       href: '/aktiviteler',
       label: 'Aktiviteler',
       icon: <ListTodo className="sidebar__nav-icon" />,
+      show: true,
+    },
+    {
+      href: '/pazar-kesfi',
+      label: 'Pazar Keşfi',
+      icon: <Compass className="sidebar__nav-icon" />,
       show: true,
     },
     {

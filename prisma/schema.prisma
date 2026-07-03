@@ -230,3 +230,17 @@ model Message {
   sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }
+
+model MarketResearchCache {
+  id        Int    @id @default(autoincrement())
+  queryKey  String @unique
+  results   String @db.LongText
+  createdAt Int    @default(0)
+}
+
+model ApiQuotaUsage {
+  id        Int    @id @default(autoincrement())
+  monthKey  String @unique
+  count     Int    @default(0)
+  maxLimit  Int    @default(4000)
+}
