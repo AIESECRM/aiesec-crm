@@ -49,6 +49,7 @@ export default function MarketResearchPage() {
   const [city, setCity] = useState("Aydın");
   const [keyword, setKeyword] = useState("Dil Okulları");
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [results, setResults] = useState<ResearchItem[]>([]);
   const [quota, setQuota] = useState<{ used: number; maxLimit: number; fromCache: boolean } | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -59,6 +60,7 @@ export default function MarketResearchPage() {
     if (!city.trim() || !keyword.trim()) return;
 
     setLoading(true);
+    setHasSearched(true);
     setErrorMsg("");
 
     try {
@@ -204,6 +206,16 @@ export default function MarketResearchPage() {
         <div style={{ padding: '16px', borderRadius: '12px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <AlertCircle size={20} />
           <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {hasSearched && !loading && results.length === 0 && !errorMsg && (
+        <div style={{ padding: '36px', textAlign: 'center', background: 'var(--card-bg, #fff)', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
+          <AlertCircle size={40} color="#94a3b8" style={{ margin: '0 auto 12px' }} />
+          <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-regular)', marginBottom: '6px' }}>Bu Bölgede İşletme Bulunamadı</h3>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto' }}>
+            &quot;{city}&quot; bölgesinde &quot;{keyword}&quot; araması için sonuç bulunamadı. Lütfen aramanızı genelleştirin veya Google Places API anahtarınızın yapılandırmasını kontrol edin.
+          </p>
         </div>
       )}
 
