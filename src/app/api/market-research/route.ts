@@ -7,6 +7,20 @@ export const runtime = 'nodejs';
 
 const NATIONAL_ROLES = ["MCP", "MCVP", "ADMIN"];
 
+function getCorsHeaders(req: NextRequest) {
+  const origin = req.headers.get("origin") || "*";
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: getCorsHeaders(req) });
+}
+
 interface ResearchItem {
   name: string;
   phone: string;
@@ -15,8 +29,9 @@ interface ResearchItem {
 }
 
 export async function GET(req: NextRequest) {
+  const cors = getCorsHeaders(req);
   const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
+  if (!session?.user) return NextResponse.json({ error: "Yetkisiz! Lütfen CRM sistemine giriş yaptığınızdan emin olun." }, { status: 401, headers: cors });
 
   const user = session.user as any;
   const { searchParams } = new URL(req.url);
@@ -24,7 +39,7 @@ export async function GET(req: NextRequest) {
   const keyword = searchParams.get("keyword") || "";
 
   if (!city.trim() || !keyword.trim()) {
-    return NextResponse.json({ error: "Lütfen şehir ve anahtar kelime belirtin." }, { status: 400 });
+    return NextResponse.json({ error: "Lütfen şehir ve anahtar kelime belirtin." }, { status: 400, headers: cors });
   }
 
   const queryKey = `${city.trim()}_${keyword.trim()}`.toLowerCase();
@@ -61,7 +76,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         error: "Aylık ücretsiz API kotanız (4000) dolmuştur. Bütçe aşımı olmaması için yeni dış aramalar engellendi.",
         quota: { used: quota.count, maxLimit: quota.maxLimit, fromCache: false }
-      }, { status: 429 });
+      }, { status: 429, headers: cors });
     }
 
     // Google Places API kontrolü
@@ -180,5 +195,5 @@ export async function GET(req: NextRequest) {
       maxLimit: quota.maxLimit,
       fromCache: isFromCache,
     }
-  });
+  }, { headers: cors });
 }

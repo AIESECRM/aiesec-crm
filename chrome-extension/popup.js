@@ -58,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addToCrmBtn.classList.add('hidden');
 
       try {
-        const res = await fetch(`${crmUrl}/api/market-research?city=${encodeURIComponent(response.city || 'Genel')}&keyword=${encodeURIComponent(response.name)}`);
+        const res = await fetch(`${crmUrl}/api/market-research?city=${encodeURIComponent(response.city || 'Genel')}&keyword=${encodeURIComponent(response.name)}`, {
+          credentials: 'include'
+        });
         const data = await res.json();
 
         if (res.ok && data.items) {
@@ -91,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch(`${crmUrl}/api/companies`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: currentScrapedItem.name,

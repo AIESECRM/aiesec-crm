@@ -7,9 +7,24 @@ export const runtime = 'nodejs';
 
 const NATIONAL_ROLES = ["MCP", "MCVP", "ADMIN"];
 
+function getCorsHeaders(req: NextRequest) {
+  const origin = req.headers.get("origin") || "*";
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: getCorsHeaders(req) });
+}
+
 export async function GET(req: NextRequest) {
+  const cors = getCorsHeaders(req);
   const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
+  if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401, headers: cors });
 
   const user = session.user as any;
   const { searchParams } = new URL(req.url);
@@ -36,18 +51,19 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ companies });
+  return NextResponse.json({ companies }, { headers: cors });
 }
 
 export async function POST(req: NextRequest) {
+  const cors = getCorsHeaders(req);
   try {
     const session = await auth();
-    if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401 });
+    if (!session?.user) return NextResponse.json({ error: "Yetkisiz!" }, { status: 401, headers: cors });
 
     const user = session.user as any;
     const { name, phone, email, status, notes, chapter, documentUrl, documentName, products, linkedinUrl } = await req.json();
 
-    if (!name) return NextResponse.json({ error: "Şirket adı zorunludur!" }, { status: 400 });
+    if (!name) return NextResponse.json({ error: "Şirket adı zorunludur!" }, { status: 400, headers: cors });
 
     const companyChapter = NATIONAL_ROLES.includes(user.role) ? chapter : user.chapter;
 
@@ -61,9 +77,7 @@ export async function POST(req: NextRequest) {
         chapter: companyChapter || null,
         products: products || null,
         linkedinUrl: linkedinUrl || null,
-        // HATA BURADAYDI: user.id string olduğu için integer'a çevirmemiz gerekiyor
-        createdById: parseInt(user.id, 10), 
-        // Şemada default(0) olduğu için şu anki zamanı manuel atamakta fayda var
+        createdById: parseInt(user.id, 10),
         createdAt: Math.floor(Date.now() / 1000),
         updatedAt: Math.floor(Date.now() / 1000),
         managers: {
@@ -79,14 +93,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, company });
+    return NextResponse.json({ success: true, company }, { headers: cors });
     
   } catch (error: any) {
-    // Eğer veritabanı veya başka bir aşamada hata çıkarsa sunucunun çökmesini engelliyoruz
     console.error("Şirket ekleme hatası:", error);
     return NextResponse.json(
       { error: "Şirket eklenirken bir hata oluştu.", details: error.message }, 
-      { status: 500 }
+      { status: 500, headers: cors }
     );
   }
 }

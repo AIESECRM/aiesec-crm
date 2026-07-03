@@ -1,36 +1,56 @@
 // Google Haritalar DOM tarama ve buton ekleyici scripti
 
 function scrapeMapsPlace() {
-  const h1 = document.querySelector('h1.DUwDvf') || document.querySelector('h1');
+  const h1 = document.querySelector('h1.DUwDvf, h1[class*="headline"], h1');
   const name = h1 ? h1.innerText.trim() : '';
 
   let phone = '';
   let address = '';
   let category = '';
 
-  // Telefon & Adres bulma
-  const buttons = document.querySelectorAll('button[data-item-id], button[aria-label]');
-  buttons.forEach(btn => {
-    const label = btn.getAttribute('aria-label') || btn.innerText || '';
-    const itemId = btn.getAttribute('data-item-id') || '';
+  // 1. Kategori bulma
+  const catEl = document.querySelector('button.DkEaL, button[class*="DkEaL"], span[class*="category"]');
+  if (catEl) category = catEl.innerText.trim();
 
-    if (itemId.startsWith('phone:') || label.toLowerCase().includes('telefon:') || label.toLowerCase().includes('phone:')) {
-      phone = label.replace(/^[Tt]elefon:\s*/, '').replace(/^[Pp]hone:\s*/, '').trim();
+  // 2. data-item-id ve aria-label ile arama
+  const elements = document.querySelectorAll('button[data-item-id], [data-item-id], button[aria-label], a[aria-label]');
+  elements.forEach(el => {
+    const label = el.getAttribute('aria-label') || '';
+    const itemId = el.getAttribute('data-item-id') || '';
+    const text = el.innerText || '';
+
+    if (itemId.includes('phone') || label.toLowerCase().includes('telefon') || label.toLowerCase().includes('phone')) {
+      const p = (label || text).replace(/.*[Tt]elefon:\s*/, '').replace(/.*[Pp]hone:\s*/, '').trim();
+      if (p && !phone) phone = p;
     }
-    if (itemId.startsWith('address:') || label.toLowerCase().includes('adres:') || label.toLowerCase().includes('address:')) {
-      address = label.replace(/^[Aa]dres:\s*/, '').replace(/^[Aa]ddress:\s*/, '').trim();
+    if (itemId.includes('address') || label.toLowerCase().includes('adres') || label.toLowerCase().includes('address')) {
+      const a = (label || text).replace(/.*[Aa]dres:\s*/, '').replace(/.*[Aa]ddress:\s*/, '').trim();
+      if (a && !address) address = a;
     }
   });
 
-  // Kategori bulma
-  const catEl = document.querySelector('button.DkEaL') || document.querySelector('.DkEaL');
-  if (catEl) category = catEl.innerText.trim();
+  // 3. Genel Google Maps metin tarama (Yedek/Fallback)
+  const textNodes = document.querySelectorAll('.Io6YTe, .fontBodyMedium, [class*="fontBodyMedium"], div[class*="CsEnBe"]');
+  textNodes.forEach(node => {
+    const txt = node.innerText.trim();
+    if (!txt) return;
 
-  // Şehir tahmini
+    const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]?\d{3}[\s\-\.]?\d{2}[\s\-\.]?\d{2}/);
+    if (!phone && phoneMatch && phoneMatch[0].replace(/\D/g, '').length >= 10) {
+      phone = phoneMatch[0];
+    }
+
+    if (!address && (txt.includes('Mah.') || txt.includes('Cad.') || txt.includes('Sok.') || txt.includes('Bulvarı') || txt.includes('No:') || txt.includes('Türkiye') || txt.includes('Turkey') || txt.split(',').length >= 2)) {
+      if (!txt.includes('http') && !txt.includes('www.') && !phoneMatch) {
+        address = txt;
+      }
+    }
+  });
+
   let city = 'Genel';
   const cities = ["Aydın", "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Denizli", "Eskişehir", "Gaziantep", "Kocaeli", "Konya", "Kütahya", "Sakarya", "Trabzon", "Adana"];
   cities.forEach(c => {
-    if (address.toLowerCase().includes(c.toLowerCase())) city = c;
+    if ((address + ' ' + name).toLowerCase().includes(c.toLowerCase())) city = c;
   });
 
   return { name, phone, address, category, city };
@@ -44,9 +64,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-// Otomatik AIESEC Butonu Entegre Etme (Müthiş Kullanıcı Deneyimi)
 function injectAiesecWidget() {
-  const h1 = document.querySelector('h1.DUwDvf') || document.querySelector('h1');
+  const h1 = document.querySelector('h1.DUwDvf, h1[class*="headline"], h1');
   if (!h1 || document.getElementById('aiesec-clipper-widget')) return;
 
   const container = h1.parentElement || h1;
@@ -74,6 +93,7 @@ function injectAiesecWidget() {
       try {
         const fetchRes = await fetch(`${crmUrl}/api/companies`, {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: data.name,
@@ -91,7 +111,7 @@ function injectAiesecWidget() {
             btn.style.background = '#10b981';
           }
         } else {
-          alert('Hata! Lütfen CRM oturumunuzun açık olduğundan emin olun.');
+          alert('Hata! Lütfen aiesecrm.com üzerinde oturumunuzun açık olduğundan emin olun.');
           if (btn) btn.textContent = '⚡ Tekrar Deneyin';
         }
       } catch (err) {
@@ -102,7 +122,6 @@ function injectAiesecWidget() {
   });
 }
 
-// Google Maps sayfa değişimlerini dinle ve butonu ekle
 setInterval(() => {
   injectAiesecWidget();
 }, 2000);
