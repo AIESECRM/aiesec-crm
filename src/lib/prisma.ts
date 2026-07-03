@@ -4,16 +4,10 @@ const globalForPrisma = globalThis as unknown as {
   prismaGlobal: PrismaClient | undefined;
 }
 
-const prismaClientSingleton = () => {
-  return new PrismaClient({
-    log: ['error'],
-  })
-}
+export const prisma = globalForPrisma.prismaGlobal ?? new PrismaClient({
+  log: ['error'],
+})
 
-export const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton()
+globalForPrisma.prismaGlobal = prisma
 
 export default prisma
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prismaGlobal = prisma
-}

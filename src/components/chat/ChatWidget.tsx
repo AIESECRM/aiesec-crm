@@ -85,9 +85,9 @@ export default function ChatWidget() {
     };
 
     fetchCounts();
-    const interval = setInterval(fetchCounts, 3000);
+    const interval = setInterval(fetchCounts, !isOpen ? 25000 : 7000);
     return () => clearInterval(interval);
-  }, [currentUser?.id, isOpen, view, activePartner, messages]);
+  }, [currentUser?.id, isOpen, view, activePartner]);
 
   useEffect(() => {
     if (view === 'chat') {
