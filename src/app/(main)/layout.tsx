@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ChatWidget from "@/components/chat/ChatWidget";
+import WhatsNewModal from "@/components/common/WhatsNewModal/WhatsNewModal";
 
 export default function DashboardLayout({
   children,
@@ -26,6 +27,7 @@ export default function DashboardLayout({
     <>
       {children}
       <ChatWidget />
+      <WhatsNewModal />
     </>
   );
 }
