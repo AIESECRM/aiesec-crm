@@ -67,6 +67,29 @@ export async function POST(req: NextRequest) {
 
     const companyChapter = NATIONAL_ROLES.includes(user.role) ? chapter : user.chapter;
 
+    // Şube ve telefon bazlı çift kayıt engeli
+    if (companyChapter) {
+      const existingInChapter = await prisma.company.findMany({
+        where: { chapter: companyChapter }
+      });
+      const normPhone = (phone || '').replace(/[\s\-\(\)\+]/g, '').replace(/^90/, '').replace(/^0/, '');
+      const normName = name.toLowerCase().trim();
+
+      const duplicate = existingInChapter.find(c => {
+        const cPhone = (c.phone || '').replace(/[\s\-\(\)\+]/g, '').replace(/^90/, '').replace(/^0/, '');
+        const phoneMatch = normPhone && cPhone && (normPhone.includes(cPhone) || cPhone.includes(normPhone)) && normPhone.length >= 7;
+        const cName = (c.name || '').toLowerCase().trim();
+        const nameMatch = normName === cName;
+        return phoneMatch || nameMatch;
+      });
+
+      if (duplicate) {
+        return NextResponse.json({
+          error: `Bu işletme (${duplicate.name}) şubenizde zaten kayıtlı! (Durum: ${duplicate.status})`
+        }, { status: 409, headers: cors });
+      }
+    }
+
     const company = await prisma.company.create({
       data: {
         name,

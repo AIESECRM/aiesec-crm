@@ -28,12 +28,11 @@ interface ResearchItem {
   website?: string;
 }
 
-// Akıllı Türk İşletme Rehberi Fallback Motoru (API anahtarı yoksa veya OSM boş dönerse anında çalışır)
+// Akıllı Türk İşletme Rehberi Fallback Motoru
 function generateFallbackBusinessDirectory(city: string, keyword: string): ResearchItem[] {
   const c = city.trim() || "Aydın";
   const kwLower = keyword.toLowerCase();
 
-  // Şehir telefon alan kodları
   const areaCodes: Record<string, string> = {
     "aydın": "0256", "istanbul": "0212", "izmir": "0232", "ankara": "0312",
     "bursa": "0224", "antalya": "0242", "denizli": "0258", "eskişehir": "0222",
@@ -41,7 +40,6 @@ function generateFallbackBusinessDirectory(city: string, keyword: string): Resea
   };
   const areaCode = areaCodes[c.toLowerCase()] || "0256";
 
-  // Anahtar kelimeye göre gerçekçi yerel işletmeler üret
   if (kwLower.includes("dil") || kwLower.includes("okul") || kwLower.includes("kurs") || kwLower.includes("eğitim")) {
     return [
       { name: `American Life Yabancı Dil Okulları (${c} Şubesi)`, phone: `${areaCode} 214 10 20`, address: `Efeler Mah. Adnan Menderes Bulvarı No:45, Merkez/${c}` },
@@ -63,7 +61,6 @@ function generateFallbackBusinessDirectory(city: string, keyword: string): Resea
     ];
   }
 
-  // Genel arama
   return [
     { name: `${keyword} - Ege Bölge Müdürlüğü (${c})`, phone: `${areaCode} 444 10 20`, address: `Merkez Mah. Ticaret Bulvarı No:12, Merkez/${c}` },
     { name: `${keyword} Sanayi ve Ticaret A.Ş. (${c} Şubesi)`, phone: `${areaCode} 412 33 44`, address: `Organize Sanayi Bölgesi 1. Cadde No:5, Merkez/${c}` },
@@ -89,7 +86,6 @@ export async function GET(req: NextRequest) {
 
   const queryKey = `${city.trim()}_${keyword.trim()}`.toLowerCase();
 
-  // 1. Kota Bilgisini Al / Oluştur
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   let quota = await prisma.apiQuotaUsage.findUnique({ where: { monthKey } });
@@ -99,7 +95,6 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // 2. Cache Kontrolü (30 gün)
   const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 24 * 60 * 60;
   const cached = await prisma.marketResearchCache.findUnique({ where: { queryKey } });
 
@@ -115,7 +110,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 3. Cache'de yoksa veya eskiyse Arama Yap
   if (!isFromCache) {
     if (quota.count >= quota.maxLimit) {
       return NextResponse.json({
@@ -150,7 +144,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Eğer Google API yoksa veya sonuç bulamadıysa OpenStreetMap denemesi
     if (items.length === 0) {
       try {
         const queryStr = `${keyword} ${city}`;
@@ -171,12 +164,10 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Eğer harici API'ler hala boş döndüyse Akıllı Yerel Rehber Fallback'i devreye al
     if (items.length === 0) {
       items = generateFallbackBusinessDirectory(city, keyword);
     }
 
-    // Bulunan sonuçları önbelleğe kaydet
     if (items.length > 0) {
       const nowTs = Math.floor(Date.now() / 1000);
       await prisma.marketResearchCache.upsert({
@@ -187,7 +178,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 4. CRM Eşleşme (Çakışma) Kontrolü
+  // 4. ŞUBE VE TELEFON BAZLI KESİN ÇAKIŞMA KONTROLÜ
   const allCompanies = await prisma.company.findMany({
     select: {
       id: true,
@@ -200,34 +191,42 @@ export async function GET(req: NextRequest) {
     }
   });
 
+  // KURAL 1: Kesişmeyi yalnızca kullanıcının kendi şubesiyle yap (Başka şube kayıtları kesinlikle gizlenir)
+  const myChapterCompanies = NATIONAL_ROLES.includes(user.role)
+    ? allCompanies
+    : allCompanies.filter(c => (c.chapter || '').toLowerCase().trim() === (user.chapter || '').toLowerCase().trim());
+
   const enrichedItems = items.map(item => {
     const normPhone = item.phone?.replace(/[\s\-\(\)\+]/g, '').replace(/^90/, '').replace(/^0/, '') || '';
     const normName = item.name?.toLowerCase().trim() || '';
 
-    const match = allCompanies.find(c => {
+    // KURAL 2: Önce telefon numarasına göre kesin kontrol (Aynı isimli başka şube yanıltmaması için)
+    let match = myChapterCompanies.find(c => {
       const cPhone = (c.phone || '').replace(/[\s\-\(\)\+]/g, '').replace(/^90/, '').replace(/^0/, '');
-      const phoneMatch = normPhone && cPhone && (normPhone.includes(cPhone) || cPhone.includes(normPhone)) && normPhone.length >= 7;
-      const cName = (c.name || '').toLowerCase().trim();
-      const nameMatch = normName && cName && (normName === cName || (normName.length > 5 && cName.includes(normName)) || (cName.length > 5 && normName.includes(cName)));
-      return phoneMatch || nameMatch;
+      return normPhone && cPhone && (normPhone.includes(cPhone) || cPhone.includes(normPhone)) && normPhone.length >= 7;
     });
+
+    // KURAL 3: Telefon yoksa veya eşleşmediyse tam isim eşleşmesine bak
+    if (!match) {
+      match = myChapterCompanies.find(c => {
+        const cName = (c.name || '').toLowerCase().trim();
+        return normName && cName && (normName === cName || (normName.length > 6 && cName === normName));
+      });
+    }
 
     let matchStatus: 'NONE' | 'SAME_CHAPTER' = 'NONE';
     let matchedCompany = null;
 
     if (match) {
-      const isUserChapter = NATIONAL_ROLES.includes(user.role) || match.chapter === user.chapter;
-      if (isUserChapter) {
-        matchStatus = 'SAME_CHAPTER';
-        matchedCompany = {
-          id: match.id,
-          name: match.name,
-          status: match.status,
-          chapter: match.chapter,
-          managers: match.managers,
-          lastActivityDate: match.updatedAt
-        };
-      }
+      matchStatus = 'SAME_CHAPTER';
+      matchedCompany = {
+        id: match.id,
+        name: match.name,
+        status: match.status,
+        chapter: match.chapter,
+        managers: match.managers,
+        lastActivityDate: match.updatedAt
+      };
     }
 
     return {
