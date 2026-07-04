@@ -126,7 +126,7 @@ export default function MarketResearchPage() {
     <div className="pazar-container">
       <div className="pazar-header">
         <h1 className="pazar-title">
-          <Compass size={30} color="#0ea5e9" />
+          <Compass size={30} color="var(--primary-400)" />
           Akıllı Pazar Keşfi (Market Research)
         </h1>
         <p className="pazar-subtitle">
@@ -137,7 +137,7 @@ export default function MarketResearchPage() {
       {/* KOTA BARI */}
       <div className="quota-card">
         <div className="quota-info">
-          <ShieldCheck size={24} color="#0ea5e9" />
+          <ShieldCheck size={24} color="var(--primary-400)" />
           <div>
             <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-regular)' }}>
               Aylık Ücretsiz Google API Bütçe Koruması
@@ -181,13 +181,13 @@ export default function MarketResearchPage() {
               value={keyword}
               onChange={e => setKeyword(e.target.value)}
             />
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
+            <div className="keyword-suggestions">
               {KEYWORD_SUGGESTIONS.map(s => (
                 <button
                   key={s}
                   type="button"
                   onClick={() => setKeyword(s)}
-                  style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)' }}
+                  className="keyword-suggestion-btn"
                 >
                   {s}
                 </button>
@@ -203,17 +203,17 @@ export default function MarketResearchPage() {
       </div>
 
       {errorMsg && (
-        <div style={{ padding: '16px', borderRadius: '12px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="pazar-error-box">
           <AlertCircle size={20} />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {hasSearched && !loading && results.length === 0 && !errorMsg && (
-        <div style={{ padding: '36px', textAlign: 'center', background: 'var(--card-bg, #fff)', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
-          <AlertCircle size={40} color="#94a3b8" style={{ margin: '0 auto 12px' }} />
-          <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-regular)', marginBottom: '6px' }}>Bu Bölgede İşletme Bulunamadı</h3>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto' }}>
+        <div className="pazar-empty-state">
+          <AlertCircle size={40} color="var(--text-muted)" style={{ margin: '0 auto 12px' }} />
+          <h3>Bu Bölgede İşletme Bulunamadı</h3>
+          <p>
             &quot;{city}&quot; bölgesinde &quot;{keyword}&quot; araması için sonuç bulunamadı. Lütfen aramanızı genelleştirin veya Google Places API anahtarınızın yapılandırmasını kontrol edin.
           </p>
         </div>

@@ -33,7 +33,7 @@
 
 /* KOTA BARI */
 .quota-card {
-  background: linear-gradient(135deg, rgba(3, 105, 161, 0.08), rgba(14, 165, 233, 0.04));
+  background: var(--activity-main-bg, rgba(3, 126, 243, 0.08));
   border: 1px solid rgba(14, 165, 233, 0.25);
   border-radius: 16px;
   padding: 16px 20px;
@@ -55,7 +55,7 @@
   flex: 1;
   min-width: 200px;
   max-width: 350px;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--border-color);
   height: 10px;
   border-radius: 999px;
   overflow: hidden;
@@ -70,11 +70,11 @@
 
 /* ARAMA FORMU */
 .pazar-search-box {
-  background: var(--card-bg, #ffffff);
+  background: var(--neutral-light);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card);
   margin-bottom: 32px;
 }
 
@@ -117,9 +117,40 @@
   transition: all 0.2s;
 }
 
+.form-select option {
+  background-color: var(--neutral-light);
+  color: var(--text-regular);
+}
+
 .form-select:focus, .form-input:focus {
   border-color: #0ea5e9;
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.keyword-suggestions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.keyword-suggestion-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--dashboard-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.keyword-suggestion-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+  background: var(--sidenav-hover);
+  transform: translateY(-1px);
 }
 
 .search-btn {
@@ -157,7 +188,7 @@
 }
 
 .result-card {
-  background: var(--card-bg, #ffffff);
+  background: var(--neutral-light);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
@@ -168,11 +199,12 @@
   transition: all 0.25s;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .result-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
   border-color: rgba(14, 165, 233, 0.4);
 }
 
@@ -209,13 +241,15 @@
 }
 
 .badge--clean {
-  background-color: #dcfce7;
-  color: #15803d;
+  background-color: var(--status-active-bg);
+  color: var(--status-active);
+  border: 1px solid rgba(34, 197, 94, 0.25);
 }
 
 .badge--same {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: var(--status-negative-bg);
+  color: var(--status-negative);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .card-actions {
@@ -256,9 +290,9 @@
 .view-btn {
   flex: 1;
   padding: 10px 16px;
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background-color: var(--dashboard-bg);
+  color: var(--text-regular);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   font-weight: 600;
   font-size: 13px;
@@ -272,5 +306,47 @@
 }
 
 .view-btn:hover {
-  background-color: #e5e7eb;
+  background-color: var(--sidenav-hover);
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+}
+
+/* HATA KUTUSU */
+.pazar-error-box {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--status-negative-bg);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--status-negative);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* BOŞ DURUM (EMPTY STATE) */
+.pazar-empty-state {
+  padding: 48px 36px;
+  text-align: center;
+  background: var(--neutral-light);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pazar-empty-state h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-regular);
+  margin-bottom: 6px;
+}
+
+.pazar-empty-state p {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 420px;
+  margin: 0 auto;
 }
