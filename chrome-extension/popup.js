@@ -3,12 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveUrlBtn = document.getElementById('saveUrlBtn');
   const urlStatus = document.getElementById('urlStatus');
   const scanBtn = document.getElementById('scanBtn');
-  const scanResult = document.getElementById('scanResult');
-  const companyName = document.getElementById('companyName');
-  const companyPhone = document.getElementById('companyPhone');
-  const companyAddress = document.getElementById('companyAddress');
-  const matchBadgeContainer = document.getElementById('matchBadgeContainer');
-  const addToCrmBtn = document.getElementById('addToCrmBtn');
+  const scanStats = document.getElementById('scanStats');
+  const scanResultList = document.getElementById('scanResultList');
 
   // Login elementleri
   const loginPanel = document.getElementById('loginPanel');
@@ -21,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   const scanPanel = document.getElementById('scanPanel');
 
-  let currentScrapedItem = null;
+  let scrapedItems = [];
   let authToken = null;
 
   // ─── Yardımcı Fonksiyonlar ───
@@ -49,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loginPanel.classList.remove('hidden');
     userBar.classList.add('hidden');
     scanPanel.classList.add('hidden');
-    scanResult.classList.add('hidden');
+    scanResultList.classList.add('hidden');
+    scanStats.classList.add('hidden');
     authToken = null;
     loginError.textContent = '';
   }
@@ -186,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ─── Sayfayı Tara ───
+  // ─── Sayfayı Tara (Toplu Liste) ───
 
   scanBtn.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -195,8 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    scanBtn.textContent = '⏳ Tara ve Kontrol Et...';
+    scanBtn.textContent = '⏳ Taranıyor...';
     scanBtn.disabled = true;
+    scanResultList.innerHTML = '';
+    scanResultList.classList.add('hidden');
+    scanStats.classList.add('hidden');
 
     // Content script'in yüklü olduğundan emin ol
     try {
@@ -205,74 +205,105 @@ document.addEventListener('DOMContentLoaded', () => {
       // Background script olmayabilir, devam et
     }
 
-    // Kısa bir bekleme (inject sonrası)
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    chrome.tabs.sendMessage(tab.id, { action: 'SCRAPE_MAPS' }, async (response) => {
-      scanBtn.innerHTML = '<span>⚡ Aktif Harita Sayfasını Tara</span>';
+    chrome.tabs.sendMessage(tab.id, { action: 'SCRAPE_MAPS_LIST' }, async (response) => {
+      scanBtn.innerHTML = '<span>⚡ Tüm Sonuçları Tara</span>';
       scanBtn.disabled = false;
 
-      // chrome.runtime.lastError kontrolü
       if (chrome.runtime.lastError) {
         console.warn('Content script hatası:', chrome.runtime.lastError.message);
         alert('Google Haritalar sayfasıyla iletişim kurulamadı. Sayfayı yenileyip tekrar deneyin.');
         return;
       }
 
-      if (!response || !response.name) {
-        alert('Google Haritalar sayfasında açık bir işletme detay kartı algılanamadı. Lütfen sol panelde bir işletmeye tıklayıp detaylarını açın.');
+      if (!response || !Array.isArray(response) || response.length === 0) {
+        alert('Sol panelde işletme listesi bulunamadı. Google Haritalar\'da bir arama yapıp sonuçların yüklenmesini bekleyin.');
         return;
       }
 
-      currentScrapedItem = response;
-      companyName.textContent = response.name;
-      companyPhone.textContent = response.phone || 'Telefon bulunamadı';
-      companyAddress.textContent = response.address || 'Adres bulunamadı';
-      scanResult.classList.remove('hidden');
+      scrapedItems = response;
+      scanStats.textContent = `📊 ${response.length} işletme bulundu`;
+      scanStats.classList.remove('hidden');
+      scanResultList.classList.remove('hidden');
 
-      // CRM Kontrolü
+      // Her işletme için kart oluştur
       const crmUrl = getCrmUrl();
-      matchBadgeContainer.innerHTML = '<span style="color:#64748b; font-size:11px;">🔍 CRM verileriyle karşılaştırılıyor...</span>';
-      addToCrmBtn.classList.add('hidden');
 
-      try {
-        const res = await fetch(`${crmUrl}/api/market-research?city=${encodeURIComponent(response.city || 'Genel')}&keyword=${encodeURIComponent(response.name)}`, {
-          headers: authHeaders(),
-        });
-        const data = await res.json();
+      for (let i = 0; i < response.length; i++) {
+        const item = response[i];
+        const card = document.createElement('div');
+        card.className = 'result-item';
+        card.innerHTML = `
+          <div class="res-name">${escapeHtml(item.name)}</div>
+          <div class="res-detail">📞 ${escapeHtml(item.phone || 'Telefon yok')}</div>
+          <div class="res-detail">📍 ${escapeHtml(item.address || 'Adres yok')}</div>
+          ${item.category ? `<div class="res-detail">🏷️ ${escapeHtml(item.category)}</div>` : ''}
+          <div class="result-item-footer">
+            <span class="badge-container" id="badge-${i}">
+              <span style="color:#64748b; font-size:10px;">🔍 Kontrol ediliyor...</span>
+            </span>
+            <button class="btn-add-item hidden" id="addBtn-${i}" data-index="${i}">+ Ekle</button>
+          </div>
+        `;
+        scanResultList.appendChild(card);
 
-        if (res.status === 401) {
-          matchBadgeContainer.innerHTML = '<span style="color:#e11d48; font-size:11px;">⚠️ Oturum süresi dolmuş. Lütfen tekrar giriş yapın.</span>';
-          chrome.storage.local.remove(['authToken', 'authUser']);
-          setTimeout(() => showLoggedOut(), 2000);
-          return;
-        }
-
-        if (res.ok && data.items) {
-          const match = data.items.find(i => i.name === response.name || (response.phone && i.phone && i.phone.includes(response.phone.replace(/\D/g, '').slice(-7))));
-          
-          if (match && match.matchStatus === 'SAME_CHAPTER') {
-            matchBadgeContainer.innerHTML = `<span class="badge badge-same">🔴 Şubenizde Kayıtlı (${match.matchedCompany?.status || 'Kayıtlı'})</span>`;
-          } else {
-            matchBadgeContainer.innerHTML = `<span class="badge badge-clean">🟢 Sistemde Yok (Uygun)</span>`;
-            addToCrmBtn.classList.remove('hidden');
-          }
-        } else {
-          matchBadgeContainer.innerHTML = `<span class="badge badge-clean">🟢 Sistemde Yok (Hazır)</span>`;
-          addToCrmBtn.classList.remove('hidden');
-        }
-      } catch (e) {
-        matchBadgeContainer.innerHTML = `<span style="color:#e11d48; font-size:11px;">⚠️ CRM bağlantısı kurulamadı. İnternet bağlantınızı kontrol edin.</span>`;
+        // Her kart için CRM kontrolünü arka planda başlat
+        checkCrmMatch(crmUrl, item, i);
       }
     });
   });
 
-  // ─── CRM'e Ekle ───
+  // ─── CRM Eşleşme Kontrolü ───
 
-  addToCrmBtn.addEventListener('click', async () => {
-    if (!currentScrapedItem) return;
-    addToCrmBtn.disabled = true;
-    addToCrmBtn.textContent = '⏳ Ekleniyor...';
+  async function checkCrmMatch(crmUrl, item, index) {
+    const badgeEl = document.getElementById(`badge-${index}`);
+    const addBtn = document.getElementById(`addBtn-${index}`);
+    if (!badgeEl) return;
+
+    try {
+      const res = await fetch(`${crmUrl}/api/market-research?city=${encodeURIComponent(item.city || 'Genel')}&keyword=${encodeURIComponent(item.name)}`, {
+        headers: authHeaders(),
+      });
+
+      if (res.status === 401) {
+        badgeEl.innerHTML = '<span style="color:#e11d48; font-size:10px;">⚠️ Oturum dolmuş</span>';
+        return;
+      }
+
+      const data = await res.json();
+
+      if (res.ok && data.items) {
+        const match = data.items.find(i => i.name === item.name || (item.phone && i.phone && i.phone.includes(item.phone.replace(/\D/g, '').slice(-7))));
+
+        if (match && match.matchStatus === 'SAME_CHAPTER') {
+          badgeEl.innerHTML = `<span class="badge badge-same">🔴 Kayıtlı</span>`;
+        } else {
+          badgeEl.innerHTML = `<span class="badge badge-clean">🟢 Uygun</span>`;
+          if (addBtn) addBtn.classList.remove('hidden');
+        }
+      } else {
+        badgeEl.innerHTML = `<span class="badge badge-clean">🟢 Uygun</span>`;
+        if (addBtn) addBtn.classList.remove('hidden');
+      }
+    } catch (e) {
+      badgeEl.innerHTML = '<span style="color:#e11d48; font-size:10px;">⚠️ Kontrol edilemedi</span>';
+      if (addBtn) addBtn.classList.remove('hidden');
+    }
+  }
+
+  // ─── CRM'e Ekle (Toplu Liste) ───
+
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.btn-add-item');
+    if (!btn) return;
+
+    const index = parseInt(btn.dataset.index);
+    const item = scrapedItems[index];
+    if (!item) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳...';
 
     const crmUrl = getCrmUrl();
 
@@ -281,12 +312,12 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({
-          name: currentScrapedItem.name,
-          phone: currentScrapedItem.phone,
-          category: currentScrapedItem.category || 'Google Maps',
+          name: item.name,
+          phone: item.phone,
+          category: item.category || 'Google Maps',
           chapter: '',
           status: 'NO_ANSWER',
-          notes: `Google Maps Clipper üzerinden eklendi. Adres: ${currentScrapedItem.address || ''}`
+          notes: `Google Maps Clipper üzerinden eklendi. Adres: ${item.address || ''}`
         })
       });
 
@@ -299,16 +330,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await res.json();
       if (res.ok) {
-        addToCrmBtn.classList.add('hidden');
-        matchBadgeContainer.innerHTML = `<span class="badge badge-same">✔ Şubenize Başarıyla Eklendi!</span>`;
+        btn.textContent = '✔ Eklendi';
+        btn.classList.add('added');
+        btn.disabled = true;
+        const badgeEl = document.getElementById(`badge-${index}`);
+        if (badgeEl) badgeEl.innerHTML = '<span class="badge badge-same">✔ Eklendi</span>';
       } else {
         alert(data.error || 'Eklenirken hata oluştu.');
+        btn.textContent = '+ Ekle';
+        btn.disabled = false;
       }
     } catch (err) {
-      alert('CRM sunucusuna bağlanılamadı. İnternet bağlantınızı kontrol edin.');
-    } finally {
-      addToCrmBtn.disabled = false;
-      addToCrmBtn.textContent = '+ Şubeme Ekle & Başlat';
+      alert('CRM sunucusuna bağlanılamadı.');
+      btn.textContent = '+ Ekle';
+      btn.disabled = false;
     }
   });
+
+  // ─── Yardımcı: HTML Escape ───
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 });

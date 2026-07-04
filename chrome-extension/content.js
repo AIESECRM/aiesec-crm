@@ -58,10 +58,84 @@ function scrapeMapsPlace() {
   return { name, phone, address, category, city };
 }
 
+// Google Maps arama sonuçları panelindeki TÜM işletme kartlarını tarar
+function scrapeMapsList() {
+  const results = [];
+
+  // Şehir listesi (scrapeMapsPlace ile aynı)
+  const cities = ["Aydın", "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Denizli", "Eskişehir", "Gaziantep", "Kocaeli", "Konya", "Kütahya", "Sakarya", "Trabzon", "Adana"];
+
+  // 1. Sonuç kartlarını bul – feed container veya Nv2PK kartları
+  const cards = document.querySelectorAll('div[role="feed"] > div > div[jsaction], div.Nv2PK');
+
+  cards.forEach(card => {
+    let name = '';
+    let phone = '';
+    let address = '';
+    let category = '';
+
+    // 2. İşletme adı: a.hfpxzc bağlantısının aria-label özniteliğinden al
+    const link = card.querySelector('a.hfpxzc');
+    if (link) {
+      name = (link.getAttribute('aria-label') || '').trim();
+    }
+    // Eğer link yoksa kart içindeki başlık metinlerini dene
+    if (!name) {
+      const titleEl = card.querySelector('.qBF1Pd, .fontHeadlineSmall, [class*="fontHeadlineSmall"]');
+      if (titleEl) name = titleEl.innerText.trim();
+    }
+
+    // İsim bulunamadıysa bu kart bir sonuç kartı değildir, atla
+    if (!name) return;
+
+    // 3. Kart içindeki .W4Efsd elemanlarından kategori, adres ve telefon bilgisi çıkar
+    const infoEls = card.querySelectorAll('.W4Efsd');
+    infoEls.forEach(el => {
+      const txt = el.innerText.trim();
+      if (!txt) return;
+
+      // Telefon numarası tarama
+      const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]\d{3}[\s\-\.]\d{2}[\s\-\.]\d{2}/);
+      if (!phone && phoneMatch && phoneMatch[0].replace(/\D/g, '').length >= 10) {
+        phone = phoneMatch[0].trim();
+      }
+
+      // Adres ipuçları
+      if (!address && (txt.includes('Mah.') || txt.includes('Cad.') || txt.includes('Sok.') || txt.includes('Bulvarı') || txt.includes('No:') || txt.includes('Türkiye') || txt.includes('Turkey') || txt.split(',').length >= 2)) {
+        if (!txt.includes('http') && !txt.includes('www.') && !phoneMatch) {
+          address = txt;
+        }
+      }
+
+      // Kategori: genellikle ilk kısa .W4Efsd metni (· ayırıcı içerebilir)
+      if (!category && txt.length < 60 && !phoneMatch && !txt.includes('Mah.') && !txt.includes('Cad.') && !txt.includes('Sok.')) {
+        // "4,3 · (120)" gibi puan satırlarını atla
+        if (!/^\d[.,]\d/.test(txt)) {
+          category = txt.split('·').map(s => s.trim()).filter(s => s && !/^\(\d+\)$/.test(s))[0] || '';
+        }
+      }
+    });
+
+    // 4. Şehir tespiti
+    let city = 'Genel';
+    cities.forEach(c => {
+      if ((address + ' ' + name).toLowerCase().includes(c.toLowerCase())) city = c;
+    });
+
+    results.push({ name, phone, address, category, city });
+  });
+
+  return results;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'SCRAPE_MAPS') {
     const data = scrapeMapsPlace();
     sendResponse(data);
+  }
+  if (request.action === 'SCRAPE_MAPS_LIST') {
+    const list = scrapeMapsList();
+    sendResponse(list);
   }
   return true;
 });
@@ -91,7 +165,7 @@ function injectAiesecWidget() {
     if (btn) btn.textContent = '⏳ Ekleniyor...';
 
     chrome.storage.local.get(['crmUrl', 'authToken'], async (res) => {
-      const crmUrl = (res.crmUrl || 'https://aiesecrm.com').replace(/\/$/, '');
+      const crmUrl = (res.crmUrl || 'https://www.aiesecrm.com').replace(/\/$/, '');
       const token = res.authToken;
 
       if (!token) {

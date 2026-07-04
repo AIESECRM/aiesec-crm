@@ -52,20 +52,14 @@
   <!-- Tarama Aracı -->
   <div id="scanPanel" class="section card hidden">
     <div class="card-title">📍 Harita Tarama Aracı</div>
-    <p class="card-desc">Google Haritalar'da bir işletmenin detay panelini açtığınızda sayfadaki bilgileri anında algılar ve CRM verilerinizle karşılaştırır.</p>
+    <p class="card-desc">Google Haritalar'da arama yapın, ardından sol paneldeki tüm işletmeleri toplu olarak tarayın.</p>
     <button id="scanBtn" class="btn btn-primary">
-      <span>⚡ Aktif Harita Sayfasını Tara</span>
+      <span>⚡ Tüm Sonuçları Tara</span>
     </button>
+    <div id="scanStats" class="scan-stats hidden"></div>
   </div>
 
-  <div id="scanResult" class="result-area hidden">
-    <div class="result-header">Algılanan İşletme</div>
-    <div id="companyName" class="res-name">—</div>
-    <div id="companyPhone" class="res-phone">—</div>
-    <div id="companyAddress" class="res-addr">—</div>
-    <div id="matchBadgeContainer" class="badge-container"></div>
-    <button id="addToCrmBtn" class="btn btn-success hidden">+ Şubeme Ekle & Başlat</button>
-  </div>
+  <div id="scanResultList" class="result-list hidden"></div>
 
   <div class="footer">
     <span>AIESEC Türkiye B2B CRM</span>

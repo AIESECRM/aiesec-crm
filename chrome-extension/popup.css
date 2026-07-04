@@ -282,3 +282,97 @@ input[type="password"]:focus {
   color: #94a3b8;
   margin-top: 8px;
 }
+
+/* SCAN STATS */
+.scan-stats {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+/* RESULT LIST */
+.result-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.result-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.result-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.result-item {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.result-item:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+}
+
+.result-item .res-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.result-item .res-detail {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.result-item .result-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.result-item .badge {
+  font-size: 10px;
+  padding: 3px 8px;
+}
+
+.btn-add-item {
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-add-item:hover {
+  background: #059669;
+}
+
+.btn-add-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-add-item.added {
+  background: #6b7280;
+}
