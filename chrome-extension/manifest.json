@@ -13,7 +13,9 @@
     "*://www.google.com/maps/*",
     "http://localhost:3000/*",
     "https://aiesecrm.com/*",
+    "https://www.aiesecrm.com/*",
     "https://*.aiesecrm.com/*",
+    "https://aiesec-crm.vercel.app/*",
     "https://*.aiesec.tr/*",
     "https://*.vercel.app/*"
   ],

@@ -10,6 +10,8 @@ const ALLOWED_ORIGINS = [
   "chrome-extension://",
   "http://localhost:3000",
   "https://aiesecrm.com",
+  "https://www.aiesecrm.com",
+  "https://aiesec-crm.vercel.app",
 ];
 
 function getCorsHeaders(req: NextRequest) {

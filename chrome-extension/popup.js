@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── Yardımcı Fonksiyonlar ───
 
   function getCrmUrl() {
-    return (crmUrlInput.value.trim() || 'https://aiesecrm.com').replace(/\/$/, '');
+    return (crmUrlInput.value.trim() || 'https://www.aiesecrm.com').replace(/\/$/, '');
   }
 
   function authHeaders() {
@@ -56,14 +56,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Başlangıçta Kayıtlı Token Kontrolü ───
 
-  chrome.storage.local.get(['crmUrl', 'authToken', 'authUser'], (res) => {
-    crmUrlInput.value = res.crmUrl || 'https://aiesecrm.com';
+  chrome.storage.local.get(['crmUrl', 'authToken', 'authUser', 'loginStatus', 'loginError'], (res) => {
+    // Eski www'suz URL'yi otomatik düzelt
+    let savedUrl = res.crmUrl || 'https://www.aiesecrm.com';
+    if (savedUrl === 'https://aiesecrm.com') {
+      savedUrl = 'https://www.aiesecrm.com';
+      chrome.storage.local.set({ crmUrl: savedUrl });
+    }
+    crmUrlInput.value = savedUrl;
 
     if (res.authToken && res.authUser) {
       authToken = res.authToken;
       showLoggedIn(res.authUser);
+
+      // Eğer popup kapandıktan sonra login başarılı olduysa kullanıcıya bildir
+      if (res.loginStatus === 'success') {
+        chrome.storage.local.remove(['loginStatus', 'loginError']);
+      }
     } else {
       showLoggedOut();
+
+      // Eğer login hatası varsa göster (popup kapanmış iken oluşan hata)
+      if (res.loginStatus === 'error' && res.loginError) {
+        loginError.textContent = res.loginError;
+        chrome.storage.local.remove(['loginStatus', 'loginError']);
+      }
     }
   });
 
@@ -85,30 +102,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const crmUrl = getCrmUrl();
 
     try {
-      const res = await fetch(`${crmUrl}/api/auth/extension-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      // Login isteğini background service worker üzerinden gönder
+      // Böylece popup kapansa bile istek tamamlanır ve token kaydedilir
+      const result = await chrome.runtime.sendMessage({
+        action: 'LOGIN',
+        crmUrl,
+        email,
+        password,
       });
 
-      const data = await res.json();
-
-      if (res.ok && data.token) {
-        authToken = data.token;
-        chrome.storage.local.set({
-          authToken: data.token,
-          authUser: data.user,
-          crmUrl: crmUrl,
-        });
-        showLoggedIn(data.user);
+      if (result && result.success) {
+        authToken = result.token;
+        // Başarılı giriş görsel geri bildirimi
+        loginBtn.textContent = '✅ Giriş Başarılı!';
+        loginBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        // Kısa bir gecikme ile UI'ı güncelle — kullanıcı başarıyı görsün
+        await new Promise(resolve => setTimeout(resolve, 600));
+        loginBtn.style.background = '';
+        showLoggedIn(result.user);
       } else {
-        loginError.textContent = data.error || 'Giriş başarısız. Bilgilerinizi kontrol edin.';
+        loginError.textContent = (result && result.error) || 'Giriş başarısız. Bilgilerinizi kontrol edin.';
       }
     } catch (err) {
-      loginError.textContent = 'CRM sunucusuna bağlanılamadı. İnternet bağlantınızı ve CRM adresini kontrol edin.';
+      // Service worker ile iletişim kurulamadıysa doğrudan dene
+      try {
+        const res = await fetch(`${crmUrl}/api/auth/extension-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          authToken = data.token;
+          chrome.storage.local.set({
+            authToken: data.token,
+            authUser: data.user,
+            crmUrl: crmUrl,
+          });
+          loginBtn.textContent = '✅ Giriş Başarılı!';
+          loginBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          await new Promise(resolve => setTimeout(resolve, 600));
+          loginBtn.style.background = '';
+          showLoggedIn(data.user);
+        } else {
+          loginError.textContent = data.error || 'Giriş başarısız. Bilgilerinizi kontrol edin.';
+        }
+      } catch (innerErr) {
+        loginError.textContent = 'CRM sunucusuna bağlanılamadı. İnternet bağlantınızı ve CRM adresini kontrol edin.';
+      }
     } finally {
       loginBtn.disabled = false;
-      loginBtn.textContent = 'Giriş Yap';
+      if (loginBtn.textContent !== '✅ Giriş Başarılı!') {
+        loginBtn.textContent = 'Giriş Yap';
+      }
     }
   });
 
