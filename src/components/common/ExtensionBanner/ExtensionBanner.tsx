@@ -28,7 +28,7 @@ export default function ExtensionBanner() {
             🚀 Daha fazla ve gerçek sonuç için Chrome Eklentimizi kullanın!
           </div>
           <div className="ext-banner-desc">
-            Google Haritalar&apos;da doğrudan gezinerek <strong>gerçek işletmeleri</strong> tek tıkla tarayın, CRM çakışma kontrolü yapın ve anında şubenize ekleyin. API limiti yok, sınırsız arama!
+            Google Haritalar&apos;da arama yapın, sol paneldeki <strong>tüm işletmeleri toplu olarak tarayın</strong>, CRM çakışma kontrolü yapın ve tek tıkla şubenize ekleyin. API limiti yok, sınırsız arama!
           </div>
         </div>
         <button className="ext-banner-btn" onClick={() => setShowModal(true)}>
@@ -126,7 +126,7 @@ export default function ExtensionBanner() {
                     <div className="ext-step-number">5</div>
                     <div className="ext-step-content">
                       <strong>Giriş Yapın & Kullanmaya Başlayın!</strong>
-                      <span>Google Haritalar&apos;a gidin, eklenti ikonuna tıklayın, CRM hesabınızla giriş yapın. Bir işletme sayfasına tıklayıp <strong>&quot;Tara&quot;</strong> butonuna basın!</span>
+                      <span>Google Haritalar&apos;a gidin, eklenti ikonuna tıklayın, CRM hesabınızla giriş yapın. Bir arama yapıp <strong>&quot;⚡ Tüm Sonuçları Tara&quot;</strong> butonuna basın!</span>
                     </div>
                   </div>
                 </div>
@@ -136,10 +136,11 @@ export default function ExtensionBanner() {
               <div className="ext-tips-section">
                 <h3 className="ext-tips-title">💡 Kullanım İpuçları</h3>
                 <ul className="ext-tips-list">
-                  <li>Google Haritalar&apos;da bir işletmenin detay panelini açtıktan sonra eklenti ikonuna tıklayıp <strong>&quot;Tara&quot;</strong> butonuna basın.</li>
-                  <li>Eklenti, sayfadaki işletme adı, telefon ve adres bilgilerini otomatik algılar.</li>
-                  <li>CRM&apos;deki kayıtlarınızla çakışma kontrolü yapılır — kayıtlı işletmeler kırmızı, yeni olanlar yeşil badge ile gösterilir.</li>
-                  <li>İşletme sayfasının üzerinde beliren <strong>&quot;AIESEC CRM&quot;</strong> widget&apos;ı ile popup&apos;ı açmadan bile tek tıkla şubenize ekleyebilirsiniz.</li>
+                  <li>Google Haritalar&apos;da bir arama yapın (ör. &quot;Denizli dil okulları&quot;), sonuçlar yüklendikten sonra eklenti ikonuna tıklayıp <strong>&quot;⚡ Tüm Sonuçları Tara&quot;</strong> butonuna basın.</li>
+                  <li>Eklenti, sol paneldeki <strong>tüm işletmelerin</strong> adı, telefon ve adres bilgilerini toplu olarak tarar.</li>
+                  <li>Her işletme için CRM çakışma kontrolü otomatik yapılır — kayıtlı olanlar 🔴, yeni olanlar 🟢 ile gösterilir.</li>
+                  <li>Uygun işletmeleri tek tek <strong>&quot;+ Ekle&quot;</strong> butonu ile şubenize ekleyebilirsiniz.</li>
+                  <li>İşletme detay sayfasında beliren <strong>&quot;AIESEC CRM&quot;</strong> widget&apos;ı ile popup açmadan da tek tıkla ekleyebilirsiniz.</li>
                 </ul>
               </div>
             </div>
