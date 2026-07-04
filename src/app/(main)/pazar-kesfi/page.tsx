@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ExtensionBanner from '@/components/common/ExtensionBanner/ExtensionBanner';
 import {
   Compass,
   Search,
@@ -133,6 +134,9 @@ export default function MarketResearchPage() {
           Google üzerinde manuel arama yapma ve CRM çakışma kontrolü eziyetine son! İşletmeleri arayın, CRM veritabanı ile çakışma kontrolü yapın ve tek tıkla şubenize ekleyin.
         </p>
       </div>
+
+      {/* CHROME EKLENTİ ÖNERİSİ */}
+      <ExtensionBanner />
 
       {/* KOTA BARI */}
       <div className="quota-card">

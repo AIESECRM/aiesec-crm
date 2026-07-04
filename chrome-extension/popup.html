@@ -14,6 +14,32 @@
     <div class="header-subtitle">Google Haritalar Pazar Keşfi & Çakışma Kontrolü</div>
   </div>
 
+  <!-- Giriş Paneli -->
+  <div id="loginPanel" class="section card">
+    <div class="card-title">🔐 CRM Girişi</div>
+    <p class="card-desc">Eklentiyi kullanmak için AIESEC CRM hesabınızla giriş yapın.</p>
+    <div class="form-group">
+      <label class="section-label" for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="email@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="section-label" for="loginPassword">Şifre</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" />
+    </div>
+    <div id="loginError" class="error-msg"></div>
+    <button id="loginBtn" class="btn btn-primary">Giriş Yap</button>
+  </div>
+
+  <!-- Kullanıcı Bilgi Barı -->
+  <div id="userBar" class="user-bar hidden">
+    <div class="user-info">
+      <span class="user-icon">👤</span>
+      <span id="userName" class="user-name"></span>
+    </div>
+    <button id="logoutBtn" class="btn-logout" title="Çıkış Yap">🚪</button>
+  </div>
+
+  <!-- CRM Sunucu Adresi (gizli - varsayılan) -->
   <div class="section" style="display: none;">
     <label class="section-label" for="crmUrlInput">🌐 CRM Sunucu Adresi</label>
     <div class="input-row">
@@ -23,7 +49,8 @@
     <div id="urlStatus" class="status-msg"></div>
   </div>
 
-  <div class="section card">
+  <!-- Tarama Aracı -->
+  <div id="scanPanel" class="section card hidden">
     <div class="card-title">📍 Harita Tarama Aracı</div>
     <p class="card-desc">Google Haritalar'da bir işletmenin detay panelini açtığınızda sayfadaki bilgileri anında algılar ve CRM verilerinizle karşılaştırır.</p>
     <button id="scanBtn" class="btn btn-primary">

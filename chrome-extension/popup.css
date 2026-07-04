@@ -65,16 +65,29 @@ body {
   gap: 8px;
 }
 
-input[type="text"] {
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13px;
   outline: none;
+  transition: all 0.2s;
+  background: #ffffff;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
   border-color: #0ea5e9;
   box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
 }
@@ -109,8 +122,13 @@ input[type="text"]:focus {
   padding: 12px;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn-success {
@@ -149,6 +167,13 @@ input[type="text"]:focus {
   font-size: 11px;
   margin-top: 4px;
   color: #10b981;
+}
+
+.error-msg {
+  font-size: 11px;
+  color: #e11d48;
+  min-height: 16px;
+  margin-bottom: 4px;
 }
 
 .result-area {
@@ -206,6 +231,49 @@ input[type="text"]:focus {
 .badge-same {
   background-color: #fee2e2;
   color: #b91c1c;
+}
+
+/* USER BAR */
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f0f9ff, #ecfdf5);
+  border: 1px solid #bae6fd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon {
+  font-size: 16px;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.btn-logout {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
 }
 
 .footer {

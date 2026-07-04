@@ -1,5 +1,7 @@
 // Google Haritalar DOM tarama ve buton ekleyici scripti
 
+window.__aiesecContentScriptLoaded = true;
+
 function scrapeMapsPlace() {
   const h1 = document.querySelector('h1.DUwDvf, h1[class*="headline"], h1');
   const name = h1 ? h1.innerText.trim() : '';
@@ -35,7 +37,7 @@ function scrapeMapsPlace() {
     const txt = node.innerText.trim();
     if (!txt) return;
 
-    const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]?\d{3}[\s\-\.]?\d{2}[\s\-\.]?\d{2}/);
+    const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]\d{3}[\s\-\.]\d{2}[\s\-\.]\d{2}/);
     if (!phone && phoneMatch && phoneMatch[0].replace(/\D/g, '').length >= 10) {
       phone = phoneMatch[0];
     }
@@ -88,13 +90,25 @@ function injectAiesecWidget() {
     const btn = document.getElementById('aiesecQuickSendBtn');
     if (btn) btn.textContent = '⏳ Ekleniyor...';
 
-    chrome.storage.local.get(['crmUrl'], async (res) => {
+    chrome.storage.local.get(['crmUrl', 'authToken'], async (res) => {
       const crmUrl = (res.crmUrl || 'https://aiesecrm.com').replace(/\/$/, '');
+      const token = res.authToken;
+
+      if (!token) {
+        alert('AIESEC CRM eklentisinde giriş yapmanız gerekiyor. Eklenti ikonuna tıklayıp giriş yapın.');
+        if (btn) btn.textContent = '⚡ Şubeme Ekle';
+        return;
+      }
+
       try {
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
+
         const fetchRes = await fetch(`${crmUrl}/api/companies`, {
           method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             name: data.name,
             phone: data.phone,
@@ -105,13 +119,21 @@ function injectAiesecWidget() {
           })
         });
 
+        if (fetchRes.status === 401) {
+          alert('Oturum süresi dolmuş. Eklenti ikonuna tıklayıp tekrar giriş yapın.');
+          chrome.storage.local.remove(['authToken', 'authUser']);
+          if (btn) btn.textContent = '⚡ Şubeme Ekle';
+          return;
+        }
+
         if (fetchRes.ok) {
           if (btn) {
             btn.textContent = '✔ Şubeye Eklendi';
             btn.style.background = '#10b981';
           }
         } else {
-          alert('Hata! Lütfen aiesecrm.com üzerinde oturumunuzun açık olduğundan emin olun.');
+          const errData = await fetchRes.json().catch(() => ({}));
+          alert(errData.error || 'Hata! Lütfen aiesecrm.com üzerinde oturumunuzun açık olduğundan emin olun.');
           if (btn) btn.textContent = '⚡ Tekrar Deneyin';
         }
       } catch (err) {

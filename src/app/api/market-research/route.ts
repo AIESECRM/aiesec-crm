@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getAuthUser, getCorsHeaders } from "@/lib/extension-auth";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const NATIONAL_ROLES = ["MCP", "MCVP", "ADMIN"];
-
-function getCorsHeaders(req: NextRequest) {
-  const origin = req.headers.get("origin") || "*";
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-    "Access-Control-Allow-Credentials": "true",
-  };
-}
 
 export async function OPTIONS(req: NextRequest) {
   return NextResponse.json({}, { headers: getCorsHeaders(req) });
@@ -308,10 +298,9 @@ function generateFallbackBusinessDirectory(city: string, keyword: string): Resea
 
 export async function GET(req: NextRequest) {
   const cors = getCorsHeaders(req);
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Yetkisiz! Lütfen CRM sistemine giriş yaptığınızdan emin olun." }, { status: 401, headers: cors });
+  const user = await getAuthUser(req);
+  if (!user) return NextResponse.json({ error: "Yetkisiz! Lütfen CRM sistemine giriş yaptığınızdan emin olun." }, { status: 401, headers: cors });
 
-  const user = session.user as any;
   const { searchParams } = new URL(req.url);
   const city = searchParams.get("city") || "";
   const keyword = searchParams.get("keyword") || "";
