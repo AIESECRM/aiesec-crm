@@ -151,6 +151,7 @@ export default function Sidebar() {
               <LogOut size={16} />
               <span>Çıkış Yap</span>
             </button>
+            <div className="sidebar__ea" title="✦">·</div>
           </div>
         )}
       </aside>

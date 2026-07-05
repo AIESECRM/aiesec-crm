@@ -162,6 +162,7 @@ export default function LoginPage() {
             </button>
           </div>
         )}
+        <div className="auth-ea">·</div>
       </div>
     </div>
   );

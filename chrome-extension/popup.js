@@ -353,4 +353,19 @@ document.addEventListener('DOMContentLoaded', () => {
     div.textContent = text;
     return div.innerHTML;
   }
+
+  // ─── 🥚 ───
+  let _eaC = 0;
+  const _eaBadge = document.querySelector('.logo-badge');
+  if (_eaBadge) {
+    _eaBadge.addEventListener('click', () => {
+      _eaC++;
+      if (_eaC === 7) {
+        _eaBadge.classList.add('ea-activated');
+        console.log('%c✦ crafted with ♥ by E.A ✦', 'color:#7c3aed;font-size:14px;font-weight:bold;');
+        setTimeout(() => _eaBadge.classList.remove('ea-activated'), 2500);
+        _eaC = 0;
+      }
+    });
+  }
 });

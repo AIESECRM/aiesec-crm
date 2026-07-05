@@ -40,3 +40,25 @@
   transform: scale(1.05);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
+
+/* 🥚 */
+.aiesec-widget-inner::after {
+  content: "E.A";
+  position: absolute;
+  right: 6px;
+  bottom: -1px;
+  font-size: 6px;
+  color: rgba(255, 255, 255, 0);
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: color 0.8s ease;
+  pointer-events: none;
+}
+
+.aiesec-widget-inner {
+  position: relative;
+}
+
+.aiesec-widget-inner:hover::after {
+  color: rgba(255, 255, 255, 0.15);
+}
