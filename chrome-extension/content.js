@@ -21,9 +21,19 @@ function scrapeMapsPlace() {
     const itemId = el.getAttribute('data-item-id') || '';
     const text = el.innerText || '';
 
+    // Telefon: data-item-id "phone:tel:+905551234567" formatında olabilir
     if (itemId.includes('phone') || label.toLowerCase().includes('telefon') || label.toLowerCase().includes('phone')) {
-      const p = (label || text).replace(/.*[Tt]elefon:\s*/, '').replace(/.*[Pp]hone:\s*/, '').trim();
-      if (p && !phone) phone = p;
+      if (!phone) {
+        // Önce data-item-id'den direkt numarayı çıkar
+        const telMatch = itemId.match(/phone:tel:(.+)/);
+        if (telMatch) {
+          phone = telMatch[1].trim();
+        } else {
+          // aria-label veya metin içinden telefon numarasını çıkar
+          const p = (label || text).replace(/.*[Tt]elefon:\s*/, '').replace(/.*[Pp]hone:\s*/, '').trim();
+          if (p) phone = p;
+        }
+      }
     }
     if (itemId.includes('address') || label.toLowerCase().includes('adres') || label.toLowerCase().includes('address')) {
       const a = (label || text).replace(/.*[Aa]dres:\s*/, '').replace(/.*[Aa]ddress:\s*/, '').trim();
@@ -37,9 +47,10 @@ function scrapeMapsPlace() {
     const txt = node.innerText.trim();
     if (!txt) return;
 
-    const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]\d{3}[\s\-\.]\d{2}[\s\-\.]\d{2}/);
+    // Geniş telefon regex: Türkiye (+90, 0xxx) ve uluslararası formatlar
+    const phoneMatch = txt.match(/(\+?\d{1,4}[\s\-\.]?)?\(?\d{2,4}\)?[\s\-\.]?\d{2,4}[\s\-\.]?\d{2,4}[\s\-\.]?\d{0,4}/);
     if (!phone && phoneMatch && phoneMatch[0].replace(/\D/g, '').length >= 10) {
-      phone = phoneMatch[0];
+      phone = phoneMatch[0].trim();
     }
 
     if (!address && (txt.includes('Mah.') || txt.includes('Cad.') || txt.includes('Sok.') || txt.includes('Bulvarı') || txt.includes('No:') || txt.includes('Türkiye') || txt.includes('Turkey') || txt.split(',').length >= 2)) {
@@ -48,6 +59,20 @@ function scrapeMapsPlace() {
       }
     }
   });
+
+  // 4. Google Maps telefon satırı: ikon yanındaki metin (son çare)
+  if (!phone) {
+    const phoneRows = document.querySelectorAll('[data-tooltip="Telefon numarasını kopyala"], [data-tooltip="Copy phone number"], [aria-label*="telefon"], [aria-label*="phone"]');
+    phoneRows.forEach(el => {
+      if (phone) return;
+      const parent = el.closest('.CsEnBe, .AeaXub, [class*="fontBody"]') || el.parentElement;
+      if (parent) {
+        const rowText = parent.innerText.trim();
+        const m = rowText.match(/(\+?\d[\d\s\-\.\(\)]{8,})/);
+        if (m) phone = m[1].trim();
+      }
+    });
+  }
 
   let city = 'Genel';
   const cities = ["Aydın", "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Denizli", "Eskişehir", "Gaziantep", "Kocaeli", "Konya", "Kütahya", "Sakarya", "Trabzon", "Adana"];
@@ -94,8 +119,8 @@ function scrapeMapsList() {
       const txt = el.innerText.trim();
       if (!txt) return;
 
-      // Telefon numarası tarama
-      const phoneMatch = txt.match(/(\+90|0)?\s*[1-9]\d{2}[\s\-\.]\d{3}[\s\-\.]\d{2}[\s\-\.]\d{2}/);
+      // Telefon numarası tarama (geniş format)
+      const phoneMatch = txt.match(/(\+?\d{1,4}[\s\-\.]?)?\(?\d{2,4}\)?[\s\-\.]?\d{2,4}[\s\-\.]?\d{2,4}[\s\-\.]?\d{0,4}/);
       if (!phone && phoneMatch && phoneMatch[0].replace(/\D/g, '').length >= 10) {
         phone = phoneMatch[0].trim();
       }
